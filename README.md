@@ -19,6 +19,47 @@ one comes before more corpus work. Numbers and caveats:
 deferred to v2 and currently return `<unknown>`; see
 [`docs/V1-SCOPE.md`](docs/V1-SCOPE.md) for why, and what it bought.
 
+## Quickstart — flash it and talk to it
+
+No toolchain, no Python, no training run. Grab the latest
+`espcontrol-esp32s3-*.bin` from
+[Releases](https://github.com/manjunathshiva/esp32-gpio-llm/releases) — it
+contains the bootloader, partition table, firmware and the model itself — and
+write it at offset 0:
+
+```sh
+pip install esptool
+esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX --baud 921600 \
+  write_flash 0x0 espcontrol-esp32s3-v0.1.0.bin
+```
+
+Open a serial monitor at **115200** and type:
+
+```
+> turn on pin 4
+pin 4 high   (378ms)
+
+> blink pin 4 every 500ms
+blinking pin 4 every 500ms   (765ms)
+
+> turn on pins 4, 5 and 6
+pin 4, 5, 6 high   (726ms)
+
+> switch off pin 100
+refused: pin 100 is not a GPIO on this board   (571ms)
+```
+
+To see something happen, put an LED and a **220Ω–1kΩ resistor** in series
+between GPIO 4 and GND — long leg to the pin side. Never wire an LED without the
+resistor. Twenty-five pins are usable: 1–18, 21, 38–42, 48.
+
+Requires an **ESP32-S3 with PSRAM** (the KV cache lives there). On a devkit with
+two USB ports use the **native USB** port — the image is built with
+`CDCOnBoot=cdc`, so the CH340 port will run correctly but print nothing.
+
+Building from source, and what to do when it misbehaves:
+[`firmware/device/README.md`](firmware/device/README.md).
+
 ## What it is
 
 A ~230K-parameter transformer, trained from scratch on synthetic pin-control

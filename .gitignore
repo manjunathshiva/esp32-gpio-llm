@@ -33,3 +33,7 @@ firmware/device/espcontrol/gpio_control.h
 firmware/device/espcontrol/gpio_control.c
 firmware/device/espcontrol/symbols.h
 firmware/device/espcontrol/bpe.h
+
+# release artifacts
+dist/
+firmware/device/espcontrol/build/
