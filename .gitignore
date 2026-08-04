@@ -1,0 +1,35 @@
+__pycache__/
+*.pyc
+.venv/
+uv.lock
+.DS_Store
+
+# generated corpora and tokenizer artifacts
+data/corpus/
+data/*.bin
+data/bpe*.json
+
+# cached paraphrases are expensive to regenerate — keep them, they are the dataset
+!data/cache/
+
+# training runs
+runs/
+
+# generated headers and exported weights
+firmware/generated/
+firmware/model/
+data/*_tok.u16
+data/*_mask.u8
+data/meta.json
+data/v0_artifacts/
+
+# Copies made by firmware/device/sync.sh so the Arduino build can see them.
+# The originals live in firmware/common; editing these is editing a copy that
+# the next sync silently overwrites.
+firmware/device/espcontrol/llm.h
+firmware/device/espcontrol/tokenizer.h
+firmware/device/espcontrol/command.h
+firmware/device/espcontrol/gpio_control.h
+firmware/device/espcontrol/gpio_control.c
+firmware/device/espcontrol/symbols.h
+firmware/device/espcontrol/bpe.h

@@ -1,0 +1,200 @@
+{"text": "turn on the living room lamp", "action": "set", "targets": ["living room lamp"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "make main boiler low", "action": "set", "targets": ["main boiler"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle desk fan", "action": "set", "targets": ["desk fan"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "I want the Warning_LED high", "action": "set", "targets": ["Warning_LED"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "power down the server rack", "action": "set", "targets": ["server rack"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "flip kitchen light", "action": "set", "targets": ["kitchen light"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "shut off the outdoor fountain plz", "action": "set", "targets": ["outdoor fountain"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "ACTIVATE ROOF HEATER", "action": "set", "targets": ["ROOF HEATER"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turm on patio lights", "action": "set", "targets": ["patio lights"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "switch basement dehumidifier", "action": "set", "targets": ["basement dehumidifier"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "could you set garage door high?", "action": "set", "targets": ["garage door"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "kill the motor1", "action": "set", "targets": ["motor1"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "start exhaust fan", "action": "set", "targets": ["exhaust fan"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "set indicator_LED2 low please", "action": "set", "targets": ["indicator_LED2"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle the green led", "action": "set", "targets": ["green led"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "put the master bedroom fan on high", "action": "set", "targets": ["master bedroom fan"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "drop zone2_valve to low", "action": "set", "targets": ["zone2_valve"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "faucet toggle", "action": "set", "targets": ["faucet"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "high for the backup generator", "action": "set", "targets": ["backup generator"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn off fish tank", "action": "set", "targets": ["fish tank"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "FISH TANK FILTER TO HIGH", "action": "set", "targets": ["FISH TANK FILTER"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "change state of the front door lock", "action": "set", "targets": ["front door lock"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "can you disable alarm system", "action": "set", "targets": ["alarm system"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "enable laser cutter", "action": "set", "targets": ["laser cutter"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "set the left audio channel to low", "action": "set", "targets": ["left audio channel"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "um, toggle the security cam", "action": "set", "targets": ["security cam"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "high the garden hose", "action": "set", "targets": ["garden hose"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "kill relay_A", "action": "set", "targets": ["relay_A"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "flip over the bed warmer", "action": "set", "targets": ["bed warmer"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "power up primary thruster", "action": "set", "targets": ["primary thruster"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "make baby monitor off", "action": "set", "targets": ["baby monitor"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn rear defroster ON", "action": "set", "targets": ["rear defroster"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "switch off the oven relay", "action": "set", "targets": ["oven relay"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggl hallway nightlight", "action": "set", "targets": ["hallway nightlight"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "send coffee maker to high", "action": "set", "targets": ["coffee maker"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "zero out teh right speaker", "action": "set", "targets": ["right speaker"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle status_led_3", "action": "set", "targets": ["status_led_3"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn on my desk lamp", "action": "set", "targets": ["my desk lamp"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "off for rgb strip", "action": "set", "targets": ["rgb strip"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "bring the AC unit online", "action": "set", "targets": ["AC unit"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "switch the lava lamp", "action": "set", "targets": ["lava lamp"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn the attic fan off!", "action": "set", "targets": ["attic fan"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "high power to water pump", "action": "set", "targets": ["water pump"], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle main screen", "action": "set", "targets": ["main screen"], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn off the damn alarm", "action": "set", "targets": ["damn alarm"], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "set pin 1 high", "action": "set", "targets": [1], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "make 42 low", "action": "set", "targets": [42], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle 21", "action": "set", "targets": [21], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn on 38", "action": "set", "targets": [38], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn off pin 5", "action": "set", "targets": [5], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "flip pin 6", "action": "set", "targets": [6], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "SET PIN 48 TO HIGH", "action": "set", "targets": [48], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "bring 18 low", "action": "set", "targets": [18], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle pin 15 please", "action": "set", "targets": [15], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "give me high on 39", "action": "set", "targets": [39], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "drop 40 to low", "action": "set", "targets": [40], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "change state of 41", "action": "set", "targets": [41], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "activate pin 9", "action": "set", "targets": [9], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "shut down 11", "action": "set", "targets": [11], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "switch 12", "action": "set", "targets": [12], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "set all the pins high", "action": "set", "targets": [""], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn off everything", "action": "set", "targets": [""], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "toggle all pins", "action": "set", "targets": [""], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "TURN EVERYTHING ON", "action": "set", "targets": [""], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "shut everything down", "action": "set", "targets": [""], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "flip all the pins", "action": "set", "targets": [""], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "set everything to high", "action": "set", "targets": [""], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "make every pin low", "action": "set", "targets": [""], "level": "low", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "can you toggle everything?", "action": "set", "targets": [""], "level": "toggle", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "turn on all pins", "action": "set", "targets": [""], "level": "high", "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read the living room lamp", "action": "read", "targets": ["living room lamp"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "what is main boiler doing", "action": "read", "targets": ["main boiler"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "status of desk fan", "action": "read", "targets": ["desk fan"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "is the Warning_LED on?", "action": "read", "targets": ["Warning_LED"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "check server rack", "action": "read", "targets": ["server rack"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "tell me about kitchen light", "action": "read", "targets": ["kitchen light"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "get state of the outdoor fountain", "action": "read", "targets": ["outdoor fountain"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "WHAT IS ROOF HEATER DOING", "action": "read", "targets": ["ROOF HEATER"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "reding patio lights", "action": "read", "targets": ["patio lights"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "is basement dehumidifier high or low", "action": "read", "targets": ["basement dehumidifier"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read garage door for me", "action": "read", "targets": ["garage door"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "check motor1 status", "action": "read", "targets": ["motor1"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "what's the exhaust fan level", "action": "read", "targets": ["exhaust fan"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read indicator_LED2", "action": "read", "targets": ["indicator_LED2"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "give me the status of the green led", "action": "read", "targets": ["green led"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "is master bedroom fan active", "action": "read", "targets": ["master bedroom fan"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "query zone2_valve", "action": "read", "targets": ["zone2_valve"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "faucet staus plz", "action": "read", "targets": ["faucet"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "is the backup generator low?", "action": "read", "targets": ["backup generator"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read fish tank", "action": "read", "targets": ["fish tank"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read pin 1", "action": "read", "targets": [1], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "what is 42 doing", "action": "read", "targets": [42], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "status of 21", "action": "read", "targets": [21], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "is 38 on", "action": "read", "targets": [38], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "check pin 5", "action": "read", "targets": [5], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read 6", "action": "read", "targets": [6], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "WHAT IS PIN 48", "action": "read", "targets": [48], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "get state of 18", "action": "read", "targets": [18], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "query pin 15", "action": "read", "targets": [15], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "read pin 39 please", "action": "read", "targets": [39], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "blink the front porch light", "action": "blink", "targets": ["front porch light"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "make main boiler flash every 500ms 10 times", "action": "blink", "targets": ["main boiler"], "level": null, "interval_ms": 500, "count": 10, "alias_name": null}
+{"text": "start blinking desk fan", "action": "blink", "targets": ["desk fan"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "I want the Warning_LED to blink at 1000ms 0 times", "action": "blink", "targets": ["Warning_LED"], "level": null, "interval_ms": 1000, "count": 0, "alias_name": null}
+{"text": "flash the server rack 200 ms 5 times", "action": "blink", "targets": ["server rack"], "level": null, "interval_ms": 200, "count": 5, "alias_name": null}
+{"text": "blink kitchen light 750ms for 3 reps", "action": "blink", "targets": ["kitchen light"], "level": null, "interval_ms": 750, "count": 3, "alias_name": null}
+{"text": "flash the outdoor fountain plz", "action": "blink", "targets": ["outdoor fountain"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "BLINK ROOF HEATER 50MS 100 TIMES", "action": "blink", "targets": ["ROOF HEATER"], "level": null, "interval_ms": 50, "count": 100, "alias_name": null}
+{"text": "bink patio lights", "action": "blink", "targets": ["patio lights"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "blink basement dehumidifier every 5000ms 0 times", "action": "blink", "targets": ["basement dehumidifier"], "level": null, "interval_ms": 5000, "count": 0, "alias_name": null}
+{"text": "could you blink garage door?", "action": "blink", "targets": ["garage door"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "flash motor1 150ms 12 times", "action": "blink", "targets": ["motor1"], "level": null, "interval_ms": 150, "count": 12, "alias_name": null}
+{"text": "blink exhaust fan at 800ms 0 times", "action": "blink", "targets": ["exhaust fan"], "level": null, "interval_ms": 800, "count": 0, "alias_name": null}
+{"text": "make indicator_LED2 blink", "action": "blink", "targets": ["indicator_LED2"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "fash the green led 250ms 4 times", "action": "blink", "targets": ["green led"], "level": null, "interval_ms": 250, "count": 4, "alias_name": null}
+{"text": "blink the master bedroom fan", "action": "blink", "targets": ["master bedroom fan"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "pulse zone2_valve 3000ms 2 times", "action": "blink", "targets": ["zone2_valve"], "level": null, "interval_ms": 3000, "count": 2, "alias_name": null}
+{"text": "faucet blink 600ms 0 times", "action": "blink", "targets": ["faucet"], "level": null, "interval_ms": 600, "count": 0, "alias_name": null}
+{"text": "can we flash backup generator", "action": "blink", "targets": ["backup generator"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "blink fish tank 10000ms 1 times", "action": "blink", "targets": ["fish tank"], "level": null, "interval_ms": 10000, "count": 1, "alias_name": null}
+{"text": "blink pin 1", "action": "blink", "targets": [1], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "flash 42 at 400ms 0 times", "action": "blink", "targets": [42], "level": null, "interval_ms": 400, "count": 0, "alias_name": null}
+{"text": "blink 21 every 100ms 50 times", "action": "blink", "targets": [21], "level": null, "interval_ms": 100, "count": 50, "alias_name": null}
+{"text": "flash 38", "action": "blink", "targets": [38], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "blink pin 5 250ms 5 times", "action": "blink", "targets": [5], "level": null, "interval_ms": 250, "count": 5, "alias_name": null}
+{"text": "make 6 blink", "action": "blink", "targets": [6], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "BLINK PIN 48 500MS 0 TIMES", "action": "blink", "targets": [48], "level": null, "interval_ms": 500, "count": 0, "alias_name": null}
+{"text": "flash 18", "action": "blink", "targets": [18], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "blink pin 15 1500ms 3 times", "action": "blink", "targets": [15], "level": null, "interval_ms": 1500, "count": 3, "alias_name": null}
+{"text": "pulse 39 at 60ms 10 times", "action": "blink", "targets": [39], "level": null, "interval_ms": 60, "count": 10, "alias_name": null}
+{"text": "chase 1 2 3", "action": "seq", "targets": [1, 2, 3], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sweep 38 39 40 41 42 at 200ms 0 times", "action": "seq", "targets": [38, 39, 40, 41, 42], "level": null, "interval_ms": 200, "count": 0, "alias_name": null}
+{"text": "run a sequence on 5 6 7 8", "action": "seq", "targets": [5, 6, 7, 8], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sewep 10 11 12 13 500ms 5 times", "action": "seq", "targets": [10, 11, 12, 13], "level": null, "interval_ms": 500, "count": 5, "alias_name": null}
+{"text": "chase across 21 48", "action": "seq", "targets": [21, 48], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sweep pins 1 4 9 16 21 42", "action": "seq", "targets": [1, 4, 9, 16, 21, 42], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sequence 2 3 40 50ms 0 times", "action": "seq", "targets": [2, 3, 40], "level": null, "interval_ms": 50, "count": 0, "alias_name": null}
+{"text": "CHASE 7 8 9 10 11 12 1000MS 2 TIMES", "action": "seq", "targets": [7, 8, 9, 10, 11, 12], "level": null, "interval_ms": 1000, "count": 2, "alias_name": null}
+{"text": "can you sweep 15 16 17 18?", "action": "seq", "targets": [15, 16, 17, 18], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "run chase on 38 48 200ms 10 times", "action": "seq", "targets": [38, 48], "level": null, "interval_ms": 200, "count": 10, "alias_name": null}
+{"text": "sweep 4 5 6", "action": "seq", "targets": [4, 5, 6], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "chase 8 9 10 11 250ms 0 times", "action": "seq", "targets": [8, 9, 10, 11], "level": null, "interval_ms": 250, "count": 0, "alias_name": null}
+{"text": "seq 12 13 14", "action": "seq", "targets": [12, 13, 14], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sweep 40 41 42 100ms 1 times", "action": "seq", "targets": [40, 41, 42], "level": null, "interval_ms": 100, "count": 1, "alias_name": null}
+{"text": "chase pins 21 38 39 40 41", "action": "seq", "targets": [21, 38, 39, 40, 41], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sequence 1 2 3 4 5 6 at 500ms 0 times", "action": "seq", "targets": [1, 2, 3, 4, 5, 6], "level": null, "interval_ms": 500, "count": 0, "alias_name": null}
+{"text": "sweep 9 10 11 12", "action": "seq", "targets": [9, 10, 11, 12], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "chase 14 15 16 17 18 300ms 5 times", "action": "seq", "targets": [14, 15, 16, 17, 18], "level": null, "interval_ms": 300, "count": 5, "alias_name": null}
+{"text": "um, sweep 38 42", "action": "seq", "targets": [38, 42], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "sweep 2 4 6 8 10 12 400ms 0 times", "action": "seq", "targets": [2, 4, 6, 8, 10, 12], "level": null, "interval_ms": 400, "count": 0, "alias_name": null}
+{"text": "chase 1 3 5", "action": "seq", "targets": [1, 3, 5], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "run seq 40 41 42 48 1000ms 1 times", "action": "seq", "targets": [40, 41, 42, 48], "level": null, "interval_ms": 1000, "count": 1, "alias_name": null}
+{"text": "sweep 7 8 9", "action": "seq", "targets": [7, 8, 9], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "chase 11 12 13 14 15 150ms 3 times", "action": "seq", "targets": [11, 12, 13, 14, 15], "level": null, "interval_ms": 150, "count": 3, "alias_name": null}
+{"text": "sweep 21 38 39 40 5000ms 0 times", "action": "seq", "targets": [21, 38, 39, 40], "level": null, "interval_ms": 5000, "count": 0, "alias_name": null}
+{"text": "stop the porch light", "action": "stop", "targets": ["porch light"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "halt main boiler", "action": "stop", "targets": ["main boiler"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop blinking desk fan", "action": "stop", "targets": ["desk fan"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "kill the Warning_LED", "action": "stop", "targets": ["Warning_LED"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stpo server rack", "action": "stop", "targets": ["server rack"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "please stop kitchen light", "action": "stop", "targets": ["kitchen light"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop outdoor fountain", "action": "stop", "targets": ["outdoor fountain"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "HALT ROOF HEATER", "action": "stop", "targets": ["ROOF HEATER"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop patio lights from flashing", "action": "stop", "targets": ["patio lights"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop basement dehumidifier", "action": "stop", "targets": ["basement dehumidifier"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop pin 1", "action": "stop", "targets": [1], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "halt 42", "action": "stop", "targets": [42], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop 21", "action": "stop", "targets": [21], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "kill pin 38 chase", "action": "stop", "targets": [38], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop 5", "action": "stop", "targets": [5], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop everything", "action": "stop", "targets": ["*"], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop", "action": "stop", "targets": [], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "halt", "action": "stop", "targets": [], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "stop the chase", "action": "stop", "targets": [], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "STOP BLINKING", "action": "stop", "targets": [], "level": null, "interval_ms": null, "count": null, "alias_name": null}
+{"text": "pin 1 is now the front porch light", "action": "alias", "targets": [1], "level": null, "interval_ms": null, "count": null, "alias_name": "front porch light"}
+{"text": "call 2 main boiler", "action": "alias", "targets": [2], "level": null, "interval_ms": null, "count": null, "alias_name": "main boiler"}
+{"text": "alias 3 to desk fan", "action": "alias", "targets": [3], "level": null, "interval_ms": null, "count": null, "alias_name": "desk fan"}
+{"text": "name 4 5 6 Warning_LED", "action": "alias", "targets": [4, 5, 6], "level": null, "interval_ms": null, "count": null, "alias_name": "Warning_LED"}
+{"text": "pins 7 8 are the server rack", "action": "alias", "targets": [7, 8], "level": null, "interval_ms": null, "count": null, "alias_name": "server rack"}
+{"text": "let 9 be kitchen light", "action": "alias", "targets": [9], "level": null, "interval_ms": null, "count": null, "alias_name": "kitchen light"}
+{"text": "call pin 10 outdoor fountain", "action": "alias", "targets": [10], "level": null, "interval_ms": null, "count": null, "alias_name": "outdoor fountain"}
+{"text": "NAME 11 ROOF HEATER", "action": "alias", "targets": [11], "level": null, "interval_ms": null, "count": null, "alias_name": "ROOF HEATER"}
+{"text": "alias 12 13 patio lights", "action": "alias", "targets": [12, 13], "level": null, "interval_ms": null, "count": null, "alias_name": "patio lights"}
+{"text": "pin 14 is basement dehumidifier", "action": "alias", "targets": [14], "level": null, "interval_ms": null, "count": null, "alias_name": "basement dehumidifier"}
+{"text": "call 15 garage door", "action": "alias", "targets": [15], "level": null, "interval_ms": null, "count": null, "alias_name": "garage door"}
+{"text": "name 16 motor1", "action": "alias", "targets": [16], "level": null, "interval_ms": null, "count": null, "alias_name": "motor1"}
+{"text": "assign 17 to exhaust fan", "action": "alias", "targets": [17], "level": null, "interval_ms": null, "count": null, "alias_name": "exhaust fan"}
+{"text": "pins 18 21 are indicator_LED2", "action": "alias", "targets": [18, 21], "level": null, "interval_ms": null, "count": null, "alias_name": "indicator_LED2"}
+{"text": "alias 38 to green led", "action": "alias", "targets": [38], "level": null, "interval_ms": null, "count": null, "alias_name": "green led"}
+{"text": "call 39 master bedroom fan", "action": "alias", "targets": [39], "level": null, "interval_ms": null, "count": null, "alias_name": "master bedroom fan"}
+{"text": "name pin 40 zone2_valve", "action": "alias", "targets": [40], "level": null, "interval_ms": null, "count": null, "alias_name": "zone2_valve"}
+{"text": "set pin 41 as faucet", "action": "alias", "targets": [41], "level": null, "interval_ms": null, "count": null, "alias_name": "faucet"}
+{"text": "let 42 be backup generator", "action": "alias", "targets": [42], "level": null, "interval_ms": null, "count": null, "alias_name": "backup generator"}
+{"text": "alias 48 fish tank", "action": "alias", "targets": [48], "level": null, "interval_ms": null, "count": null, "alias_name": "fish tank"}
+{"text": "1 2 3 is now main display", "action": "alias", "targets": [1, 2, 3], "level": null, "interval_ms": null, "count": null, "alias_name": "main display"}
+{"text": "call 4 and 5 dual pumps", "action": "alias", "targets": [4, 5], "level": null, "interval_ms": null, "count": null, "alias_name": "dual pumps"}
+{"text": "name 6 7 8 9 10 11 hex array", "action": "alias", "targets": [6, 7, 8, 9, 10, 11], "level": null, "interval_ms": null, "count": null, "alias_name": "hex array"}
+{"text": "pin 12 is porch lite", "action": "alias", "targets": [12], "level": null, "interval_ms": null, "count": null, "alias_name": "porch lite"}
+{"text": "alias 13 14 to status_bars", "action": "alias", "targets": [13, 14], "level": null, "interval_ms": null, "count": null, "alias_name": "status_bars"}

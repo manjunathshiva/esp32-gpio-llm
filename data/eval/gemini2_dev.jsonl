@@ -1,0 +1,427 @@
+{"text": "set pin 48 light color to turquoise", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "blink balcony_light at 1000ms 10 times", "symbols": ["<blink>", "<name>", "balcony_light", "<nend>", "<int>", "1", "0", "0", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "TURN ON PIN 42 AT 0800 HOURS", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "turn off everything", "symbols": ["<set>", "<all>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "toggle pin 48", "symbols": ["<set>", "<p48>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "CHASE 7 8 9 10 11 12 1000MS 2 TIMES", "symbols": ["<seq>", "<p7>", "<p8>", "<p9>", "<p10>", "<p11>", "<p12>", "<int>", "1", "0", "0", "0", "<nend>", "<cnt>", "2", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "i want you to turn", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "enable laser cutter", "symbols": ["<set>", "<name>", "laser cutter", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "trigger the siren on motion", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "check pin 5", "symbols": ["<read>", "<p5>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": true, "locked": false}
+{"text": "um blink the", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "trigger pin 48 if pin 1 is active", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "turn", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "what channel is the game on tonight", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "set 16 high", "symbols": ["<set>", "<p16>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "open google", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "pin 38 low", "symbols": ["<set>", "<p38>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "switch 12", "symbols": ["<set>", "<p12>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "change it to a cooler temperature", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "at sunset turn on the driveway", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "um make pin 14 soft yellow please", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "run the pump at half speed", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "switch off pin 25", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": true, "locked": false}
+{"text": "read water_leak_sensor", "symbols": ["<read>", "<name>", "water_leak_sensor", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "drive 11 high", "symbols": ["<set>", "<p11>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "call pin 41 porch light", "symbols": ["<alias>", "<p41>", "<name>", "porch light", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "halt 42", "symbols": ["<stop>", "<p42>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "flash the outdoor fountain plz", "symbols": ["<blink>", "<name>", "outdoor fountain", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "turn rear defroster ON", "symbols": ["<set>", "<name>", "rear defroster", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "TOGGLE OUTDOOR_SPOTLIGHT", "symbols": ["<set>", "<name>", "OUTDOOR_SPOTLIGHT", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "please drive heater high", "symbols": ["<set>", "<name>", "heater", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "why is the sky blue", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "convert 50 miles to kilometers", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "pin 21 high", "symbols": ["<set>", "<p21>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "turn off the lights at sunrise", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "pin 11 is zone 3 valve", "symbols": ["<alias>", "<p11>", "<name>", "zone 3 valve", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "set all the pins high", "symbols": ["<set>", "<all>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "flash disco ball at 150ms 50 times", "symbols": ["<blink>", "<name>", "disco ball", "<nend>", "<int>", "1", "5", "0", "<nend>", "<cnt>", "5", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "switch on pin", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "READ ANALOG VOLTAGE ON PIN 10", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "could you make pin 9 output pure white", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "alias 38 to green led", "symbols": ["<alias>", "<p38>", "<name>", "green led", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "let 42 be backup generator", "symbols": ["<alias>", "<p42>", "<name>", "backup generator", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "please toggle", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "pins 7 8 are the server rack", "symbols": ["<alias>", "<p7>", "<p8>", "<name>", "server rack", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "turn on pin 8 at 7:30 am tomorrow", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "kill pin 38 chase", "symbols": ["<stop>", "<p38>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "what is the square root of 144", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": true, "locked": false}
+{"text": "set stairwell_light high", "symbols": ["<set>", "<name>", "stairwell_light", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "while pin 5 is on blink pin 6", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "put pin 21 at 2.5v", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "chase pins 1 and", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "HALT ROOF HEATER", "symbols": ["<stop>", "<name>", "ROOF HEATER", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "read the humidity sensor", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "set the neo pixels to white", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "make baby monitor off", "symbols": ["<set>", "<name>", "baby monitor", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "flash stairwell_light", "symbols": ["<blink>", "<name>", "stairwell_light", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "set the strip to warm white", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "is basement dehumidifier high or low", "symbols": ["<read>", "<name>", "basement dehumidifier", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "toggle penned fan", "symbols": ["<set>", "<name>", "penned fan", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "blink pin 3 every", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "blink pin 15 1500ms 3 times", "symbols": ["<blink>", "<p15>", "<int>", "1", "5", "0", "0", "<nend>", "<cnt>", "3", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "what is the resistance on pin 6", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "turn on 3 but only if 4 is off", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "report pin", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "if pin 1 is high then turn on pin 2", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "write a python script to sort a list", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "if pin 39 is low turn on pin 40", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "can you lower the pump power to 30%", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "run a sequence on 5 6 7 8", "symbols": ["<seq>", "<p5>", "<p6>", "<p7>", "<p8>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "blink pin 18 for five minutes then stop", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "can you turn off", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "chase 1 2 3 4 5 6 7 8 rate 500", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "I want the Warning_LED to blink at 1000ms 0 times", "symbols": ["<blink>", "<name>", "Warning_LED", "<nend>", "<int>", "1", "0", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "get state of pin 1", "symbols": ["<read>", "<p1>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "pin 12 is porch lite", "symbols": ["<alias>", "<p12>", "<name>", "porch lite", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "check server rack", "symbols": ["<read>", "<name>", "server rack", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "change state of 41", "symbols": ["<set>", "<p41>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "switch off the oven relay", "symbols": ["<set>", "<name>", "oven relay", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "toggle pin 15 please", "symbols": ["<set>", "<p15>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "blink proch light at 500ms 5 times", "symbols": ["<blink>", "<name>", "proch light", "<nend>", "<int>", "5", "0", "0", "<nend>", "<cnt>", "5", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "um, toggle the security cam", "symbols": ["<set>", "<name>", "security cam", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "chase pins 1 2 3 at 100ms forever", "symbols": ["<seq>", "<p1>", "<p2>", "<p3>", "<int>", "1", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "undo the last command", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": true, "locked": false}
+{"text": "set pin 38 to 75 percent output", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "chase 38 39 40 41 42 48 1 2", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "read fish tank", "symbols": ["<read>", "<name>", "fish tank", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "measure ambient temperature near pin 8", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "blink siren_alarm every 750ms forever", "symbols": ["<blink>", "<name>", "siren_alarm", "<nend>", "<int>", "7", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "loop pin 7 state to match pin 8", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "stop porch light", "symbols": ["<stop>", "<name>", "porch light", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": true, "locked": false}
+{"text": "sweep 2 4 6 8 10 12 400ms 0 times", "symbols": ["<seq>", "<p2>", "<p4>", "<p6>", "<p8>", "<p10>", "<p12>", "<int>", "4", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "fade pin 10 to completely off", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "hey make pin 7 light up orange", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "SCALE PIN 48 DOWN TO HALF INTENSITY", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "turn pin 21 down to 10%", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "blink 10 at speed", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "turn on the living room lamp", "symbols": ["<set>", "<name>", "living room lamp", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "bring the AC unit online", "symbols": ["<set>", "<name>", "AC unit", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "run sequence across 4 5 6 7 8 9 at 250ms 10 times", "symbols": ["<seq>", "<p4>", "<p5>", "<p6>", "<p7>", "<p8>", "<p9>", "<int>", "2", "5", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "turn on garage door motor", "symbols": ["<set>", "<name>", "garage door motor", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "when pin 2 is high turn on pin 3", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "calculate 45 times 12", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "stop chase on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "flash the server rack 200 ms 5 times", "symbols": ["<blink>", "<name>", "server rack", "<nend>", "<int>", "2", "0", "0", "<nend>", "<cnt>", "5", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "flash deck_strip every 600ms indefinitely", "symbols": ["<blink>", "<name>", "deck_strip", "<nend>", "<int>", "6", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "turn pin 48 off after a 10 second delay", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "check heater state please", "symbols": ["<read>", "<name>", "heater", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "what is 42 doing", "symbols": ["<read>", "<p42>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "keep pin 17 matched to pin 18", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "if pin 10 goes high wait 2 seconds then turn on pin 11", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "is the backup generator low?", "symbols": ["<read>", "<name>", "backup generator", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "swep 17 18 21 at 250ms forever", "symbols": ["<seq>", "<p17>", "<p18>", "<p21>", "<int>", "2", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "turn pin 21 to deep violet", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "change that to 500 milliseconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "sequence 1 2 3 4 5 6 at 500ms 0 times", "symbols": ["<seq>", "<p1>", "<p2>", "<p3>", "<p4>", "<p5>", "<p6>", "<int>", "5", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "who was the first president of the United States", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "set pin 15 color hex to FF0000", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "is pin 23 on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "chase 11 12 13 14 15 150ms 3 times", "symbols": ["<seq>", "<p11>", "<p12>", "<p13>", "<p14>", "<p15>", "<int>", "1", "5", "0", "<nend>", "<cnt>", "3", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "translate hello to spanish", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "chase 1 2 3 4 5 6 at 200ms indefinitely", "symbols": ["<seq>", "<p1>", "<p2>", "<p3>", "<p4>", "<p5>", "<p6>", "<int>", "2", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "query pin 15", "symbols": ["<read>", "<p15>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "call 39 master bedroom fan", "symbols": ["<alias>", "<p39>", "<name>", "master bedroom fan", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "how far is the moon", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "who won the World Cup in 2022", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "trigger pin 2 in 45 seconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "um set dishwasher_relay low", "symbols": ["<set>", "<name>", "dishwasher_relay", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "GIVE ME RAINBOW COLORS", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "flash master bed lamp every 350ms continuously", "symbols": ["<blink>", "<name>", "master bed lamp", "<nend>", "<int>", "3", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "alias 42 as siren_alarm", "symbols": ["<alias>", "<p42>", "<name>", "siren_alarm", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "turn it sky blue", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "pin 48 value please", "symbols": ["<read>", "<p48>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "delay 5 seconds then turn on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "stop attic vent", "symbols": ["<stop>", "<name>", "attic vent", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "flash motor1 150ms 12 times", "symbols": ["<blink>", "<name>", "motor1", "<nend>", "<int>", "1", "5", "0", "<nend>", "<cnt>", "1", "2", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "how do I bake a cake", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "repeat what i just said", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "turn off pin 3 at 10pm tonight", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "reding patio lights", "symbols": ["<read>", "<name>", "patio lights", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "DO IT AGAIN", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "what time is it", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": true, "locked": false}
+{"text": "chase 2 3 4 5 6 7 8 9", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "sequence 10 11 12 every 500ms 5 times", "symbols": ["<seq>", "<p10>", "<p11>", "<p12>", "<int>", "5", "0", "0", "<nend>", "<cnt>", "5", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "assign pin 4 as pump 2", "symbols": ["<alias>", "<p4>", "<name>", "pump 2", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "FLASH PIN 3 EVERY 30MS", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": true, "locked": false}
+{"text": "what is the co2 concentration", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "toggle deck_strip", "symbols": ["<set>", "<name>", "deck_strip", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "hey switch pin 6 on at sunset today", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "decrease intensity of the laser", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "switch pin 8 to blue", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "stop kichen fan", "symbols": ["<stop>", "<name>", "kichen fan", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "if pin 15 toggles turn on pin 16", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "can u undo that", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "start a timer for my pasta", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "flash patio lamp", "symbols": ["<blink>", "<name>", "patio lamp", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "CHASE 2 3 4 5 6 7 8 9 RATE 100", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "check pin 21", "symbols": ["<read>", "<p21>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": true, "locked": false}
+{"text": "stop what you were just doing", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "stop blinking desk fan", "symbols": ["<stop>", "<name>", "desk fan", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "halt deck_strip", "symbols": ["<stop>", "<name>", "deck_strip", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "sweep 4 5 6", "symbols": ["<seq>", "<p4>", "<p5>", "<p6>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "put it on a low setting", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "read ambient light intensity on pin 21", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "chase 2 5 8 11 14 at 350ms indefinitely", "symbols": ["<seq>", "<p2>", "<p5>", "<p8>", "<p11>", "<p14>", "<int>", "3", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "get value of main_pwr", "symbols": ["<read>", "<name>", "main_pwr", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "stop blinking pin 24", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "link pin 7 to pin 8 state", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "turn on pin 45", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "name 6 7 8 9 10 11 hex array", "symbols": ["<alias>", "<p6>", "<p7>", "<p8>", "<p9>", "<p10>", "<p11>", "<name>", "hex array", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "high for pin 9", "symbols": ["<set>", "<p9>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "make it half brightness", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "can you sweep 15 16 17 18?", "symbols": ["<seq>", "<p15>", "<p16>", "<p17>", "<p18>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "power down the server rack", "symbols": ["<set>", "<name>", "server rack", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "delay 10 seconds then toggle pin 12", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "switch off at 10:30", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "if pin 10 turns off switch pin 11 on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "wake me up at 7am with pin 5", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "um how are you doing today", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "pull buzzer low", "symbols": ["<set>", "<name>", "buzzer", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "give me high on 39", "symbols": ["<set>", "<p39>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "high pin 3", "symbols": ["<set>", "<p3>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "how much power is the heater drawing", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "set the left audio channel to low", "symbols": ["<set>", "<name>", "left audio channel", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "shut down 11", "symbols": ["<set>", "<p11>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "check coffee maker state", "symbols": ["<read>", "<name>", "coffee maker", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "start exhaust fan", "symbols": ["<set>", "<name>", "exhaust fan", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "um lower pin 40 brightness to medium", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "RGB 255 0 0 on pin 2", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "recommend a good movie to watch tonight", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "set bedrom light low", "symbols": ["<set>", "<name>", "bedrom light", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "set pin 42 brightness to maximum level", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "set a timer to switch off pin 3", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "stop blinking pin 21", "symbols": ["<stop>", "<p21>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "flash 18", "symbols": ["<blink>", "<p18>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": true, "locked": false}
+{"text": "alias pin 10 to coffee maker", "symbols": ["<alias>", "<p10>", "<name>", "coffee maker", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "status of 21", "symbols": ["<read>", "<p21>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": true, "locked": false}
+{"text": "measure noise level on pin 17", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "sync pin 48 with pin 1 output", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "MAKE PIN 41 GLOW PINK", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "assign 17 to exhaust fan", "symbols": ["<alias>", "<p17>", "<name>", "exhaust fan", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "kill the Warning_LED", "symbols": ["<stop>", "<name>", "Warning_LED", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "toggle exhaust_fan_1", "symbols": ["<set>", "<name>", "exhaust_fan_1", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "blink 21 every 100ms 50 times", "symbols": ["<blink>", "<p21>", "<int>", "1", "0", "0", "<nend>", "<cnt>", "5", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "deactivate siren_alarm", "symbols": ["<set>", "<name>", "siren_alarm", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "flash pin 2 at 400ms 6 times", "symbols": ["<blink>", "<p2>", "<int>", "4", "0", "0", "<nend>", "<cnt>", "6", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "I want the Warning_LED high", "symbols": ["<set>", "<name>", "Warning_LED", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "read motion_detector", "symbols": ["<read>", "<name>", "motion_detector", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "turn on pin 14", "symbols": ["<set>", "<p14>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "name pin 4 as", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "turn off fish tank", "symbols": ["<set>", "<name>", "fish tank", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "low pin 5", "symbols": ["<set>", "<p5>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "is master bedroom fan active", "symbols": ["<read>", "<name>", "master bedroom fan", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "blink pin 10 at 45 milliseconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "FLIP BASEMENT_LED", "symbols": ["<set>", "<name>", "BASEMENT_LED", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "turn pin 4 to solid blue", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "turn off pin 50", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": true, "locked": false}
+{"text": "pins 8 and 9 are stereo_speakers", "symbols": ["<alias>", "<p8>", "<p9>", "<name>", "stereo_speakers", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "read the living room lamp", "symbols": ["<read>", "<name>", "living room lamp", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "how many milliamps is pin 11 drawing", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "schedule pin 9 to turn off in an hour", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "after 2 hours stop the chase", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "name 16 motor1", "symbols": ["<alias>", "<p16>", "<name>", "motor1", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "alias 48 fish tank", "symbols": ["<alias>", "<p48>", "<name>", "fish tank", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "turn off the heater when it hits 70 degrees", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "analog write 128 to pin 2", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "flip kitchen light", "symbols": ["<set>", "<name>", "kitchen light", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "bring 18 low", "symbols": ["<set>", "<p18>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "turn off the one I just turned on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "chase 1 2 3 4 5 6 7 8 9 rate 1000", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "flash the alert at", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "turn on pin 40 in fifteen seconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "soften the intensity on pin 5", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "how do plants grow", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "toggle master bed lamp", "symbols": ["<set>", "<name>", "master bed lamp", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "start a countdown for 10 mins", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "slowly ramp up pin 10", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "tone down the spotlight", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "is there motion detected on pin 4", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "faucet staus plz", "symbols": ["<read>", "<name>", "faucet", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "search the web for arduino tutorials", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "bring brightness on pin 3 down slightly", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "make main boiler flash every 500ms 10 times", "symbols": ["<blink>", "<name>", "main boiler", "<nend>", "<int>", "5", "0", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "chase 38 39 40 41 42 48 1 2 rate 300", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "get status of blue_status", "symbols": ["<read>", "<name>", "blue_status", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "read indicator_LED2", "symbols": ["<read>", "<name>", "indicator_LED2", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "stop blinking warning_led", "symbols": ["<stop>", "<name>", "warning_led", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "sweep 38 39 40 41", "symbols": ["<seq>", "<p38>", "<p39>", "<p40>", "<p41>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": true, "locked": false}
+{"text": "chase 8 9 10 11 250ms 0 times", "symbols": ["<seq>", "<p8>", "<p9>", "<p10>", "<p11>", "<int>", "2", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "let 9 be kitchen light", "symbols": ["<alias>", "<p9>", "<name>", "kitchen light", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "make it glow teal", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "blink porch light", "symbols": ["<blink>", "<name>", "porch light", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "call 4 and 5 dual pumps", "symbols": ["<alias>", "<p4>", "<p5>", "<name>", "dual pumps", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "turn on the lights in five minutes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "map pin 3 to status_led", "symbols": ["<alias>", "<p3>", "<name>", "status_led", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "play some rock music", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "only turn on if it is night time", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "chase 1 2 3 rate", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "turn on 18 if the switch is flipped", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "um set pin 14 state equal to pin 15", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "turm on patio lights", "symbols": ["<set>", "<name>", "patio lights", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "blink pin 7 every 250ms four times", "symbols": ["<blink>", "<p7>", "<int>", "2", "5", "0", "<nend>", "<cnt>", "4", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "do the same thing to the other light", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "shift pin 6 color temperature to 3000k", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "how do i wire a relay", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "stop the laser array", "symbols": ["<stop>", "<name>", "laser array", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "switch off pin 20", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "toggle pin 39 every two hours continuously", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "blink pin 5 every 20 milliseconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "blink fish tank 10000ms 1 times", "symbols": ["<blink>", "<name>", "fish tank", "<nend>", "<int>", "1", "0", "0", "0", "0", "<nend>", "<cnt>", "1", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "ACTIVATE ROOF HEATER", "symbols": ["<set>", "<name>", "ROOF HEATER", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "turn off hall_lamp_3", "symbols": ["<set>", "<name>", "hall_lamp_3", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "stop siren_alarm", "symbols": ["<stop>", "<name>", "siren_alarm", "<nend>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "turn off pool_valve", "symbols": ["<set>", "<name>", "pool_valve", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "switch it back off please", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "stop pin 7", "symbols": ["<stop>", "<p7>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": true, "locked": false}
+{"text": "shut everything down", "symbols": ["<set>", "<all>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "NAME 11 ROOF HEATER", "symbols": ["<alias>", "<p11>", "<name>", "ROOF HEATER", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "set yellow indicator low", "symbols": ["<set>", "<name>", "yellow indicator", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "switch on every evening", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "RESET TO PREVIOUS STATE", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "pull pin 41 low", "symbols": ["<set>", "<p41>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "stop blinking the", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "wait for an hour", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "switch basement dehumidifier", "symbols": ["<set>", "<name>", "basement dehumidifier", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "make the", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "flash the light every 15000 milliseconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "find a recipe for pancakes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "what is the stock price of Apple", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "flash warning_led every 500ms 10 times", "symbols": ["<blink>", "<name>", "warning_led", "<nend>", "<int>", "5", "0", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "chase", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "turn laser array on", "symbols": ["<set>", "<name>", "laser array", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "blink the same pin again", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "run the chase sequence backwards if 21 is high", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "summarize the plot of Romeo and Juliet", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "flash pin 17", "symbols": ["<blink>", "<p17>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": true, "locked": false}
+{"text": "DO THIS EVERY TIME I ENTER", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "is 38 on", "symbols": ["<read>", "<p38>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "give me a nice purple on pin 3", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "flash yellow indicator every 800ms forever", "symbols": ["<blink>", "<name>", "yellow indicator", "<nend>", "<int>", "8", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "how many amps is the motor using", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "power up primary thruster", "symbols": ["<set>", "<name>", "primary thruster", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "can we flash backup generator", "symbols": ["<blink>", "<name>", "backup generator", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "turn off pin 2 at 6:00 pm", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "call pin 39 heater", "symbols": ["<alias>", "<p39>", "<name>", "heater", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "how much power are we using right now", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "blink the front porch light", "symbols": ["<blink>", "<name>", "front porch light", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "is the Warning_LED on?", "symbols": ["<read>", "<name>", "Warning_LED", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "SET HUE TO 120", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "blink pin 4 every 10 milliseconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "can you make the bedroom lights green", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "at 6pm switch on the porch light", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "what state is pin 15 in", "symbols": ["<read>", "<p15>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": true, "locked": false}
+{"text": "stop blinking on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "chase 4 5 6 7 8 9 10", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "check the room humidity", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "perform the last operation on pin 18", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "SET PIN 48 TO HIGH", "symbols": ["<set>", "<p48>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "change the led strip to cyan", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "make the lights warm white", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "pwm pin 8 at fifty percent power", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "repeat chase 4 5 6 five times in a loop", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "tell me something interesting about space", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "run chase on pins 21 38 39 every 100ms 20 times", "symbols": ["<seq>", "<p21>", "<p38>", "<p39>", "<int>", "1", "0", "0", "<nend>", "<cnt>", "2", "0", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "turn on pin 25 please", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "set pin 12 to 3.3 volts", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "turn on my desk lamp", "symbols": ["<set>", "<name>", "desk lamp", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "chase 3 4 5 6 7 8 9 rate 250", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "chase pins 21 38 39 40 41", "symbols": ["<seq>", "<p21>", "<p38>", "<p39>", "<p40>", "<p41>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "set rgb on pin 5 to 255 0 128", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "measure pressure sensor on pin 12", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "repeat turning on pin 12 every time pin 13 changes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "name pin 12", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "toggle pin 20", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "halt pin 48", "symbols": ["<stop>", "<p48>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": false, "locked": false}
+{"text": "change pin 40 RGB to 0 255 0", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "when pin 16 is low turn off pin 17", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "stop everything", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": true, "locked": false}
+{"text": "fade up the hallway lamp", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "stop the motor in like twenty minutes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "pull 18 low", "symbols": ["<set>", "<p18>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "run sequence 15 18 21 48 at 120ms 15 times", "symbols": ["<seq>", "<p15>", "<p18>", "<p21>", "<p48>", "<int>", "1", "2", "0", "<nend>", "<cnt>", "1", "5", "<nend>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "toggle pin 3 after 5 seconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "name 4 5 6 Warning_LED", "symbols": ["<alias>", "<p4>", "<p5>", "<p6>", "<name>", "Warning_LED", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "status of desk fan", "symbols": ["<read>", "<name>", "desk fan", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "pump 2 to 3.3 volts please", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "pin 1 is now the front porch light", "symbols": ["<alias>", "<p1>", "<name>", "front porch light", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "toggle the one from before", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "pin 5 is now the shed heater", "symbols": ["<alias>", "<p5>", "<name>", "shed heater", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "turn on pin 30", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "turn the attic fan off!", "symbols": ["<set>", "<name>", "attic fan", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "pulse beacon_led at 5000ms rate 2 times", "symbols": ["<blink>", "<name>", "beacon_led", "<nend>", "<int>", "5", "0", "0", "0", "<nend>", "<cnt>", "2", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "activate fountain_pump", "symbols": ["<set>", "<name>", "fountain_pump", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "STOP PIN 38", "symbols": ["<stop>", "<p38>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": true, "locked": false}
+{"text": "tell me a story about a dragon", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "alias 12 13 patio lights", "symbols": ["<alias>", "<p12>", "<p13>", "<name>", "patio lights", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "what is the light level", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "STOP THE", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "shut off the coffee maker", "symbols": ["<set>", "<name>", "coffee maker", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "name pin 40 zone2_valve", "symbols": ["<alias>", "<p40>", "<name>", "zone2_valve", "<nend>", "<end>"], "action": "alias", "source": "gemini2", "stratum": "alias", "in_train": false, "locked": false}
+{"text": "switch pin 14 on in half an hour", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "chase across 21 48", "symbols": ["<seq>", "<p21>", "<p48>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "BLINK ROOF HEATER 50MS 100 TIMES", "symbols": ["<blink>", "<name>", "ROOF HEATER", "<nend>", "<int>", "5", "0", "<nend>", "<cnt>", "1", "0", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "set the", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "set pwm duty cycle on 4 to 128", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "flip flux_capacitor", "symbols": ["<set>", "<name>", "flux_capacitor", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "chase 1 2 3 4 5 6 7 8 9 10", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "blink pin 5 250ms 5 times", "symbols": ["<blink>", "<p5>", "<int>", "2", "5", "0", "<nend>", "<cnt>", "5", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "um, sweep 38 42", "symbols": ["<seq>", "<p38>", "<p42>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "set pin 2 to", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "loop this five times", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "explain how photosynthesis works", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "trun on the patio lamp", "symbols": ["<set>", "<name>", "patio lamp", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "name pin 38 to", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "switch off the", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "pause for 10 minutes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "stop 21", "symbols": ["<stop>", "<p21>", "<end>"], "action": "stop", "source": "gemini2", "stratum": "stop", "in_train": true, "locked": false}
+{"text": "read", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": true, "locked": false}
+{"text": "sequence 40 41 42 48", "symbols": ["<seq>", "<p40>", "<p41>", "<p42>", "<p48>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "turn it on again", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "switch on the alarm if the door opens", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "turn off pin 6", "symbols": ["<set>", "<p6>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "define quantum entanglement", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "turn pin 41 to quarter power", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "blink pin 21 at rate", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg8", "in_train": false, "locked": false}
+{"text": "is zone 3 valve open", "symbols": ["<read>", "<name>", "zone 3 valve", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "BLINK PIN 7 AT 12000MS", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "how many watts is pin 8 pulling", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "bring pin 13 down to twenty percent", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "set all pins high", "symbols": ["<set>", "<all>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "fade out the leds over 3 seconds", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "set the brighness to maximum", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "um can you just make it a little brighter", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "change state of the front door lock", "symbols": ["<set>", "<name>", "front door lock", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "what is the attic vent doing", "symbols": ["<read>", "<name>", "attic vent", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "tell me the wattage", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg6", "in_train": false, "locked": false}
+{"text": "blink pin 6 at 5 ms rate", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "bind pin 8 state to pin 10", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "turn off pin 6 if pin 7 stays on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "toggle pin 39", "symbols": ["<set>", "<p39>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "toggle all pins", "symbols": ["<set>", "<all>", "<toggle>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": true, "locked": false}
+{"text": "switch on pin 49", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": true, "locked": false}
+{"text": "give me a recipe for chocolate chip cookies", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "sweep pins 7 8 9 10 11 12", "symbols": ["<seq>", "<p7>", "<p8>", "<p9>", "<p10>", "<p11>", "<p12>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "turn off pin 24", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": true, "locked": false}
+{"text": "blink exhaust fan at 800ms 0 times", "symbols": ["<blink>", "<name>", "exhaust fan", "<nend>", "<int>", "8", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "open the pod bay doors", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "set color to #FF0000", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg2", "in_train": false, "locked": false}
+{"text": "sweep 3 6 9 12", "symbols": ["<seq>", "<p3>", "<p6>", "<p9>", "<p12>", "<end>"], "action": "seq", "source": "gemini2", "stratum": "seq", "in_train": false, "locked": false}
+{"text": "WHAT IS THE CAPITAL OF FRANCE", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": true, "locked": false}
+{"text": "check temp_sensor_1", "symbols": ["<read>", "<name>", "temp_sensor_1", "<nend>", "<end>"], "action": "read", "source": "gemini2", "stratum": "read", "in_train": false, "locked": false}
+{"text": "SET PIN 10 TO 25 PERCENT BRIGHTNESS", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "how do I make sourdough bread", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "turn on the fan when temperature is above 25", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "trigger 12 when 13 is on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "switch pin 50 on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg7", "in_train": false, "locked": false}
+{"text": "blink status_led continuously at 1000ms", "symbols": ["<blink>", "<name>", "status_led", "<nend>", "<int>", "1", "0", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini2", "stratum": "blink", "in_train": false, "locked": false}
+{"text": "hey drop pin 1 brightness down to half", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "activate pin 9", "symbols": ["<set>", "<p9>", "<high>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}
+{"text": "trigger pin 7 after one minute delay", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "teach me French grammar", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": false, "locked": false}
+{"text": "set pin 9 brightness to 60 percent", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg1", "in_train": false, "locked": false}
+{"text": "undo that please", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg5", "in_train": false, "locked": false}
+{"text": "tell me a fun fact", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg9", "in_train": true, "locked": false}
+{"text": "while pin 11 is active run chase 12 13 14", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg4", "in_train": false, "locked": false}
+{"text": "start chase 1 2 3 in an hour", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini2", "stratum": "neg3", "in_train": false, "locked": false}
+{"text": "set kichen fan low", "symbols": ["<set>", "<name>", "kichen fan", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini2", "stratum": "set", "in_train": false, "locked": false}

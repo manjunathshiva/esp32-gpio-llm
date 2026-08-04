@@ -1,0 +1,250 @@
+{"text": "turn on pin 5", "symbols": ["<set>", "<p5>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "set 38 high", "symbols": ["<set>", "<p38>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "off 12", "symbols": ["<set>", "<p12>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "toggle gpio 48", "symbols": ["<set>", "<p48>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "is pin 21 on?", "symbols": ["<read>", "<p21>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "blink 1 500ms 10", "symbols": ["<blink>", "<p1>", "<int>", "5", "0", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 2 3 4 5", "symbols": ["<seq>", "<p2>", "<p3>", "<p4>", "<p5>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop blink 1", "symbols": ["<stop>", "<p1>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name pin 41 warning_led", "symbols": ["<alias>", "<p41>", "<name>", "warning_led", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "turn off warning_led", "symbols": ["<set>", "<name>", "warning_led", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "low 17", "symbols": ["<set>", "<p17>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "read pin 42", "symbols": ["<read>", "<p42>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "TURN OFF 39", "symbols": ["<set>", "<p39>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "pls high pin 18", "symbols": ["<set>", "<p18>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flash 9 100ms forever", "symbols": ["<blink>", "<p9>", "<int>", "1", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 38 39 40 41 42", "symbols": ["<seq>", "<p38>", "<p39>", "<p40>", "<p41>", "<p42>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name pin 7 front_relay", "symbols": ["<alias>", "<p7>", "<name>", "front_relay", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "read front_relay", "symbols": ["<read>", "<name>", "front_relay", "<nend>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "toggle 10", "symbols": ["<set>", "<p10>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "make pin 14 on", "symbols": ["<set>", "<p14>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "is 15 high?", "symbols": ["<read>", "<p15>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "blink gpio 13 200ms 5 times", "symbols": ["<blink>", "<p13>", "<int>", "2", "0", "0", "<nend>", "<cnt>", "5", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 6 7 8", "symbols": ["<seq>", "<p6>", "<p7>", "<p8>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "halt chase", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "call pin 38 pump", "symbols": ["<alias>", "<p38>", "<name>", "pump", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "pump on", "symbols": ["<set>", "<name>", "pump", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "pump off", "symbols": ["<set>", "<name>", "pump", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "switch 11 off", "symbols": ["<set>", "<p11>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "pin 16 state?", "symbols": ["<read>", "<p16>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "blink 48 1000ms 3", "symbols": ["<blink>", "<p48>", "<int>", "1", "0", "0", "0", "<nend>", "<cnt>", "3", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 1 18 21 38", "symbols": ["<seq>", "<p1>", "<p18>", "<p21>", "<p38>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "cancel blink 13", "symbols": ["<stop>", "<p13>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "alias 3 desk_lamp", "symbols": ["<alias>", "<p3>", "<name>", "desk_lamp", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "toggle desk_lamp", "symbols": ["<set>", "<name>", "desk_lamp", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "high 4", "symbols": ["<set>", "<p4>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "read gpio 2", "symbols": ["<read>", "<p2>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn 42 off NOW", "symbols": ["<set>", "<p42>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flash 17 50ms forever", "symbols": ["<blink>", "<p17>", "<int>", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 12 13 14 15 16 17", "symbols": ["<seq>", "<p12>", "<p13>", "<p14>", "<p15>", "<p16>", "<p17>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop all", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name 21 alarm_buzzer", "symbols": ["<alias>", "<p21>", "<name>", "alarm_buzzer", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "alarm_buzzer on", "symbols": ["<set>", "<name>", "alarm_buzzer", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "is alarm_buzzer on", "symbols": ["<read>", "<name>", "alarm_buzzer", "<nend>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "low 8", "symbols": ["<set>", "<p8>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "get status pin 5", "symbols": ["<read>", "<p5>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "pls switch off pin 38", "symbols": ["<set>", "<p38>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink pin 41 speed 300ms count 20", "symbols": ["<blink>", "<p41>", "<int>", "3", "0", "0", "<nend>", "<cnt>", "2", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 40 41 42", "symbols": ["<seq>", "<p40>", "<p41>", "<p42>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "kill chase", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "label 10 status_pin", "symbols": ["<alias>", "<p10>", "<name>", "status_pin", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "status_pin off", "symbols": ["<set>", "<name>", "status_pin", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flip pin 1", "symbols": ["<set>", "<p1>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "check if 18 is on", "symbols": ["<read>", "<p18>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn 7 on please", "symbols": ["<set>", "<p7>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flash gpio 9 5000ms 2 times", "symbols": ["<blink>", "<p9>", "<int>", "5", "0", "0", "0", "<nend>", "<cnt>", "2", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 21 48", "symbols": ["<seq>", "<p21>", "<p48>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "end blink on pin 9", "symbols": ["<stop>", "<p9>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name pin 2 button_led", "symbols": ["<alias>", "<p2>", "<name>", "button_led", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "toggle button_led", "symbols": ["<set>", "<name>", "button_led", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "set pin 15 to 0", "symbols": ["<set>", "<p15>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "state of pin 14?", "symbols": ["<read>", "<p14>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "can u turn 39 on", "symbols": ["<set>", "<p39>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink 6 100ms 500 times", "symbols": ["<blink>", "<p6>", "<int>", "1", "0", "0", "<nend>", "<cnt>", "5", "0", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 5 6 7 8 9 10", "symbols": ["<seq>", "<p5>", "<p6>", "<p7>", "<p8>", "<p9>", "<p10>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop 6", "symbols": ["<stop>", "<p6>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "assign name fan to pin 12", "symbols": ["<alias>", "<p12>", "<name>", "fan", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "fan off", "symbols": ["<set>", "<name>", "fan", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "pin 3 high", "symbols": ["<set>", "<p3>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "read 11", "symbols": ["<read>", "<p11>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn pin 48 off fast", "symbols": ["<set>", "<p48>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "make pin 38 flash 250ms forever", "symbols": ["<blink>", "<p38>", "<int>", "2", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 16 17 18", "symbols": ["<seq>", "<p16>", "<p17>", "<p18>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop chasing", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name pin 4 door_sensor_led", "symbols": ["<alias>", "<p4>", "<name>", "door_sensor_led", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "check door_sensor_led", "symbols": ["<read>", "<name>", "door_sensor_led", "<nend>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "17 high", "symbols": ["<set>", "<p17>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "gpio 13 status", "symbols": ["<read>", "<p13>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn on pin 2", "symbols": ["<set>", "<p2>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink 42 at 800ms for 10 times", "symbols": ["<blink>", "<p42>", "<int>", "8", "0", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 48 42 41 40 39 38", "symbols": ["<seq>", "<p48>", "<p42>", "<p41>", "<p40>", "<p39>", "<p38>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "disable blink 42", "symbols": ["<stop>", "<p42>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "call pin 1 main_switch", "symbols": ["<alias>", "<p1>", "<name>", "main_switch", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "main_switch high", "symbols": ["<set>", "<name>", "main_switch", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "low pin 21", "symbols": ["<set>", "<p21>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "is gpio 38 active?", "symbols": ["<read>", "<p38>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn off 10", "symbols": ["<set>", "<p10>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink pin 18 10000ms 1 time", "symbols": ["<blink>", "<p18>", "<int>", "1", "0", "0", "0", "0", "<nend>", "<cnt>", "1", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 3 4 5", "symbols": ["<seq>", "<p3>", "<p4>", "<p5>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop blink 18", "symbols": ["<stop>", "<p18>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "alias pin 8 blue_led", "symbols": ["<alias>", "<p8>", "<name>", "blue_led", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "blue_led on", "symbols": ["<set>", "<name>", "blue_led", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "trun off 15", "symbols": ["<set>", "<p15>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "read pin 1", "symbols": ["<read>", "<p1>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "pin 7 to high", "symbols": ["<set>", "<p7>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flash 11 50ms 10 times", "symbols": ["<blink>", "<p11>", "<int>", "5", "0", "<nend>", "<cnt>", "1", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 14 15 16 17", "symbols": ["<seq>", "<p14>", "<p15>", "<p16>", "<p17>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "cancel chase", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "set pin 40 name error_light", "symbols": ["<alias>", "<p40>", "<name>", "error_light", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "error_light toggle", "symbols": ["<set>", "<name>", "error_light", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "42 off", "symbols": ["<set>", "<p42>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "pin 12 high?", "symbols": ["<set>", "<p12>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "switch on pin 9", "symbols": ["<set>", "<p9>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink gpio 21 interval 400ms count 8", "symbols": ["<blink>", "<p21>", "<int>", "4", "0", "0", "<nend>", "<cnt>", "8", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 10 11 12 13 14", "symbols": ["<seq>", "<p10>", "<p11>", "<p12>", "<p13>", "<p14>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop blink pin 21", "symbols": ["<stop>", "<p21>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name pin 17 valve", "symbols": ["<alias>", "<p17>", "<name>", "valve", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "valve on", "symbols": ["<set>", "<name>", "valve", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "low 39", "symbols": ["<set>", "<p39>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "state pin 48", "symbols": ["<read>", "<p48>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "make pin 5 go low", "symbols": ["<set>", "<p5>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink 10 750ms forever", "symbols": ["<blink>", "<p10>", "<int>", "7", "5", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 1 2 3", "symbols": ["<seq>", "<p1>", "<p2>", "<p3>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop 10", "symbols": ["<stop>", "<p10>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "call gpio 6 heater", "symbols": ["<alias>", "<p6>", "<name>", "heater", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "heater off", "symbols": ["<set>", "<name>", "heater", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "high 21", "symbols": ["<set>", "<p21>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "is pin 4 off?", "symbols": ["<read>", "<p4>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn pin 18 on now", "symbols": ["<set>", "<p18>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flash pin 38 600ms 4 times", "symbols": ["<blink>", "<p38>", "<int>", "6", "0", "0", "<nend>", "<cnt>", "4", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 7 8 9 10 11 12", "symbols": ["<seq>", "<p7>", "<p8>", "<p9>", "<p10>", "<p11>", "<p12>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop sequence", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "alias 15 reset_led", "symbols": ["<alias>", "<p15>", "<name>", "reset_led", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "reset_led on", "symbols": ["<set>", "<name>", "reset_led", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "set 41 to low", "symbols": ["<set>", "<p41>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "check 16", "symbols": ["<read>", "<p16>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "turn off pin 4", "symbols": ["<set>", "<p4>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink 39 150ms 30 times", "symbols": ["<blink>", "<p39>", "<int>", "1", "5", "0", "<nend>", "<cnt>", "3", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 18 21 38 39 40 41", "symbols": ["<seq>", "<p18>", "<p21>", "<p38>", "<p39>", "<p40>", "<p41>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "end blink 39", "symbols": ["<stop>", "<p39>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "label pin 14 sign", "symbols": ["<alias>", "<p14>", "<name>", "sign", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "sign toggle", "symbols": ["<set>", "<name>", "sign", "<nend>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "8 high", "symbols": ["<set>", "<p8>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "read pin 40", "symbols": ["<read>", "<p40>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "shut down pin 2", "symbols": ["<set>", "<p2>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "flash gpio 1 2000ms 5 times", "symbols": ["<blink>", "<p1>", "<int>", "2", "0", "0", "0", "<nend>", "<cnt>", "5", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 41 42", "symbols": ["<seq>", "<p41>", "<p42>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop blink 1", "symbols": ["<stop>", "<p1>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "rename pin 11 light2", "symbols": ["<alias>", "<p11>", "<name>", "light2", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "light2 high", "symbols": ["<set>", "<name>", "light2", "<nend>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "toggle pin 17", "symbols": ["<set>", "<p17>", "<toggle>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "state of gpio 3", "symbols": ["<read>", "<p3>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "pin 48 high", "symbols": ["<set>", "<p48>", "<high>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "blink 16 900ms forever", "symbols": ["<blink>", "<p16>", "<int>", "9", "0", "0", "<nend>", "<cnt>", "0", "<nend>", "<end>"], "action": "blink", "source": "gemini"}
+{"text": "chase 9 10 11 12", "symbols": ["<seq>", "<p9>", "<p10>", "<p11>", "<p12>", "<end>"], "action": "seq", "source": "gemini"}
+{"text": "stop chase", "symbols": ["<stop>", "<end>"], "action": "stop", "source": "gemini"}
+{"text": "name pin 13 auxiliary", "symbols": ["<alias>", "<p13>", "<name>", "auxiliary", "<nend>", "<end>"], "action": "alias", "source": "gemini"}
+{"text": "auxiliary off", "symbols": ["<set>", "<name>", "auxiliary", "<nend>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "low 5", "symbols": ["<set>", "<p5>", "<low>", "<end>"], "action": "set", "source": "gemini"}
+{"text": "check pin 18", "symbols": ["<read>", "<p18>", "<end>"], "action": "read", "source": "gemini"}
+{"text": "What is the weather in Tokyo today?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Tell me a story about a dragon.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Write a Python script to sort a list.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "What is 25 times 48?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Translate hello to Spanish.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Who won the world cup in 2022?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "How do I bake chocolate chip cookies?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "What is the capital of France?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Explain quantum physics in simple terms.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Can you write a poem about microcontrollers?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Play some music for me.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "How tall is Mount Everest?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Generate a password for my wifi.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "What is the meaning of life?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Calculate the square root of 144.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Summarize the news today.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Who wrote Hamlet?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "Give me a joke about engineers.", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "How do I fix a leaking sink?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "What is the distance from Earth to the Sun?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "turn on pin", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "blink 12 at", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "chase pins", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "can you please", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set pin to", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "name pin 48", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "check if pin", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "I want you to toggle", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "flash gpio", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "stop blink on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "alias pin", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "read state of", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set line 15 to", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "is pin", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "make pin 21 go", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "dim pin 5 to half brightness", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set pin 12 brightness to 75 percent", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "fade pin 1 from off to on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set voltage on pin 38 to 2.5 volts", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "output analog signal on pin 41", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set pin 18 duty cycle to 50%", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "make pin 3 20% bright", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "dim status_led", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "ramp up brightness on pin 21", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "pulse pin 48 with smooth dimming", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "adjust intensity of pin 7 to medium", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set pin 2 brightness to 10%", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "fade out pin 10", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set analog value 128 on pin 15", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "output 3.3V on pin 42", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "change pin 5 color to red", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set pin 38 to green light", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "make pin 18 glow blue", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "switch RGB LED on pin 12 to yellow", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set pin 41 hue to purple", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "cycle through colors on pin 21", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "make pin 7 turn warm white", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "change color of pin 48 to cyan", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set color temperature of pin 2 to 3000K", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "light up pin 14 in magenta", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "turn on pin 5 in 10 minutes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "schedule pin 18 to turn off at 5:00 PM", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "wait 10 seconds then toggle pin 48", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "turn off pin 12 after 1 hour", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "set alarm to turn on pin 21 tomorrow morning", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "delay 5 seconds and switch pin 1 to high", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "turn on pin 38 every day at 8am", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "keep pin 7 off until midnight", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "in 30 seconds blink pin 41", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "auto turn off pin 15 after 20 minutes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "if pin 1 is high turn on pin 2", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "when button on pin 5 is pressed blink pin 12", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "wait for pin 3 to turn on before turning on pin 4", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "if pin 21 turns off, trigger chase on 38 39 40", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "monitor pin 18 and turn on pin 48 if it changes", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "toggle pin 7 whenever pin 8 goes high", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "automatically turn off pin 41 when temperature sensor triggers", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "create a loop: while pin 10 is high, blink pin 11", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "sound alarm on pin 42 if pin 1 goes low", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "read pin 6 and copy its state to pin 17", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "trigger pin 14 when motion is detected on pin 13", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "link pin 2 and pin 3 so they turn on together automatically", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "whenever gpio 12 toggles, toggle gpio 15", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "wait until pin 48 is low then set pin 38 high", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "automatically stop blink on pin 9 if pin 10 opens", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "do that again", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "undo last command", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "repeat what you just did on pin 5", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "turn off the pin I just turned on", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "what was the last pin I checked?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "switch back to previous state", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "do the same thing to pin 48", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "reverse the last operation", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "what pin did I just rename?", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "run the previous chase sequence again", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "turn on pin 19", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "blink pin 5 at 10ms interval", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "chase across pins 1 2 3 4 5 6 7", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "blink pin 12 at 20000ms interval", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}
+{"text": "toggle pin 99", "symbols": ["<unknown>", "<end>"], "action": "unknown", "source": "gemini"}

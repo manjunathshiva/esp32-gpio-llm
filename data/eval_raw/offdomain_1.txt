@@ -1,0 +1,250 @@
+{"text": "set pin 1 to 50 percent", "category": 1}
+{"text": "dim the kitchen lights a bit", "category": 1}
+{"text": "fade out the leds over 3 seconds", "category": 1}
+{"text": "make it half brightness", "category": 1}
+{"text": "drop the fan speed to 2", "category": 1}
+{"text": "can you lower the pump power to 30%", "category": 1}
+{"text": "pump 2 to 3.3 volts please", "category": 1}
+{"text": "set pwm duty cycle on 4 to 128", "category": 1}
+{"text": "i need it slightly dimmer", "category": 1}
+{"text": "crank it up to 75%", "category": 1}
+{"text": "DIMMER ON PIN 6", "category": 1}
+{"text": "give me 2 volts on pin 8", "category": 1}
+{"text": "just barest glow on the nightlight", "category": 1}
+{"text": "reduce the output by 20 percent", "category": 1}
+{"text": "turn it on but only half way", "category": 1}
+{"text": "slowly ramp up pin 10", "category": 1}
+{"text": "decrease intensity of the laser", "category": 1}
+{"text": "set the brighness to maximum", "category": 1}
+{"text": "put it on a low setting", "category": 1}
+{"text": "increase motor speed slightly", "category": 1}
+{"text": "dim pin 15", "category": 1}
+{"text": "fade up the hallway lamp", "category": 1}
+{"text": "set pin 5 to 75pc", "category": 1}
+{"text": "um can you just make it a little brighter", "category": 1}
+{"text": "put pin 21 at 2.5v", "category": 1}
+{"text": "run the pump at half speed", "category": 1}
+{"text": "tone down the spotlight", "category": 1}
+{"text": "set analog out on 42 to 200", "category": 1}
+{"text": "give it just a tiny bit of power", "category": 1}
+{"text": "MAX POWER 100 PERCENT", "category": 1}
+{"text": "turn the strip red", "category": 2}
+{"text": "make the lights warm white", "category": 2}
+{"text": "switch pin 8 to blue", "category": 2}
+{"text": "set color to #FF0000", "category": 2}
+{"text": "change it to a cooler temperature", "category": 2}
+{"text": "can you make the bedroom lights green", "category": 2}
+{"text": "SET HUE TO 120", "category": 2}
+{"text": "make the glow pinkish", "category": 2}
+{"text": "change the led strip to cyan", "category": 2}
+{"text": "give me a nice purple on pin 3", "category": 2}
+{"text": "make the mood lighting orange", "category": 2}
+{"text": "i want the lights to be yellow", "category": 2}
+{"text": "flash red and blue", "category": 2}
+{"text": "set the neo pixels to white", "category": 2}
+{"text": "cool white on the desk lamp", "category": 2}
+{"text": "change pin 16 to magenta", "category": 2}
+{"text": "make it glow teal", "category": 2}
+{"text": "shift the colour to slightly yellowish", "category": 2}
+{"text": "RGB 255 0 0 on pin 2", "category": 2}
+{"text": "set the rgb to pure green", "category": 2}
+{"text": "um could you make it like a soft pink", "category": 2}
+{"text": "switch the backlight to amber", "category": 2}
+{"text": "turn it sky blue", "category": 2}
+{"text": "GIVE ME RAINBOW COLORS", "category": 2}
+{"text": "set the strip to warm white", "category": 2}
+{"text": "turn on the lights in five minutes", "category": 3}
+{"text": "at 6pm switch on the porch light", "category": 3}
+{"text": "wake me up at 7am with pin 5", "category": 3}
+{"text": "turn off the pump after an hour", "category": 3}
+{"text": "blink the led tomorrow morning", "category": 3}
+{"text": "start a countdown for 10 mins", "category": 3}
+{"text": "keep it on for 30 seconds then stop", "category": 3}
+{"text": "schedule pin 12 to go high at noon", "category": 3}
+{"text": "wait 5 minutes then toggle 4", "category": 3}
+{"text": "leave it on until midnight", "category": 3}
+{"text": "turn it on every morning", "category": 3}
+{"text": "stop the motor in like twenty minutes", "category": 3}
+{"text": "switch off at 10:30", "category": 3}
+{"text": "RUN FOR 2 HOURS", "category": 3}
+{"text": "can you turn it off in a bit", "category": 3}
+{"text": "delay 5 seconds then turn on", "category": 3}
+{"text": "at sunset turn on the driveway", "category": 3}
+{"text": "wait for an hour", "category": 3}
+{"text": "cancel the timer for pin 8", "category": 3}
+{"text": "shut down at exactly 5pm", "category": 3}
+{"text": "um turn the heater off in ten minutes", "category": 3}
+{"text": "keep the fan running for half an hour", "category": 3}
+{"text": "turn it on when I wake up", "category": 3}
+{"text": "set a timer to switch off pin 3", "category": 3}
+{"text": "switch on every evening", "category": 3}
+{"text": "after 2 hours stop the chase", "category": 3}
+{"text": "trigger pin 2 in 45 seconds", "category": 3}
+{"text": "pause for 10 minutes", "category": 3}
+{"text": "turn off the lights at sunrise", "category": 3}
+{"text": "in ten mins switch off", "category": 3}
+{"text": "if it gets dark turn on pin 4", "category": 4}
+{"text": "turn on the fan when temperature is above 25", "category": 4}
+{"text": "when pin 2 is high turn on pin 3", "category": 4}
+{"text": "while the button is pressed keep it on", "category": 4}
+{"text": "blink 5 if motion is detected", "category": 4}
+{"text": "loop this five times", "category": 4}
+{"text": "tie pin 8 to pin 9", "category": 4}
+{"text": "turn on the pump when the soil is dry", "category": 4}
+{"text": "IF PIN 1 THEN PIN 2", "category": 4}
+{"text": "switch on the alarm if the door opens", "category": 4}
+{"text": "make it blink whenever I get a message", "category": 4}
+{"text": "keep running the chase until i say stop", "category": 4}
+{"text": "um if the water level is low turn on pin 15", "category": 4}
+{"text": "wait until pin 5 goes low", "category": 4}
+{"text": "trigger 12 when 13 is on", "category": 4}
+{"text": "sync the garage light with the hallway", "category": 4}
+{"text": "turn on if raining", "category": 4}
+{"text": "run the chase sequence backwards if 21 is high", "category": 4}
+{"text": "blink 4 while 5 is on", "category": 4}
+{"text": "link the bathroom fan to the light", "category": 4}
+{"text": "only turn on if it is night time", "category": 4}
+{"text": "turn off the heater when it hits 70 degrees", "category": 4}
+{"text": "DO THIS EVERY TIME I ENTER", "category": 4}
+{"text": "if someone walks by flash the light", "category": 4}
+{"text": "mirror pin 8 to pin 10", "category": 4}
+{"text": "flash the led if the battery gets low", "category": 4}
+{"text": "turn on 3 but only if 4 is off", "category": 4}
+{"text": "toggle pin 12 whenever pin 11 changes", "category": 4}
+{"text": "trigger the siren on motion", "category": 4}
+{"text": "turn on 18 if the switch is flipped", "category": 4}
+{"text": "do that again", "category": 5}
+{"text": "undo the last command", "category": 5}
+{"text": "turn off the one I just turned on", "category": 5}
+{"text": "blink the same pin", "category": 5}
+{"text": "reverse that", "category": 5}
+{"text": "stop what you were just doing", "category": 5}
+{"text": "make that one blink instead", "category": 5}
+{"text": "oops i meant pin 5", "category": 5}
+{"text": "repeat the previous action", "category": 5}
+{"text": "DO IT AGAIN", "category": 5}
+{"text": "um actually turn it off", "category": 5}
+{"text": "do the same thing to the other light", "category": 5}
+{"text": "change that to 500 milliseconds", "category": 5}
+{"text": "turn on the other one", "category": 5}
+{"text": "cancel that last request", "category": 5}
+{"text": "do the chase thing again", "category": 5}
+{"text": "switch off the light we just used", "category": 5}
+{"text": "no wait turn it back on", "category": 5}
+{"text": "repeat what i just said", "category": 5}
+{"text": "undo that please", "category": 5}
+{"text": "what is the temperature in here", "category": 6}
+{"text": "read the humidity sensor", "category": 6}
+{"text": "how much power is the heater drawing", "category": 6}
+{"text": "measure the voltage on pin 4", "category": 6}
+{"text": "tell me the current on pin 15", "category": 6}
+{"text": "what is the light level", "category": 6}
+{"text": "read the analog value of pin 6", "category": 6}
+{"text": "IS IT HOT IN HERE", "category": 6}
+{"text": "check the battery level", "category": 6}
+{"text": "how many amps is the motor using", "category": 6}
+{"text": "read the ambient temperature", "category": 6}
+{"text": "what is the voltage on the battery", "category": 6}
+{"text": "how much power are we using right now", "category": 6}
+{"text": "read the pressure sensor", "category": 6}
+{"text": "um what is the current draw of the pump", "category": 6}
+{"text": "check the soil moisture level", "category": 6}
+{"text": "tell me the wattage", "category": 6}
+{"text": "measure the resistance on pin 2", "category": 6}
+{"text": "how many watts is pin 8 pulling", "category": 6}
+{"text": "what is the co2 concentration", "category": 6}
+{"text": "turn on pin 19", "category": 7}
+{"text": "blink pin 5 every 20 milliseconds", "category": 7}
+{"text": "chase pins 1 2 3 4 5 6 7", "category": 7}
+{"text": "switch off pin 25", "category": 7}
+{"text": "flash the light every 15000 milliseconds", "category": 7}
+{"text": "toggle pin 20", "category": 7}
+{"text": "read the status of pin 30", "category": 7}
+{"text": "blink pin 2 at 10 ms", "category": 7}
+{"text": "set pin 22 to on", "category": 7}
+{"text": "chase across 11 12 13 14 15 16 17", "category": 7}
+{"text": "turn on pin 45", "category": 7}
+{"text": "blink the alert light every 20000ms", "category": 7}
+{"text": "chase 2 3 4 5 6 7 8 9", "category": 7}
+{"text": "switch pin 50 on", "category": 7}
+{"text": "blink pin 10 at 45 milliseconds", "category": 7}
+{"text": "is pin 23 on", "category": 7}
+{"text": "name pin 35 as the back door", "category": 7}
+{"text": "stop blinking pin 24", "category": 7}
+{"text": "FLASH PIN 3 EVERY 30MS", "category": 7}
+{"text": "chase 38 39 40 41 42 48 1 2", "category": 7}
+{"text": "um could you turn on pin 33", "category": 7}
+{"text": "blink pin 8 at 12000 ms", "category": 7}
+{"text": "turn off pin 26", "category": 7}
+{"text": "chase 1 2 3 4 5 6 7 8 9 10", "category": 7}
+{"text": "toggle pin 49", "category": 7}
+{"text": "blink pin 13 every 5 milliseconds", "category": 7}
+{"text": "read pin 27", "category": 7}
+{"text": "chase 4 5 6 7 8 9 10", "category": 7}
+{"text": "name pin 20 to front light", "category": 7}
+{"text": "turn on pin 0", "category": 7}
+{"text": "switch the", "category": 8}
+{"text": "turn on", "category": 8}
+{"text": "blink pin 5 every", "category": 8}
+{"text": "chase pins 1 and", "category": 8}
+{"text": "toggle the", "category": 8}
+{"text": "name pin 3 to", "category": 8}
+{"text": "read the state of", "category": 8}
+{"text": "STOP THE", "category": 8}
+{"text": "make the", "category": 8}
+{"text": "can you turn off", "category": 8}
+{"text": "um blink the", "category": 8}
+{"text": "flash pin 4 at", "category": 8}
+{"text": "set the", "category": 8}
+{"text": "turn", "category": 8}
+{"text": "chase", "category": 8}
+{"text": "please switch on the", "category": 8}
+{"text": "i want you to turn", "category": 8}
+{"text": "read", "category": 8}
+{"text": "blink", "category": 8}
+{"text": "toggle", "category": 8}
+{"text": "name pin", "category": 8}
+{"text": "stop blinking the", "category": 8}
+{"text": "run a chase on", "category": 8}
+{"text": "check if the", "category": 8}
+{"text": "set pin 2 to", "category": 8}
+{"text": "switch off my", "category": 8}
+{"text": "flash the alert at", "category": 8}
+{"text": "turn off", "category": 8}
+{"text": "turn on pin", "category": 8}
+{"text": "please toggle", "category": 8}
+{"text": "what is the weather like today", "category": 9}
+{"text": "what is 5 plus 7", "category": 9}
+{"text": "tell me a joke", "category": 9}
+{"text": "how do I bake a cake", "category": 9}
+{"text": "translate hello to spanish", "category": 9}
+{"text": "who is the president", "category": 9}
+{"text": "write a poem about leds", "category": 9}
+{"text": "set an alarm for 6am", "category": 9}
+{"text": "WHAT IS THE CAPITAL OF FRANCE", "category": 9}
+{"text": "play some jazz music", "category": 9}
+{"text": "send a text message to mom", "category": 9}
+{"text": "add milk to my shopping list", "category": 9}
+{"text": "order some more jumper wires", "category": 9}
+{"text": "what time is it", "category": 9}
+{"text": "open the pod bay doors", "category": 9}
+{"text": "give me directions to the store", "category": 9}
+{"text": "read me the news", "category": 9}
+{"text": "how far is the moon", "category": 9}
+{"text": "spell check this for me", "category": 9}
+{"text": "print hello world", "category": 9}
+{"text": "search the web for arduino tutorials", "category": 9}
+{"text": "what is the meaning of life", "category": 9}
+{"text": "recommend a good movie", "category": 9}
+{"text": "um how are you doing today", "category": 9}
+{"text": "check my email", "category": 9}
+{"text": "open google", "category": 9}
+{"text": "find a recipe for pancakes", "category": 9}
+{"text": "remind me to take out the trash", "category": 9}
+{"text": "volume up", "category": 9}
+{"text": "mute the tv", "category": 9}
+{"text": "how do i wire a relay", "category": 9}
+{"text": "do you like being a microcontroller", "category": 9}
+{"text": "tell me a fun fact", "category": 9}
+{"text": "start a timer for my pasta", "category": 9}
+{"text": "call dad", "category": 9}

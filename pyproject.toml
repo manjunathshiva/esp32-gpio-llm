@@ -1,0 +1,13 @@
+[project]
+name = "espcontrol"
+version = "0.1.0"
+description = "A fully-local natural-language interface to GPIO pins on an ESP32"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=3.0",
+    "numpy>=2.5.1",
+    "tokenizers>=0.23.1",
+    "torch>=2.13.0",
+    "tqdm>=4.69.0",
+]

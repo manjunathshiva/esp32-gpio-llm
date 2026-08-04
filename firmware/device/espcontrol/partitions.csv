@@ -1,0 +1,15 @@
+# espcontrol partition table.
+#
+# The model is data, not code: 898 KB of fp32 weights in their own partition,
+# memory-mapped at boot. Keeping it out of the app means a firmware change
+# reflashes ~1 MB of sketch instead of ~2 MB, and `model.bin` only gets rewritten
+# when src/export.py runs again.
+#
+# Sized for 4 MB flash and up. Subtype 0x40 is arbitrary-but-ours; the sketch
+# looks the partition up by it, so do not renumber without changing map_model().
+#
+# Name,     Type, SubType,  Offset,   Size,     Flags
+nvs,        data, nvs,      0x9000,   0x5000,
+otadata,    data, ota,      0xe000,   0x2000,
+app0,       app,  ota_0,    0x10000,  0x200000,
+model,      data, 0x40,     0x210000, 0x100000,
