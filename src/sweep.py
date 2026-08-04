@@ -30,8 +30,7 @@ from evaluate import Decoder, load_split, score, wilson
 ROOT = Path(__file__).resolve().parent.parent
 RUNS = ROOT / "runs"
 
-DEFAULT_SPLITS = ["v1_gemini2_dev", "v1_gemini2_locked", "v1_massive",
-                  "v1_gemini"]
+DEFAULT_SPLITS = ["v1_dev", "v1_locked", "v1_massive"]
 
 
 def fmt(vals: list[float]) -> str:

@@ -155,7 +155,11 @@ def level_check(f: Frame, text: str) -> str | None:
     """Phrasing-independent and therefore safe on anything, unlike a reparse."""
     if f.action is not Action.SET or f.level is Level.TOGGLE:
         return None
-    on, off = bool(_ON_W.search(text)), bool(_OFF_W.search(text))
+    # Digits are pin numbers here, never levels. Without stripping them,
+    # "shut down 1, 2, 3" matched the bare `1` in _ON_W and was reported as a
+    # level disagreement on correct gold.
+    bare = re.sub(r"\d+", " ", text)
+    on, off = bool(_ON_W.search(bare)), bool(_OFF_W.search(bare))
     if on == off:                              # both or neither: no evidence
         return None
     want = Level.HIGH if on else Level.LOW
@@ -178,7 +182,7 @@ def digits_present(f: Frame, text: str) -> str | None:
     if missing and not re.search(
             r"\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|"
             r"twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|"
-            r"twenty)\b", text, re.I):
+            r"twenty|zero)\b", text, re.I):
         return f"pin {', '.join(missing)} does not appear in the text"
     return None
 

@@ -1,0 +1,200 @@
+{"text": "switch off pin 19", "action": "set", "targets": [19], "level": "low", "interval_ms": null, "count": null}
+{"text": "turn on gpio20", "action": "set", "targets": [20], "level": "high", "interval_ms": null, "count": null}
+{"text": "set #22 high", "action": "set", "targets": [22], "level": "high", "interval_ms": null, "count": null}
+{"text": "read pin 23 status", "action": "read", "targets": [23], "level": null, "interval_ms": null, "count": null}
+{"text": "blink gpio24 every 500ms", "action": "blink", "targets": [24], "level": null, "interval_ms": 500, "count": 0}
+{"text": "toggle pin 25", "action": "set", "targets": [25], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "PIN 26 HIGH", "action": "set", "targets": [26], "level": "high", "interval_ms": null, "count": null}
+{"text": "turn off 27", "action": "set", "targets": [27], "level": "low", "interval_ms": null, "count": null}
+{"text": "read gpio28", "action": "read", "targets": [28], "level": null, "interval_ms": null, "count": null}
+{"text": "stop pin 29", "action": "stop", "targets": [29], "level": null, "interval_ms": null, "count": null}
+{"text": "blink pin 30 at 100ms", "action": "blink", "targets": [30], "level": null, "interval_ms": 100, "count": 0}
+{"text": "pulse gpio 31 low", "action": "set", "targets": [31], "level": "low", "interval_ms": null, "count": null}
+{"text": "#32 set to low", "action": "set", "targets": [32], "level": "low", "interval_ms": null, "count": null}
+{"text": "check status of pin 33", "action": "read", "targets": [33], "level": null, "interval_ms": null, "count": null}
+{"text": "set pin 34 to high", "action": "set", "targets": [34], "level": "high", "interval_ms": null, "count": null}
+{"text": "turn on pin 35", "action": "set", "targets": [35], "level": "high", "interval_ms": null, "count": null}
+{"text": "blink gpio36 rate 250ms", "action": "blink", "targets": [36], "level": null, "interval_ms": 250, "count": 0}
+{"text": "disable pin 37", "action": "set", "targets": [37], "level": "low", "interval_ms": null, "count": null}
+{"text": "power on gpio 43", "action": "set", "targets": [43], "level": "high", "interval_ms": null, "count": null}
+{"text": "read pin 44", "action": "read", "targets": [44], "level": null, "interval_ms": null, "count": null}
+{"text": "toggle gpio45", "action": "set", "targets": [45], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "set pin 46 low", "action": "set", "targets": [46], "level": "low", "interval_ms": null, "count": null}
+{"text": "blink #47 every 1000ms", "action": "blink", "targets": [47], "level": null, "interval_ms": 1000, "count": 0}
+{"text": "turn on pin 49", "action": "set", "targets": [49], "level": "high", "interval_ms": null, "count": null}
+{"text": "switch off gpio50", "action": "set", "targets": [50], "level": "low", "interval_ms": null, "count": null}
+{"text": "is pin 19 high", "action": "read", "targets": [19], "level": null, "interval_ms": null, "count": null}
+{"text": "blink gpio20 500ms 10 times", "action": "blink", "targets": [20], "level": null, "interval_ms": 500, "count": 10}
+{"text": "set pin 22 low", "action": "set", "targets": [22], "level": "low", "interval_ms": null, "count": null}
+{"text": "ENABLE GPIO 23", "action": "set", "targets": [23], "level": "high", "interval_ms": null, "count": null}
+{"text": "stop blinking pin 24", "action": "stop", "targets": [24], "level": null, "interval_ms": null, "count": null}
+{"text": "check gpio25", "action": "read", "targets": [25], "level": null, "interval_ms": null, "count": null}
+{"text": "set 26 to high", "action": "set", "targets": [26], "level": "high", "interval_ms": null, "count": null}
+{"text": "toggle gpio 27", "action": "set", "targets": [27], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "blink pin 28 200ms", "action": "blink", "targets": [28], "level": null, "interval_ms": 200, "count": 0}
+{"text": "turn off pin 29", "action": "set", "targets": [29], "level": "low", "interval_ms": null, "count": null}
+{"text": "READ GPIO 30", "action": "read", "targets": [30], "level": null, "interval_ms": null, "count": null}
+{"text": "set pin 31 high", "action": "set", "targets": [31], "level": "high", "interval_ms": null, "count": null}
+{"text": "deactivate #32", "action": "set", "targets": [32], "level": "low", "interval_ms": null, "count": null}
+{"text": "blink gpio33 50ms 5 times", "action": "blink", "targets": [33], "level": null, "interval_ms": 50, "count": 5}
+{"text": "read pin 34 state", "action": "read", "targets": [34], "level": null, "interval_ms": null, "count": null}
+{"text": "toggle pin 35", "action": "set", "targets": [35], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "turn on 36", "action": "set", "targets": [36], "level": "high", "interval_ms": null, "count": null}
+{"text": "stop gpio 37", "action": "stop", "targets": [37], "level": null, "interval_ms": null, "count": null}
+{"text": "set pin 43 high", "action": "set", "targets": [43], "level": "high", "interval_ms": null, "count": null}
+{"text": "blink pin 44 300ms", "action": "blink", "targets": [44], "level": null, "interval_ms": 300, "count": 0}
+{"text": "get status gpio45", "action": "read", "targets": [45], "level": null, "interval_ms": null, "count": null}
+{"text": "off pin 46", "action": "set", "targets": [46], "level": "low", "interval_ms": null, "count": null}
+{"text": "set #47 to high", "action": "set", "targets": [47], "level": "high", "interval_ms": null, "count": null}
+{"text": "blink pin 49 every 400ms", "action": "blink", "targets": [49], "level": null, "interval_ms": 400, "count": 0}
+{"text": "READ PIN 50", "action": "read", "targets": [50], "level": null, "interval_ms": null, "count": null}
+{"text": "turn on pin 19", "action": "set", "targets": [19], "level": "high", "interval_ms": null, "count": null}
+{"text": "toggle #20", "action": "set", "targets": [20], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "blink gpio22 at 100ms", "action": "blink", "targets": [22], "level": null, "interval_ms": 100, "count": 0}
+{"text": "switch off pin 23", "action": "set", "targets": [23], "level": "low", "interval_ms": null, "count": null}
+{"text": "set gpio 24 low", "action": "set", "targets": [24], "level": "low", "interval_ms": null, "count": null}
+{"text": "pin 27 high", "action": "set", "targets": [27], "level": "high", "interval_ms": null, "count": null}
+{"text": "blink #31 600ms", "action": "blink", "targets": [31], "level": null, "interval_ms": 600, "count": 0}
+{"text": "read pin 43 value", "action": "read", "targets": [43], "level": null, "interval_ms": null, "count": null}
+{"text": "set gpio49 high", "action": "set", "targets": [49], "level": "high", "interval_ms": null, "count": null}
+{"text": "stop pin 50", "action": "stop", "targets": [50], "level": null, "interval_ms": null, "count": null}
+{"text": "switch off pin 100", "action": "set", "targets": [100], "level": "low", "interval_ms": null, "count": null}
+{"text": "turn on gpio 100", "action": "set", "targets": [100], "level": "high", "interval_ms": null, "count": null}
+{"text": "read pin 100", "action": "read", "targets": [100], "level": null, "interval_ms": null, "count": null}
+{"text": "blink pin 100 at 500ms", "action": "blink", "targets": [100], "level": null, "interval_ms": 500, "count": 0}
+{"text": "set pin 128 high", "action": "set", "targets": [128], "level": "high", "interval_ms": null, "count": null}
+{"text": "turn off gpio128", "action": "set", "targets": [128], "level": "low", "interval_ms": null, "count": null}
+{"text": "toggle #128", "action": "set", "targets": [128], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "read gpio 128 status", "action": "read", "targets": [128], "level": null, "interval_ms": null, "count": null}
+{"text": "turn on pin 200", "action": "set", "targets": [200], "level": "high", "interval_ms": null, "count": null}
+{"text": "switch off gpio200", "action": "set", "targets": [200], "level": "low", "interval_ms": null, "count": null}
+{"text": "blink #200 every 1000ms", "action": "blink", "targets": [200], "level": null, "interval_ms": 1000, "count": 0}
+{"text": "PIN 200 LOW", "action": "set", "targets": [200], "level": "low", "interval_ms": null, "count": null}
+{"text": "set gpio60 high", "action": "set", "targets": [60], "level": "high", "interval_ms": null, "count": null}
+{"text": "read pin 60", "action": "read", "targets": [60], "level": null, "interval_ms": null, "count": null}
+{"text": "turn off gpio 99", "action": "set", "targets": [99], "level": "low", "interval_ms": null, "count": null}
+{"text": "toggle pin 99", "action": "set", "targets": [99], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "blink gpio105 200ms", "action": "blink", "targets": [105], "level": null, "interval_ms": 200, "count": 0}
+{"text": "read #150", "action": "read", "targets": [150], "level": null, "interval_ms": null, "count": null}
+{"text": "set pin 255 high", "action": "set", "targets": [255], "level": "high", "interval_ms": null, "count": null}
+{"text": "turn off gpio255", "action": "set", "targets": [255], "level": "low", "interval_ms": null, "count": null}
+{"text": "stop pin 500", "action": "stop", "targets": [500], "level": null, "interval_ms": null, "count": null}
+{"text": "SET GPIO 100 TO HIGH", "action": "set", "targets": [100], "level": "high", "interval_ms": null, "count": null}
+{"text": "toggle pin 100", "action": "set", "targets": [100], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "blink gpio 128 every 250ms", "action": "blink", "targets": [128], "level": null, "interval_ms": 250, "count": 0}
+{"text": "stop pin 128", "action": "stop", "targets": [128], "level": null, "interval_ms": null, "count": null}
+{"text": "read status of pin 200", "action": "read", "targets": [200], "level": null, "interval_ms": null, "count": null}
+{"text": "toggle gpio200", "action": "set", "targets": [200], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "set #60 low", "action": "set", "targets": [60], "level": "low", "interval_ms": null, "count": null}
+{"text": "turn on gpio 99", "action": "set", "targets": [99], "level": "high", "interval_ms": null, "count": null}
+{"text": "blink pin 255 at 100ms", "action": "blink", "targets": [255], "level": null, "interval_ms": 100, "count": 0}
+{"text": "turn on pin 0", "action": "set", "targets": [0], "level": "high", "interval_ms": null, "count": null}
+{"text": "switch off gpio0", "action": "set", "targets": [0], "level": "low", "interval_ms": null, "count": null}
+{"text": "read gpio 0 status", "action": "read", "targets": [0], "level": null, "interval_ms": null, "count": null}
+{"text": "toggle #0", "action": "set", "targets": [0], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "blink pin 0 every 500ms", "action": "blink", "targets": [0], "level": null, "interval_ms": 500, "count": 0}
+{"text": "set pin 0 high", "action": "set", "targets": [0], "level": "high", "interval_ms": null, "count": null}
+{"text": "stop gpio0", "action": "stop", "targets": [0], "level": null, "interval_ms": null, "count": null}
+{"text": "PIN 0 LOW", "action": "set", "targets": [0], "level": "low", "interval_ms": null, "count": null}
+{"text": "check state of pin 0", "action": "read", "targets": [0], "level": null, "interval_ms": null, "count": null}
+{"text": "blink gpio0 100ms 5 times", "action": "blink", "targets": [0], "level": null, "interval_ms": 100, "count": 5}
+{"text": "blink pin 2 at 10ms", "action": "blink", "targets": [2], "level": null, "interval_ms": 10, "count": 0}
+{"text": "blink gpio5 at 1ms", "action": "blink", "targets": [5], "level": null, "interval_ms": 1, "count": 0}
+{"text": "flash pin 12 every 20ms", "action": "blink", "targets": [12], "level": null, "interval_ms": 20, "count": 0}
+{"text": "blink #21 at 45ms", "action": "blink", "targets": [21], "level": null, "interval_ms": 45, "count": 0}
+{"text": "blink pin 40 every 5ms", "action": "blink", "targets": [40], "level": null, "interval_ms": 5, "count": 0}
+{"text": "blink gpio48 rate 25ms", "action": "blink", "targets": [48], "level": null, "interval_ms": 25, "count": 0}
+{"text": "chase pins 1, 2, 3 at 30ms", "action": "seq", "targets": [1, 2, 3], "level": null, "interval_ms": 30, "count": 0}
+{"text": "blink pin 1 at 40ms", "action": "blink", "targets": [1], "level": null, "interval_ms": 40, "count": 0}
+{"text": "flash gpio4 at 15ms speed", "action": "blink", "targets": [4], "level": null, "interval_ms": 15, "count": 0}
+{"text": "blink pin 7 every 49ms", "action": "blink", "targets": [7], "level": null, "interval_ms": 49, "count": 0}
+{"text": "blink gpio15 at 2ms", "action": "blink", "targets": [15], "level": null, "interval_ms": 2, "count": 0}
+{"text": "sequence pins 38, 39, 40 at 10ms", "action": "seq", "targets": [38, 39, 40], "level": null, "interval_ms": 10, "count": 0}
+{"text": "BLINK PIN 10 AT 5MS", "action": "blink", "targets": [10], "level": null, "interval_ms": 5, "count": 0}
+{"text": "blink #3 at 1ms", "action": "blink", "targets": [3], "level": null, "interval_ms": 1, "count": 0}
+{"text": "blink pin 18 speed 35ms", "action": "blink", "targets": [18], "level": null, "interval_ms": 35, "count": 0}
+{"text": "chase gpio 1, 2, 3, 4 at 20ms", "action": "seq", "targets": [1, 2, 3, 4], "level": null, "interval_ms": 20, "count": 0}
+{"text": "blink pin 41 every 8ms", "action": "blink", "targets": [41], "level": null, "interval_ms": 8, "count": 0}
+{"text": "flash pin 6 at 12ms", "action": "blink", "targets": [6], "level": null, "interval_ms": 12, "count": 0}
+{"text": "blink gpio8 interval 25ms", "action": "blink", "targets": [8], "level": null, "interval_ms": 25, "count": 0}
+{"text": "blink pin 14 at 30ms 10 times", "action": "blink", "targets": [14], "level": null, "interval_ms": 30, "count": 10}
+{"text": "blink gpio17 every 5ms", "action": "blink", "targets": [17], "level": null, "interval_ms": 5, "count": 0}
+{"text": "chase 4, 5, 6 delay 15ms", "action": "seq", "targets": [4, 5, 6], "level": null, "interval_ms": 15, "count": 0}
+{"text": "blink #42 at 2ms", "action": "blink", "targets": [42], "level": null, "interval_ms": 2, "count": 0}
+{"text": "blink pin 11 rate 1ms", "action": "blink", "targets": [11], "level": null, "interval_ms": 1, "count": 0}
+{"text": "flash gpio16 at 40ms", "action": "blink", "targets": [16], "level": null, "interval_ms": 40, "count": 0}
+{"text": "blink pin 9 at 10ms", "action": "blink", "targets": [9], "level": null, "interval_ms": 10, "count": 0}
+{"text": "blink gpio21 speed 45ms", "action": "blink", "targets": [21], "level": null, "interval_ms": 45, "count": 0}
+{"text": "sequence 1, 2, 3 at 5ms interval", "action": "seq", "targets": [1, 2, 3], "level": null, "interval_ms": 5, "count": 0}
+{"text": "blink pin 13 every 20ms", "action": "blink", "targets": [13], "level": null, "interval_ms": 20, "count": 0}
+{"text": "blink gpio38 at 3ms", "action": "blink", "targets": [38], "level": null, "interval_ms": 3, "count": 0}
+{"text": "blink pin 7 at 12000ms", "action": "blink", "targets": [7], "level": null, "interval_ms": 12000, "count": 0}
+{"text": "blink gpio2 every 20000ms", "action": "blink", "targets": [2], "level": null, "interval_ms": 20000, "count": 0}
+{"text": "flash pin 15 every 50000ms", "action": "blink", "targets": [15], "level": null, "interval_ms": 50000, "count": 0}
+{"text": "blink pin 1 at rate of 15000ms", "action": "blink", "targets": [1], "level": null, "interval_ms": 15000, "count": 0}
+{"text": "blink #21 every 60 seconds", "action": "blink", "targets": [21], "level": null, "interval_ms": 60000, "count": 0}
+{"text": "blink gpio38 at 30000ms interval", "action": "blink", "targets": [38], "level": null, "interval_ms": 30000, "count": 0}
+{"text": "chase pins 1, 2, 3 every 15 seconds", "action": "seq", "targets": [1, 2, 3], "level": null, "interval_ms": 15000, "count": 0}
+{"text": "blink pin 4 at 10500ms", "action": "blink", "targets": [4], "level": null, "interval_ms": 10500, "count": 0}
+{"text": "flash gpio10 every 25 seconds", "action": "blink", "targets": [10], "level": null, "interval_ms": 25000, "count": 0}
+{"text": "blink pin 18 rate 40000ms", "action": "blink", "targets": [18], "level": null, "interval_ms": 40000, "count": 0}
+{"text": "blink gpio42 at 12000ms", "action": "blink", "targets": [42], "level": null, "interval_ms": 12000, "count": 0}
+{"text": "sequence pins 5, 6, 7 every 20000ms", "action": "seq", "targets": [5, 6, 7], "level": null, "interval_ms": 20000, "count": 0}
+{"text": "BLINK PIN 12 AT 15000MS", "action": "blink", "targets": [12], "level": null, "interval_ms": 15000, "count": 0}
+{"text": "blink #48 every 30 seconds", "action": "blink", "targets": [48], "level": null, "interval_ms": 30000, "count": 0}
+{"text": "blink pin 3 speed 100000ms", "action": "blink", "targets": [3], "level": null, "interval_ms": 100000, "count": 0}
+{"text": "chase gpio 8, 9, 10 at 12 seconds rate", "action": "seq", "targets": [8, 9, 10], "level": null, "interval_ms": 12000, "count": 0}
+{"text": "blink pin 39 every 50000ms", "action": "blink", "targets": [39], "level": null, "interval_ms": 50000, "count": 0}
+{"text": "flash pin 16 at 2 minutes rate", "action": "blink", "targets": [16], "level": null, "interval_ms": 120000, "count": 0}
+{"text": "blink gpio11 interval 18000ms", "action": "blink", "targets": [11], "level": null, "interval_ms": 18000, "count": 0}
+{"text": "blink pin 17 every 45000ms", "action": "blink", "targets": [17], "level": null, "interval_ms": 45000, "count": 0}
+{"text": "blink gpio6 at 60000ms", "action": "blink", "targets": [6], "level": null, "interval_ms": 60000, "count": 0}
+{"text": "chase 1, 2, 3 delay 20000ms", "action": "seq", "targets": [1, 2, 3], "level": null, "interval_ms": 20000, "count": 0}
+{"text": "blink #40 at 15000ms", "action": "blink", "targets": [40], "level": null, "interval_ms": 15000, "count": 0}
+{"text": "blink pin 14 rate 80000ms", "action": "blink", "targets": [14], "level": null, "interval_ms": 80000, "count": 0}
+{"text": "flash gpio13 at 20000ms", "action": "blink", "targets": [13], "level": null, "interval_ms": 20000, "count": 0}
+{"text": "blink pin 5 every 11000ms", "action": "blink", "targets": [5], "level": null, "interval_ms": 11000, "count": 0}
+{"text": "blink gpio21 speed 90 seconds", "action": "blink", "targets": [21], "level": null, "interval_ms": 90000, "count": 0}
+{"text": "sequence 2, 3, 4 at 14000ms interval", "action": "seq", "targets": [2, 3, 4], "level": null, "interval_ms": 14000, "count": 0}
+{"text": "blink pin 9 every 25000ms", "action": "blink", "targets": [9], "level": null, "interval_ms": 25000, "count": 0}
+{"text": "blink gpio41 at 70000ms", "action": "blink", "targets": [41], "level": null, "interval_ms": 70000, "count": 0}
+{"text": "chase pins 1 to 7", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7], "level": null, "interval_ms": null, "count": null}
+{"text": "chase pins 1, 2, 3, 4, 5, 6, 7, 8", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8], "level": null, "interval_ms": null, "count": null}
+{"text": "sequence gpios 1, 2, 3, 4, 5, 6, 7 at 100ms", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7], "level": null, "interval_ms": 100, "count": 0}
+{"text": "chase pins 10, 11, 12, 13, 14, 15, 16", "action": "seq", "targets": [10, 11, 12, 13, 14, 15, 16], "level": null, "interval_ms": null, "count": null}
+{"text": "run chase across pins 1 to 8 every 200ms", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8], "level": null, "interval_ms": 200, "count": 0}
+{"text": "chase pins 2, 3, 4, 5, 6, 7, 8, 9", "action": "seq", "targets": [2, 3, 4, 5, 6, 7, 8, 9], "level": null, "interval_ms": null, "count": null}
+{"text": "sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "level": null, "interval_ms": null, "count": null}
+{"text": "chase gpios 12, 13, 14, 15, 16, 17, 18", "action": "seq", "targets": [12, 13, 14, 15, 16, 17, 18], "level": null, "interval_ms": null, "count": null}
+{"text": "cycle pins 3, 4, 5, 6, 7, 8, 9, 10 at 500ms", "action": "seq", "targets": [3, 4, 5, 6, 7, 8, 9, 10], "level": null, "interval_ms": 500, "count": 0}
+{"text": "chase pins 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "level": null, "interval_ms": null, "count": null}
+{"text": "chase all legal pins 1, 2, 3, 4, 5, 6, 7", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7], "level": null, "interval_ms": null, "count": null}
+{"text": "sequence pins 5, 6, 7, 8, 9, 10, 11", "action": "seq", "targets": [5, 6, 7, 8, 9, 10, 11], "level": null, "interval_ms": null, "count": null}
+{"text": "CHASE PINS 1, 2, 3, 4, 5, 6, 7, 8", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8], "level": null, "interval_ms": null, "count": null}
+{"text": "chase gpio 1, gpio 2, gpio 3, gpio 4, gpio 5, gpio 6, gpio 7", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7], "level": null, "interval_ms": null, "count": null}
+{"text": "chase 38, 39, 40, 41, 42, 48, 1, 2", "action": "seq", "targets": [38, 39, 40, 41, 42, 48, 1, 2], "level": null, "interval_ms": null, "count": null}
+{"text": "chase pins 4, 5, 6, 7, 8, 9, 10 at 150ms", "action": "seq", "targets": [4, 5, 6, 7, 8, 9, 10], "level": null, "interval_ms": 150, "count": 0}
+{"text": "sequence 10, 11, 12, 13, 14, 15, 16, 17", "action": "seq", "targets": [10, 11, 12, 13, 14, 15, 16, 17], "level": null, "interval_ms": null, "count": null}
+{"text": "chase pins 1 through 9", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9], "level": null, "interval_ms": null, "count": null}
+{"text": "run sequence on pins 1, 2, 3, 4, 5, 6, 7, 8, 9, 10", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "level": null, "interval_ms": null, "count": null}
+{"text": "chase gpios 1, 2, 3, 4, 5, 6, 7, 8, 21", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 21], "level": null, "interval_ms": null, "count": null}
+{"text": "chase #1, #2, #3, #4, #5, #6, #7", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7], "level": null, "interval_ms": null, "count": null}
+{"text": "chase pins 11, 12, 13, 14, 15, 16, 17, 18", "action": "seq", "targets": [11, 12, 13, 14, 15, 16, 17, 18], "level": null, "interval_ms": null, "count": null}
+{"text": "sequence pins 2, 3, 4, 5, 6, 7, 8 at 300ms", "action": "seq", "targets": [2, 3, 4, 5, 6, 7, 8], "level": null, "interval_ms": 300, "count": 0}
+{"text": "chase gpio 1 to gpio 7", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7], "level": null, "interval_ms": null, "count": null}
+{"text": "chase pins 6, 7, 8, 9, 10, 11, 12, 13", "action": "seq", "targets": [6, 7, 8, 9, 10, 11, 12, 13], "level": null, "interval_ms": null, "count": null}
+{"text": "run chase on pins 1, 3, 5, 7, 9, 11, 13, 15", "action": "seq", "targets": [1, 3, 5, 7, 9, 11, 13, 15], "level": null, "interval_ms": null, "count": null}
+{"text": "chase 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "level": null, "interval_ms": null, "count": null}
+{"text": "sequence gpio 1, 2, 3, 4, 5, 6, 7, 8", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8], "level": null, "interval_ms": null, "count": null}
+{"text": "chase pins 7, 8, 9, 10, 11, 12, 13 at 250ms", "action": "seq", "targets": [7, 8, 9, 10, 11, 12, 13], "level": null, "interval_ms": 250, "count": 0}
+{"text": "chase pins 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14", "action": "seq", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "level": null, "interval_ms": null, "count": null}
+{"text": "turn on pins 4, 5 and 100", "action": "set", "targets": [4, 5, 100], "level": "high", "interval_ms": null, "count": null}
+{"text": "switch off gpio1, gpio2 and gpio19", "action": "set", "targets": [1, 2, 19], "level": "low", "interval_ms": null, "count": null}
+{"text": "read pins 3, 12 and 200", "action": "read", "targets": [3, 12, 200], "level": null, "interval_ms": null, "count": null}
+{"text": "set pins 5, 6 and 22 high", "action": "set", "targets": [5, 6, 22], "level": "high", "interval_ms": null, "count": null}
+{"text": "turn off gpio 10, 11 and 128", "action": "set", "targets": [10, 11, 128], "level": "low", "interval_ms": null, "count": null}
+{"text": "blink pins 2, 4 and 50 at 500ms", "action": "blink", "targets": [2, 4, 50], "level": null, "interval_ms": 500, "count": 0}
+{"text": "toggle gpio1, gpio5 and gpio0", "action": "set", "targets": [1, 5, 0], "level": "toggle", "interval_ms": null, "count": null}
+{"text": "read status of pins 7, 8 and 99", "action": "read", "targets": [7, 8, 99], "level": null, "interval_ms": null, "count": null}
+{"text": "stop pins 15, 16 and 43", "action": "stop", "targets": [15, 16, 43], "level": null, "interval_ms": null, "count": null}
+{"text": "turn on pins 21, 38 and 255", "action": "set", "targets": [21, 38, 255], "level": "high", "interval_ms": null, "count": null}

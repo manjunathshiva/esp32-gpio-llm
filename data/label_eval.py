@@ -58,6 +58,9 @@ OFF_W = r"(?:off|low|0)"
 
 _NUM = r"(\d+)"
 _PINREF = r"(?:pin|gpio|io|p)?\s*" + _NUM
+_PIN_ITEM = (r"(?:pins?|gpios?|io|p)?\s*\d+(?!\d)"
+             r"(?!\s*(?:ms|hz|s\b|sec|min|milli|hour))")
+_PINLIST = rf"((?:{_PIN_ITEM}[\s,]*(?:and\s+)?)+)"
 
 
 def _pin(n: int) -> Pin:
@@ -108,7 +111,7 @@ def _named(x: str) -> bool:
 
 
 _WORD_NUM = {
-    "once": 1, "twice": 2, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+    "once": 1, "twice": 2, "thrice": 3, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
     "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11,
     "twelve": 12, "fifteen": 15, "twenty": 20, "thirty": 30, "fifty": 50,
     "a hundred": 100, "hundred": 100, "a couple": 2, "a few": 3,
@@ -127,36 +130,94 @@ _RATE_WORD = re.compile(r"\b(every|at|interval|speed|rate|per)\b", re.I)
 UNREADABLE = -1
 
 
-def _interval_count(rest: str) -> tuple[int | None, int | None]:
-    """Pull an interval and a cycle count out of Gemini's compact tail forms:
-    '500ms 10', 'at 800ms for 10 times', 'speed 300ms count 20', '100ms forever',
-    'every 250ms four times'.
-    """
-    ms = re.search(r"(\d+)\s*ms", rest)
-    if not ms:
-        ms = re.search(r"(?:interval|speed|every|at)\s*(\d+)", rest)
-    interval = int(ms.group(1)) if ms else None
+# A rate can be said in units that are not milliseconds, and every one of these
+# was missing. Against a held-out batch the rules read "at 2Hz" as a 2ms
+# interval, "every 2 seconds" as 2ms, and "twice a second" as a *count* of two --
+# disagreeing with correct gold on eleven items in a single 200-line run. A
+# second opinion that is wrong more often than the first is not a check.
+_MS = re.compile(r"(\d+)\s*(?:ms|millis|milliseconds?)\b", re.I)
+_HZ = re.compile(r"(\d+(?:\.\d+)?)\s*hz\b", re.I)
+_PER_SEC_N = {"once": 1, "twice": 2, "thrice": 3, "one": 1, "two": 2,
+              "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+              "eight": 8, "nine": 9, "ten": 10}
+_PER_SEC = re.compile(
+    r"\b(once|twice|thrice|one|two|three|four|five|six|seven|eight|nine|ten|"
+    r"\d+)\s*(?:times?)?\s*(?:a|per|every)\s+second\b", re.I)
+_UNIT_BARE = re.compile(r"\b(?:every|each)\s+(second|minute)\b", re.I)
+_HALF_SEC = re.compile(r"\bevery\s+(?:a\s+)?half\s+(?:a\s+)?second\b", re.I)
+_UNIT_TIME = re.compile(
+    r"\b(?:every|at|each)\s+(\d+(?:\.\d+)?)\s*(s|seconds?|secs?|m|minutes?|mins?)\b",
+    re.I)
+_SLOT_UNIT = re.compile(
+    r"(?:interval|speed|rate)\s*(?:of\s*)?(\d+(?:\.\d+)?)\s*"
+    r"(seconds?|secs?|minutes?|mins?)\b", re.I)
+_BARE_NUM_SLOT = re.compile(r"(?:interval|speed|rate|every|at)\s*(\d+)\b", re.I)
+_XN = re.compile(r"\bx\s*(\d+)\b", re.I)
 
-    if re.search(r"\b(forever|indefinitely|continuous(?:ly)?|non-?stop)\b", rest):
+
+def _interval_count(rest: str) -> tuple[int | None, int | None]:
+    """Pull an interval and a cycle count out of the compact tail forms:
+    '500ms 10', 'at 800ms for 10 times', 'speed 300ms count 20', '100ms forever',
+    'every 250ms four times', 'at 2Hz', 'twice a second 6 times', 'x3'.
+
+    The rate is matched first and its span removed, so the count search cannot
+    re-read part of it -- without that, "twice a second" contributes a count of
+    two and "5Hz" a count of five.
+    """
+    interval: int | None = None
+    left = rest
+
+    def take(rx: re.Pattern, fn) -> None:
+        nonlocal interval, left
+        if interval is not None:
+            return
+        m = rx.search(left)
+        if not m:
+            return
+        interval = fn(m)
+        left = left[:m.start()] + " " + left[m.end():]
+
+    take(_MS, lambda m: int(m.group(1)))
+    take(_HZ, lambda m: int(round(1000.0 / float(m.group(1)))))
+    take(_PER_SEC, lambda m: int(round(1000.0 / (
+        _PER_SEC_N.get(m.group(1).lower())
+        or float(m.group(1)) if not m.group(1).isdigit()
+        else float(m.group(1))))))
+    take(_HALF_SEC, lambda m: 500)
+    take(_UNIT_BARE, lambda m: 60000 if m.group(1).lower() == "minute" else 1000)
+    take(_UNIT_TIME, lambda m: int(float(m.group(1)) *
+                                   (60000 if m.group(2).lower().startswith("min")
+                                    else 1000)))
+    take(_SLOT_UNIT, lambda m: int(float(m.group(1)) *
+                                  (60000 if m.group(2).lower().startswith("min")
+                                   else 1000)))
+    take(_BARE_NUM_SLOT, lambda m: int(m.group(1)))
+
+    if re.search(r"\b(forever|indefinitely|continuous(?:ly)?|non-?stop|"
+                 r"endlessly)\b", left, re.I):
         return interval, 0
 
-    c = re.search(r"(?:for\s+)?(\d+)\s*(?:times?|x|count)", rest)
-    if not c:
-        c = re.search(r"count\s*(\d+)", rest)
-    if not c and ms:
-        c = re.search(r"\b(\d+)\b", rest[ms.end():])
-    if c:
-        return interval, int(c.group(1))
+    m = _XN.search(left)
+    if m:
+        return interval, int(m.group(1))
+    m = re.search(r"(?:for\s+)?(\d+)\s*(?:times?|cycles?|blinks?|flashes|count)\b",
+                  left, re.I)
+    if not m:
+        m = re.search(r"count\s*(\d+)", left, re.I)
+    if not m and interval is not None:
+        m = re.search(r"\b(\d+)\b", left)
+    if m:
+        return interval, int(m.group(1))
 
     for word, n in _WORD_NUM.items():
-        if re.search(rf"\b{re.escape(word)}\b", rest, re.I):
+        if re.search(rf"\b{re.escape(word)}\b", left, re.I):
             return interval, n
-    if _COUNT_WORD.search(rest):
+    if _COUNT_WORD.search(left):
         return interval, UNREADABLE
     # "blink pin 5 every", "blink 10 at speed" -- the rate slot is announced and
     # then cut off. Reading these as an untimed blink turned the whole truncated
     # class into valid commands.
-    if interval is None and _RATE_WORD.search(rest):
+    if interval is None and _RATE_WORD.search(left):
         return UNREADABLE, None
     return interval, None
 
@@ -173,15 +234,21 @@ def _interval_count(rest: str) -> tuple[int | None, int | None]:
 _SCHEDULE = re.compile(
     r"\b(?:if|when|whenever|while|unless|tomorrow|tonight|sunset|sunrise|"
     r"midnight|noon|o'?clock|monday|tuesday|wednesday|thursday|friday|"
-    r"saturday|sunday)\b"
+    r"saturday|sunday|weekends?|weekdays?)\b"
     r"|\bevery\s+(?:morning|evening|night|day|hour|week|month|other)\b"
     r"|\b(?:in|after|within)\s+(?:a|an|\d+)\s*"
     r"(?:second|minute|hour|day|week)s?\b"
     # A duration as an end condition -- "blink pin 4 for 10 seconds". The tool
     # counts cycles, not time. Units are required so "for 5 cycles", which is a
     # legal count, does not match.
-    r"|\bfor\s+(?:a|an|\d+|half|the\s+next)\s*\w*\s*"
+    r"|\bfor\s+(?:a|an|\d+|half|the\s+next|one|two|three|four|five|six|seven|"
+    r"eight|nine|ten|twelve|fifteen|twenty|thirty|sixty)\s*\w*\s*"
     r"(?:second|sec|minute|min|hour)s?\b"
+    # A pin range, and a set-minus-subset. Both are refusals the rules would
+    # otherwise read as an ordinary command on the first pin they found.
+    r"|\b(?:pins?|gpios?)?\s*\d+\s*(?:-|\u2013|to|through|thru)\s*\d+\b"
+    r"|\b(?:except|but not|apart from|other than|all but|every other|"
+    r"odd pins?|even pins?|the rest of|remaining)\b"
     r"|\d\s*(?:am|pm)\b|\b\d{1,2}:\d{2}\b", re.I)
 
 
@@ -219,8 +286,13 @@ def label_gemini(s: str) -> Frame | str:
     if re.fullmatch(r"(?:stop|halt|cancel|kill|end|disable)\s*"
                     r"(?:all|everything|chase|chasing|sequence|blink(?:ing)?)?", low):
         return Frame(Action.STOP)
-    m = re.match(r"^(?:stop|halt|cancel|kill|end|disable)\s+"
-                 rf"(?:blink(?:ing)?|chase|sequence)?\s*(?:on\s+)?{_PINREF}$", low)
+    m = re.match(r"^(?:stop|halt|cancel|end|freeze|quit)\s+"
+                 r"(?:blink(?:ing)?|chase|sequence)?"
+                 rf"\s*(?:on\s+)?{_PINREF}$", low)
+    if not m:
+        # kill/disable need the animation noun: bare, they set a level.
+        m = re.match(r"^(?:kill|disable)\s+(?:blink(?:ing)?|chase|sequence)"
+                     rf"\s*(?:on\s+)?{_PINREF}$", low)
     if m:
         return Frame(Action.STOP, [_pin(int(m.group(1)))])
 
@@ -241,12 +313,12 @@ def label_gemini(s: str) -> Frame | str:
         return Frame(Action.SEQ, ps)
 
     # --- blink ---------------------------------------------------------------
-    m = re.match(rf"^(?:blink|flash|strobe|pulse)\s+{_PINREF}\s*(.*)$", low)
+    m = re.match(rf"^(?:blink|flash|strobe|pulse)\s+{_PINLIST}\s*(.*)$", low)
     if not m:
-        m2 = re.match(rf"^make\s+{_PINREF}\s+(?:blink|flash)\s*(.*)$", low)
-        m = m2
+        m = re.match(rf"^make\s+{_PINLIST}\s+(?:blink|flash)\s*(.*)$", low)
     if m:
-        p = _pin(int(m.group(1)))
+        ps = [_pin(int(x)) for x in re.findall(r"\d+", m.group(1))]
+        p = ps[0]
         iv, ct = _interval_count(m.group(2))
         if UNREADABLE in (iv, ct):
             return "NEEDS_REVIEW"
@@ -259,11 +331,11 @@ def label_gemini(s: str) -> Frame | str:
             # default. Returning a bare frame here dropped the count entirely,
             # so "blink pin 9 five times" reparsed as an untimed blink and the
             # cross-check flagged correct gold as a disagreement.
-            return Frame(Action.BLINK, [p], count=ct) if ct is not None \
-                else Frame(Action.BLINK, [p])
+            return Frame(Action.BLINK, ps, count=ct) if ct is not None \
+                else Frame(Action.BLINK, ps)
         # An interval outside the device bounds is labelled, not rejected: 12000
         # is what the speaker said, so it is what the model must emit.
-        return Frame(Action.BLINK, [p], interval_ms=iv, count=ct if ct is not None else 0)
+        return Frame(Action.BLINK, ps, interval_ms=iv, count=ct if ct is not None else 0)
 
     # --- read ----------------------------------------------------------------
     m = re.match(rf"^(?:read|check|get\s+status|status(?:\s+of)?|state(?:\s+of)?)\s+"
@@ -293,6 +365,17 @@ def label_gemini(s: str) -> Frame | str:
         (rf"^shut\s+down\s+{_PINREF}{tail}$", Level.LOW),
         (rf"^{_PINREF}\s+(?:to\s+|go\s+)?{ON_W}{tail}$", Level.HIGH),
         (rf"^{_PINREF}\s+(?:to\s+|go\s+)?{OFF_W}{tail}$", Level.LOW),
+    ):
+        m = re.match(pat, low)
+        if m:
+            return Frame(Action.SET, [_pin(int(m.group(1)))], level=lvl)
+
+    # --- verbs that carry their own level -------------------------------------
+    for pat, lvl in (
+        (rf"^(?:enable|activate|energi[sz]e|light\s+up|fire\s+up|power\s+up)"
+         rf"\s+{_PINREF}{tail}$", Level.HIGH),
+        (rf"^(?:disable|deactivate|extinguish|douse|kill|cut(?:\s+power\s+to)?|"
+         rf"shut\s+down|power\s+down|put\s+out)\s+{_PINREF}{tail}$", Level.LOW),
     ):
         m = re.match(pat, low)
         if m:
