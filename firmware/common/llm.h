@@ -8,7 +8,7 @@
 // Change one side and you must change the other, re-export, and re-run
 // firmware/host_verify/verify.c.
 //
-// **fp32 throughout.** This model is 229,952 parameters -- 898 KB, which fits
+// **fp32 throughout.** This model is 312,128 parameters -- 1.2 MB, which fits
 // flash without argument. esp32-tinyllm's int4 path exists because a 28.9M
 // model does not fit; carrying it here would buy space nobody needs and give up
 // an exact host check. See src/export.py.
@@ -29,7 +29,7 @@
 // writing past the buffers, because the alternative is memory corruption that
 // looks like a bad parse.
 #ifndef LLM_MAX_LAYERS
-#define LLM_MAX_LAYERS 4
+#define LLM_MAX_LAYERS 6
 #endif
 #ifndef LLM_MAX_DIM
 #define LLM_MAX_DIM 64

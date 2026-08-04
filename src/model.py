@@ -24,17 +24,35 @@ import torch.nn.functional as F
 class Config:
     vocab_size: int = 1024
     d_model: int = 64
-    n_layers: int = 4
-    n_heads: int = 4
+    n_layers: int = 6
+    n_heads: int = 8
     ffn_hidden: int = 128
     seq_len: int = 96
     rope_theta: float = 10000.0
     tie_embeddings: bool = True
     # Tying is inherited from esp32-tinyllm, where it saved 3.1M parameters on a
-    # 32,768 vocabulary. Here it saves 65,536 -- but the input and output
-    # vocabularies are nearly disjoint (symbols are only ever emitted, English
-    # words almost only ever read), so one shared space may be the wrong
-    # constraint rather than a free saving. Measured, not assumed: see RESULTS.
+    # 32,768 vocabulary. Here it saves 65,536, and the worry was that the input
+    # and output vocabularies are nearly disjoint -- symbols are only ever
+    # emitted, English words almost only ever read -- so one shared space might
+    # be the wrong constraint rather than a free saving.
+    #
+    # Measured on v1_locked: untying is *worse*. 86.7% exact-match against
+    # 87.0% tied, and substitution 6.0% against 2.8%. Digits are the one thing
+    # appearing in both roles, and a copy task apparently wants them to share a
+    # vector. Tying stays.
+
+    # d64/L6/H8 rather than the d64/L4/H4 this started with, and the choice is
+    # measured. On v1_locked, three seeds: baseline 87.0% exact / 90.5% pin copy
+    # / 2.8% substitution; L6+H8 90.1% / 93.6% / 1.8%, clearing the spread on
+    # every metric for +36% parameters.
+    #
+    # What did *not* help is the interesting part. d128/L6/F256 -- 1.1M
+    # parameters, 4.9x -- read 88.1%, barely above baseline and below this
+    # config at a third the size. Width and FFN buy nothing here; head count and
+    # depth buy everything. The failure was tracking position through a long run
+    # of near-identical <pin> d d tokens, which wants more independent attention
+    # patterns, not fatter ones. Eight heads at d_model 64 gives head_dim 8 and
+    # still wins, which is the opposite of what head-width intuition predicts.
 
     @property
     def head_dim(self) -> int:

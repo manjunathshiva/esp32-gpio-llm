@@ -427,6 +427,20 @@ def sample_target(rng: random.Random, pins: list[int], *,
 # really do address a single pin -- but never zero, which is what v0 trained and
 # what made "stop pins 4 and 5" come back as a chase.
 MULTI_PIN_PROB = 0.18
+# Of those multi-pin lists, how many run past what a chase can drive.
+#
+# Zero, and the zero is a measurement. Long lists were under-covered -- 1.76% of
+# pin-bearing rows against 6.08% of the held-out set -- and raising this to 0.25
+# closed that gap exactly (to 5.90%) while moving exact-match +0.5 against a
+# +-1.4 spread: nothing. It also cost 1.5 points of false-accept, which does
+# clear its spread, because lists of numbers in the positives make the model
+# readier to read any list of numbers as a command.
+#
+# The derailment on long lists was never a coverage problem. It was the model
+# losing track of position through a long digit run, and two extra layers plus
+# four extra heads fixed what 3.4x the training examples did not. Kept at zero
+# rather than deleted so the finding is not rediscovered.
+LONG_LIST_PROB = 0.0
 
 
 def _pin_list(rng: random.Random, pins: list[int], *,
@@ -436,7 +450,15 @@ def _pin_list(rng: random.Random, pins: list[int], *,
     t = sample_target(rng, pins, allow_all=allow_all)
     if isinstance(t, All) or rng.random() >= MULTI_PIN_PROB:
         return [t]
-    n = rng.randint(2, MAX_SEQ_PINS)
+    # Lists longer than a chase can run. Only `seq` ever produced these, at
+    # LONG_SEQ_PROB, so lists of 7+ were 1.76% of pin-bearing rows while the
+    # held-out set needs them for 6% -- and that is where the emission derails,
+    # dropping or repeating a pin partway through a long digit run. Capped at
+    # +4 for the same reason seq is: past ten pins the utterance runs beyond
+    # seq_len and prepare.py drops it, which removes the wordiest phrasings
+    # first and biases what is left.
+    n = (rng.randint(MAX_SEQ_PINS + 1, MAX_SEQ_PINS + 4)
+         if rng.random() < LONG_LIST_PROB else rng.randint(2, MAX_SEQ_PINS))
     return [Pin(sample_pin_number(rng, pins)) for _ in range(n)]
 
 
