@@ -346,6 +346,65 @@ same asymmetry existed for politeness prefixes and suffixes. Negatives now go
 through the positives' own `_decorate`, and the fix is structural: any register
 one side of the corpus gets and the other does not becomes a shortcut.
 
+### Capacity is not the constraint
+
+The obvious objection to a 230K-parameter model is that it is too small, and
+that a bigger one would carry more grammar. Worth settling with a number rather
+than an argument, because it will be asked again.
+
+Same corpus, same steps, same hyperparameters; only width and depth move. Three
+seeds each, so the comparison can be read against the seed spread.
+
+```sh
+uv run python src/train.py --steps 14000 --seed 0 --tag big \
+    --d-model 128 --n-layers 6 --ffn-hidden 256
+uv run python src/sweep.py --tag big --seeds 0 1 2
+```
+
+| | params | val loss | dev exact | locked exact | locked false-accept | locked pin copy |
+|---|---:|---:|---:|---:|---:|---:|
+| `v1` | 229,952 | 0.00504 | 95.4% ±1.6 | 95.8% ±1.0 | 2.8% ±0.6 | 97.2% ±0.6 |
+| `big` | 1,115,776 | **0.00268** | 95.4% ±1.1 | 96.9% ±1.0 | **2.8% ±0.3** | 97.6% ±0.0 |
+
+**4.9× the parameters halved the training loss and bought nothing the eval can
+resolve.** The locked exact-match gain is +1.1 against a ±1.0 spread on both
+runs, which does not clear the bar this project uses — believe a difference only
+when it exceeds the spread of both. It is the right sign, so the honest claim is
+"no effect this measurement can resolve", not "no effect".
+
+Three readings, in order of how much they should change what happens next:
+
+**Val loss halved while free-running accuracy did not move.** That is the
+teacher-forced illusion in a single line, and the reason `train.py`'s 99.9%
+symbol accuracy was never the number to steer by: it grades each symbol given
+all the correct ones before it, so more capacity buys a better fit to the
+training distribution and not a better run on the model's own output.
+
+**False-accept is identical, 2.8% against 2.8%.** This is the sharpest result.
+False-accept is the gate still failing, and the extra capacity moved it by
+nothing at all. Whatever causes off-domain input to be accepted, it is not a
+shortage of parameters — and every false-accept actually diagnosed and fixed
+here was a corpus defect: a register only the positives carried, a missing verb
+bank, one utterance under two labels.
+
+**The cost is real.** 4.4 MB instead of 898 KB, 2.5× longer to train, and about
+6× the compute per token on device (`d_model²` × layers), which would take
+113 ms – 2 s to roughly 0.7 – 12 s. All of that for a gain indistinguishable
+from noise.
+
+So the parameter count is not what bounds the grammar, and it was never the
+thing to spend on. Adding names in v2 costs a `<name>` slot in `frames.py` and
+training data that uses it — most likely at 229,952 parameters, unchanged. The
+bottleneck is the corpus and the grammar, which is also what the rest of this
+document keeps finding.
+
+One boundary on the claim: this measures a bigger model on an eval that cannot
+see grammar gaps, over a closed domain of roughly 1,024 tokens and six actions.
+It says capacity does not fix the *residual errors on representable input*. It
+says nothing about a task where capacity genuinely is the constraint —
+`esp32-tinyllm` runs 28.9M parameters on this same chip precisely because
+generating stories is that kind of task.
+
 ## Out of scope, and when it comes back
 
 - **Names and aliases** — v2. The full grammar, the alias table, and the
