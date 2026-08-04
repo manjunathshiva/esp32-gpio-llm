@@ -177,6 +177,11 @@ _SCHEDULE = re.compile(
     r"|\bevery\s+(?:morning|evening|night|day|hour|week|month|other)\b"
     r"|\b(?:in|after|within)\s+(?:a|an|\d+)\s*"
     r"(?:second|minute|hour|day|week)s?\b"
+    # A duration as an end condition -- "blink pin 4 for 10 seconds". The tool
+    # counts cycles, not time. Units are required so "for 5 cycles", which is a
+    # legal count, does not match.
+    r"|\bfor\s+(?:a|an|\d+|half|the\s+next)\s*\w*\s*"
+    r"(?:second|sec|minute|min|hour)s?\b"
     r"|\d\s*(?:am|pm)\b|\b\d{1,2}:\d{2}\b", re.I)
 
 
@@ -245,13 +250,17 @@ def label_gemini(s: str) -> Frame | str:
         iv, ct = _interval_count(m.group(2))
         if UNREADABLE in (iv, ct):
             return "NEEDS_REVIEW"
-        # A count with no rate ("blink pin 9 a few times") is not representable:
-        # validate() requires the two slots to travel together. Returning the
-        # device default here would silently discard the count.
-        if iv is None and ct is not None:
-            return "NEEDS_REVIEW"
+        # A count with no rate ("blink pin 9 a few times") is now representable:
+        # it means that many cycles at the device default rate. It used to be
+        # NEEDS_REVIEW, which kept the whole shape out of the eval while the
+        # model was answering it by inventing a rate.
         if iv is None:
-            return Frame(Action.BLINK, [p])          # device default
+            # A count with no rate means that many cycles at the device
+            # default. Returning a bare frame here dropped the count entirely,
+            # so "blink pin 9 five times" reparsed as an untimed blink and the
+            # cross-check flagged correct gold as a disagreement.
+            return Frame(Action.BLINK, [p], count=ct) if ct is not None \
+                else Frame(Action.BLINK, [p])
         # An interval outside the device bounds is labelled, not rejected: 12000
         # is what the speaker said, so it is what the model must emit.
         return Frame(Action.BLINK, [p], interval_ms=iv, count=ct if ct is not None else 0)
@@ -312,11 +321,10 @@ def label_gemini(s: str) -> Frame | str:
         iv, ct = _interval_count(m.group(1))
         if UNREADABLE in (iv, ct):
             return "NEEDS_REVIEW"
-        # A count with no rate ("blink pin 9 a few times") is not representable:
-        # validate() requires the two slots to travel together. Returning the
-        # device default here would silently discard the count.
-        if iv is None and ct is not None:
-            return "NEEDS_REVIEW"
+        # A count with no rate ("blink pin 9 a few times") is now representable:
+        # it means that many cycles at the device default rate. It used to be
+        # NEEDS_REVIEW, which kept the whole shape out of the eval while the
+        # model was answering it by inventing a rate.
         if iv is None:
             return Frame(Action.BLINK, [All()])
         return Frame(Action.BLINK, [All()], interval_ms=iv,

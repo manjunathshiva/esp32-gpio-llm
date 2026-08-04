@@ -132,6 +132,7 @@ static int cmd_parse(const int *ids, int n, Command *c) {
   // --- shape, mirroring frames.validate -------------------------------------
   int targets = c->n_pins + (c->all ? 1 : 0);
   int timed = (c->interval_ms != CMD_UNSET) + (c->count != CMD_UNSET);
+  int rate_no_count = (c->interval_ms != CMD_UNSET && c->count == CMD_UNSET);
 
   switch (c->action) {
     case ACT_SET:
@@ -141,21 +142,26 @@ static int cmd_parse(const int *ids, int n, Command *c) {
         return -1;
       break;
     case ACT_READ:
-      if (targets != 1 || c->all || c->level != LVL_NONE) return -1;
+      if (targets < 1 || c->all || c->level != LVL_NONE) return -1;
       break;
     case ACT_BLINK:
-      // Timing is optional but not half-given: gpio_control has defaults, so an
-      // omitted pair means "device default", while one slot alone is a parse
-      // that lost information.
-      if (targets != 1 || c->level != LVL_NONE || timed == 1) return -1;
+      // A count with no rate is legal -- "blink pin 4 five times" means five
+      // cycles at the device default. A rate with no count is not: it would
+      // discard a number the speaker said.
+      if (targets < 1 || (c->all && c->n_pins) || c->level != LVL_NONE ||
+          rate_no_count) return -1;
       break;
     case ACT_SEQ:
       // Only the lower bound is structural. The upper bound is how many pins
       // the hardware will drive, and that is cmd_range_check's call.
-      if (c->n_pins < 2 || c->all || c->level != LVL_NONE || timed == 1) return -1;
+      if (c->n_pins < 2 || c->all || c->level != LVL_NONE || rate_no_count)
+        return -1;
       break;
     case ACT_STOP:
-      if (targets > 1 || c->level != LVL_NONE || c->interval_ms != CMD_UNSET)
+      // No targets means everything; any other number is a list of pins. One
+      // target was the old limit, and "stop pins 4 and 5" came back as <seq>,
+      // starting an animation instead of ending one.
+      if (c->all || c->level != LVL_NONE || c->interval_ms != CMD_UNSET)
         return -1;
       break;
     default: return -1;

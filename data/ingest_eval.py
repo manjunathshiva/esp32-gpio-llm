@@ -1,32 +1,26 @@
-"""Ingest the wider Gemini eval batch and split it into a dev half and a
-locked half.
+"""Ingest the v1 eval batch and merge it into the held-out sets.
 
-The first held-out sets were too small to steer by. 150 in-domain items make
-one item worth 0.67%; MASSIVE's 19 refusals make one item worth 5.3%. Five
-rounds of data tuning were scored against those numbers, and by the last round
-the run-to-run spread was the same size as the improvements being chased. That
-is fitting to noise.
+The migrated v1 sets hold 95 and 96 in-domain items -- smaller than the set
+abandoned for being too small, and blind by construction: collected against v0,
+they contain no utterance v0 could not express, so no multi-pin command and no
+out-of-range value. Both v1 bugs found so far were invisible to them.
 
-Two things fix it, and this script does both.
+This reads six AI Studio runs (`data/eval_prompts/v1_*.md`) and **adds** to the
+existing sets rather than replacing them -- a refusal is still a refusal, so the
+old rows keep their value and their locked/dev assignment.
 
-**Size.** ~400 in-domain and ~500 off-domain, so one item is worth 0.25% and
-0.2% respectively. The <2% false-accept gate becomes something a measurement
-can actually resolve.
+Gold is Gemini's annotation of its own sentences, re-checked three ways:
+`frames.validate` for structural legality, `level_check` for on/off agreement,
+and `label_eval.label_gemini` as an independent second opinion. In v1 that
+second opinion is usable on *every* in-domain line, because every in-domain
+line targets a pin number -- the restriction that made it unreliable on v0 was
+name-targeted phrasing, and there is none left. Disagreements are quarantined,
+never resolved automatically.
 
-**A set nobody has looked at.** The pooled batch is shuffled and split in half,
-stratified so the two halves have the same composition. `dev` is for
-diagnosis -- read its failures, tune against it, burn it. `locked` rows carry
-`"locked": true`, and `evaluate.py` refuses to print their failures without
-`--unlock`. It is scored once, at the end, and the gap between the two halves
-is the estimate of how much tuning went into the dev half rather than into the
-model.
-
-Gold comes from Gemini's own annotation of its own sentences, re-checked here
-three ways: `frames.validate` for structural legality, a verbatim-span check so
-names are copies rather than paraphrases, and `label_eval.label_gemini` as an
-independent second opinion wherever its rules fire. Disagreements are
-quarantined, not resolved automatically. Reading quarantined *gold* is fine --
-it is reading model *failures* on the locked half that would burn it.
+**Out-of-range values are positives here.** "switch off pin 100" gets the frame
+it says, `[100]`, not a corrected `[10]`. The whole point of the numeric file is
+to measure whether the model transcribes or substitutes, and an ingest that
+clamped would delete the measurement.
 
     uv run python data/ingest_eval.py
 """
@@ -37,34 +31,31 @@ import argparse
 import json
 import random
 import re
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 import frames
-from frames import Action, All, Frame, Level, Name, Pin
-from label_eval import label_gemini
+from frames import Action, All, Frame, Level, Pin
+from label_eval import DEFERRED, label_gemini
 
 HERE = Path(__file__).parent
 RAW = HERE / "eval_raw"
 OUT = HERE / "eval"
 CORPUS = HERE / "corpus"
 
-PINSET = set(frames.PINS_S3)
 LEVELS = {l.value: l for l in Level}
 ACTIONS = {a.value: a for a in Action}
 
+# Sets the new rows are deduplicated against. Their own outputs are excluded so
+# re-running after a raw-file edit is idempotent rather than empty.
+SEEN_SETS = ["v1_gemini2_dev", "v1_gemini2_locked", "v1_massive", "v1_gemini"]
+SELF = {"v1_dev.jsonl", "v1_locked.jsonl"}
 
-# --------------------------------------------------------------------------
-# raw parsing
-# --------------------------------------------------------------------------
 
 def read_jsonl_ish(path: Path) -> list[dict]:
-    """Pull JSON objects out of whatever AI Studio produced.
-
-    Handles a bare JSONL body, a ```json fence, and the {"response": "..."}
-    wrapper the first batch arrived in. Anything else on a line is skipped
-    rather than guessed at.
-    """
+    """Pull JSON objects out of whatever AI Studio produced: a bare JSONL body,
+    a ```json fence, or a {"response": "..."} wrapper. Anything else on a line
+    is skipped rather than guessed at."""
     text = path.read_text()
     stripped = text.strip()
     if stripped.startswith("{") and '"response"' in stripped[:40]:
@@ -72,7 +63,6 @@ def read_jsonl_ish(path: Path) -> list[dict]:
             text = json.loads(stripped)["response"]
         except (json.JSONDecodeError, KeyError):
             pass
-
     out = []
     for line in text.splitlines():
         line = line.strip().rstrip(",")
@@ -85,21 +75,40 @@ def read_jsonl_ish(path: Path) -> list[dict]:
     return out
 
 
+def read_lines(path: Path) -> list[str]:
+    """Plain-text refusals, one per line."""
+    text = path.read_text()
+    stripped = text.strip()
+    if stripped.startswith("{") and '"response"' in stripped[:40]:
+        try:
+            text = json.loads(stripped)["response"]
+        except (json.JSONDecodeError, KeyError):
+            pass
+    out = []
+    for line in text.splitlines():
+        line = line.strip().strip("-*").strip()
+        line = re.sub(r"^\d+[.)]\s*", "", line)      # stray numbering
+        if line and not line.startswith(("#", "```", "|")):
+            out.append(line)
+    return out
+
+
 # --------------------------------------------------------------------------
 # in-domain
 # --------------------------------------------------------------------------
 
-# "everything", "all the pins", "every output". The `"*"` sentinel the prompt
-# asks for came back as `""` on 18 of the 20 all-pins items in the first batch,
-# so an empty target is repaired rather than discarded -- but only when the
-# text says so, which makes it a check rather than a guess.
 ALL_PHRASE = re.compile(
     r"\b(?:everything|every\s+(?:pin|output|channel|line)|"
     r"all\s+(?:the\s+|of\s+)?(?:pins?|outputs?|channels?|lines?|them))\b", re.I)
 
 
 def build_frame(o: dict) -> Frame:
-    """Gemini's annotation -> a Frame. Raises on anything malformed."""
+    """Gemini's annotation -> a Frame. Raises on anything malformed.
+
+    Deliberately does *not* range-check. A pin outside the allowlist is a valid
+    v1 label; `frames.range_check` refuses it downstream, and that refusal is
+    what the numeric file exists to measure.
+    """
     action = ACTIONS.get(str(o.get("action", "")).lower())
     if action is None or action is Action.UNKNOWN:
         raise frames.ParseError(f"bad action {o.get('action')!r}")
@@ -110,98 +119,44 @@ def build_frame(o: dict) -> Frame:
         if isinstance(t, bool):
             raise frames.ParseError("bool target")
         if isinstance(t, int):
-            if t not in PINSET:
-                raise frames.ParseError(f"pin {t} not on the allowlist")
             targets.append(Pin(t))
-        elif isinstance(t, str) and t.strip() in ("*", "all", "ALL", ""):
-            if t.strip() != "*" and not ALL_PHRASE.search(text):
+        elif isinstance(t, str) and t.strip().lower() in ("all", "*", ""):
+            # The literal sentinel came back as "" on most all-pins items in the
+            # first batch, so an empty target is repaired -- but only when the
+            # text actually says so, which makes it a check and not a guess.
+            if t.strip().lower() != "all" and not ALL_PHRASE.search(text):
                 raise frames.ParseError(f"bad target {t!r}")
             targets.append(All())
-        elif isinstance(t, str) and t.strip():
-            targets.append(Name(t.strip()))
+        elif isinstance(t, str) and t.strip().isdigit():
+            targets.append(Pin(int(t.strip())))
         else:
-            raise frames.ParseError(f"bad target {t!r}")
-
-    # "stop everything" is trained as a bare <stop>: sample_frame draws STOP
-    # targets with allow_all=False, so <stop> <all> is a form the model has
-    # never seen and gold must not ask for it.
-    if action is Action.STOP and any(isinstance(t, All) for t in targets):
-        targets = []
+            # A name. v1 has no Name target, so this is either the wrong file or
+            # a mis-annotation; either way it is not gold.
+            raise frames.ParseError(f"non-numeric target {t!r}")
 
     lvl = o.get("level")
-    level = LEVELS[lvl.lower()] if isinstance(lvl, str) and lvl.strip() else None
-    if lvl and level is None:
-        raise frames.ParseError(f"bad level {lvl!r}")
+    interval, count = o.get("interval_ms"), o.get("count")
+    for v in (interval, count):
+        if v is not None and (isinstance(v, bool) or not isinstance(v, int)):
+            raise frames.ParseError("non-integer timing")
 
-    def as_int(k: str) -> int | None:
-        v = o.get(k)
-        if v is None or v == "":
-            return None
-        if isinstance(v, bool) or not isinstance(v, (int, float, str)):
-            raise frames.ParseError(f"bad {k} {v!r}")
-        return int(v)
-
-    alias = o.get("alias_name")
-    f = Frame(action, targets, level, as_int("interval_ms"), as_int("count"),
-              alias.strip() if isinstance(alias, str) and alias.strip() else None)
-    strip_articles(f)
+    f = Frame(action, targets,
+              level=LEVELS.get(str(lvl).lower()) if lvl else None,
+              interval_ms=interval, count=count)
     frames.validate(f)
     return f
 
 
-def _spans(f: Frame) -> list[str]:
-    out = [t.text for t in f.targets if isinstance(t, Name)]
-    if f.alias_name:
-        out.append(f.alias_name)
-    return out
-
-
-_ARTICLE = re.compile(r"^(?:the|my|a|an|our|that|this)\s+", re.I)
-
-
-def strip_articles(f: Frame) -> None:
-    """Drop a leading article from every name, in place.
-
-    Mechanical and unambiguous, and `label_eval._target` already does it for
-    the MASSIVE gold -- leaving it to the annotator produced "the greenhouse
-    mister" alongside "greenhouse mister" for identical phrasings, and no
-    single model output could satisfy both.
-    """
-    f.targets = [Name(_ARTICLE.sub("", t.text).strip()) if isinstance(t, Name)
-                 else t for t in f.targets]
-    if f.alias_name:
-        f.alias_name = _ARTICLE.sub("", f.alias_name).strip()
-
-
-def span_problem(f: Frame, text: str) -> str | None:
-    """The model's job on a name is to *copy* a span. If the annotation
-    paraphrases or hallucinates it, the gold is asking for something the
-    architecture cannot do and the item is unscoreable."""
-    low = " ".join(text.lower().split())
-    for s in _spans(f):
-        if not s.strip():
-            return "empty name"
-        if s.lower() not in low:
-            return f"name {s!r} is not a span of the text"
-    return None
-
-
-_OFF_W = re.compile(r"\b(?:off|low|shut|kill|disable|deactivate|extinguish|"
-                    r"douse|cut)\b", re.I)
-_ON_W = re.compile(r"\b(?:on|high|enable|activate|energi[sz]e|light\s+up)\b", re.I)
+_ON_W = re.compile(r"\b(on|high|1|enable|activate|energi[sz]e)\b", re.I)
+_OFF_W = re.compile(r"\b(off|low|0|disable|deactivate|kill|cut)\b", re.I)
 
 
 def level_check(f: Frame, text: str) -> str | None:
-    """Does the level agree with the words in the sentence?
-
-    Phrasing-independent and therefore safe on anything, unlike a full reparse.
-    Skipped when the text carries both polarities ("is it on or off") or when
-    the level is toggle, neither of which this can rule on.
-    """
+    """Phrasing-independent and therefore safe on anything, unlike a reparse."""
     if f.action is not Action.SET or f.level is Level.TOGGLE:
         return None
     on, off = bool(_ON_W.search(text)), bool(_OFF_W.search(text))
-    if on == off:                          # both or neither: no evidence
+    if on == off:                              # both or neither: no evidence
         return None
     want = Level.HIGH if on else Level.LOW
     if f.level is not want:
@@ -209,39 +164,42 @@ def level_check(f: Frame, text: str) -> str | None:
     return None
 
 
+def digits_present(f: Frame, text: str) -> str | None:
+    """Every number in the frame must appear in the utterance.
+
+    The one label error that cannot be tolerated in this batch: a gold pin the
+    text never mentions makes the item unscoreable, and a *clamped* one ("pin
+    100" annotated as 10) silently inverts the measurement the numeric file
+    exists for. Word-numbers and derived rates are exempt.
+    """
+    runs = set(re.findall(r"\d+", text))
+    missing = [str(t.n) for t in f.targets
+               if isinstance(t, Pin) and str(t.n) not in runs]
+    if missing and not re.search(
+            r"\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|"
+            r"twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|"
+            r"twenty)\b", text, re.I):
+        return f"pin {', '.join(missing)} does not appear in the text"
+    return None
+
+
 def cross_check(f: Frame, text: str) -> str | None:
-    """Reparse with the rule labeller -- but only for pin-numbered utterances.
+    """Reparse with the rule labeller as an independent second opinion.
 
-    The rules were written against the first batch, which was almost entirely
-    terse machine-style forms. On this batch's natural phrasing they are simply
-    worse than the annotation: run as a general second opinion they quarantined
-    67 items, and all 67 were the rules misreading the sentence ("drive pin 42
-    high" -> a name literally called "drive pin 42", "read warning_led state" ->
-    a name called "warning_led state"). A second opinion that is wrong more
-    often than the first is not a check, it is noise, and acting on it would
-    have deleted 67 correct items.
-
-    Where the rules *are* reliable is exactly what they were built for: an
-    utterance whose targets are literal pin numbers. There a disagreement means
-    a wrong pin or a wrong level, which is a real annotation bug. So the
-    reparse runs only when both sides resolve to pins, and `level_check` above
-    carries the phrasing-independent part everywhere else.
+    v0 restricted this to pin-numbered utterances, because on natural
+    name-targeted phrasing the rules were wrong more often than Gemini and
+    quarantined 67 correct items. v1 has no names, so the restriction is gone
+    and it applies to everything -- but only where the rules actually fire.
     """
     rule = label_gemini(text)
-    if isinstance(rule, str):
-        return None                       # rules do not cover this phrasing
-    strip_articles(rule)                  # compare on the same convention
+    if isinstance(rule, str):                  # NEEDS_REVIEW or DEFERRED
+        return None
     try:
         frames.validate(rule)
     except frames.ParseError:
         return None
-    all_pins = (bool(f.targets) and all(isinstance(t, Pin) for t in f.targets)
-                and bool(rule.targets)
-                and all(isinstance(t, Pin) for t in rule.targets))
-    if not all_pins:
-        return None
     if rule.key() != f.key():
-        return (f"rules read it as {' '.join(frames.to_symbols(rule))}, "
+        return (f"rules read {' '.join(frames.to_symbols(rule))}, "
                 f"annotation says {' '.join(frames.to_symbols(f))}")
     return None
 
@@ -250,242 +208,187 @@ def cross_check(f: Frame, text: str) -> str | None:
 # off-domain
 # --------------------------------------------------------------------------
 
-# Markers of a capability the grammar genuinely lacks. A sentence carrying one
-# is a refusal whatever else it looks like -- "turn on the lamp in ten minutes"
-# opens exactly like a legal command and is one only up to the last three words.
-# Checked first so the collision detector below never fires on it.
-#
-# Deliberately narrow. Every word here switches the collision detector off for
-# that item, so a word that can legitimately appear inside a command opens a
-# hole. Four were cut for exactly that reason:
-#   bare colour words -- "turn on the red led" is a normal alias
-#   "bright"          -- likewise "the bright lamp"
-#   "seconds"         -- realize.py renders intervals as "every two seconds"
-#   "sensor/motion"   -- "the motion sensor light" is a name, not a capability
-# Their categories are still caught: a colour request needs colour/hue/rgb, a
-# conditional needs when/if/while, a sensor read needs measure/temperature.
-UNSUPPORTED = re.compile(
-    r"\b(?:"
-    r"dim(?:mer|ming)?|brighten|brightness|fade|fading|dimly|percent|"
-    r"pwm|duty\s*cycle|analog|analogue|volts?|voltage|half\s+power|intensity|"
-    r"colou?r|rgb|hue|saturation|warm\s+white|cool\s+white|kelvin|"
-    r"when|whenever|after|before|until|unless|while|schedule[ds]?|"
-    r"tomorrow|tonight|morning|evening|midnight|noon|later|countdown|delay|"
-    r"minutes?|hours?|o'?\s*clock|a\.?m\.?|p\.?m\.?|every\s+day|daily|"
-    r"temperature|humidity|current\s+draw|power\s+usage|wattage|amperage|"
-    r"measure|again|undo|previous|last\s+one|earlier|just\s+(?:did|turned|said)|"
-    r"mins?|sunrise|sunset|dawn|dusk|timer"
-    r")\b"
-    # "check if pin 18 is on" is a legal read, not a conditional.
-    r"|(?<!check )(?<!see )\bif\b"
-    # Digit-anchored units. \b does not fire between "6" and "pm", so the word
-    # list above misses "6pm", "2.5v", "75pc" and "10:30" entirely.
-    r"|\d\s*(?:%|pc\b|percent|v\b|volts?\b|[ap]\.?m\.?\b)"
-    r"|\d{1,2}:\d{2}"
-    # "in 45 seconds" is a schedule; "every 2 seconds" is a legal blink rate.
-    # The distinguishing word is the preposition, not the unit, so "seconds"
-    # cannot go in the list above.
-    r"|\b(?:in|after|within)\s+\w+\s+(?:seconds?|secs?|minutes?|mins?|hours?)\b",
-    re.I)
+# Categories, inferred rather than asked for: the prompt deliberately forbids
+# numbering, so the label comes from the text. Only used for the diagnosis
+# breakdown, never to accept or reject a row.
+STRATA = [
+    ("range",     re.compile(r"\bpins?\s*\d+\s*(?:-|–|to|through|thru)\s*\d+", re.I)),
+    ("duration",  re.compile(r"\bfor\s+(?:a|an|\d+|half|the next)\s*\w*\s*"
+                             r"(?:second|sec|minute|min|hour)s?\b", re.I)),
+    ("except",    re.compile(r"\b(except|but not|apart from|other than|all but|"
+                             r"every other|the odd|the even|the rest|remaining|"
+                             r"the first \w+|the last \w+)\b", re.I)),
+    ("analog",    re.compile(r"\b(dim|brighten|brightness|intensity|percent|%|"
+                             r"pwm|analog|analogue|voltage|volts?|v\b|duty|fade|"
+                             r"adc)\b", re.I)),
+    ("colour",    re.compile(r"\b(colou?r|red|green|blue|yellow|purple|rgb|hue|"
+                             r"white|orange|pink|cyan|magenta)\b", re.I)),
+    ("schedule",  re.compile(r"\b(at \d|am\b|pm\b|o'?clock|tomorrow|tonight|"
+                             r"sunset|sunrise|midnight|morning|evening|schedule|"
+                             r"in \d+ (?:second|minute|hour)|every (?:day|night|"
+                             r"morning|monday))", re.I)),
+    ("condition", re.compile(r"\b(if|when|whenever|while|unless|until|sensor|"
+                             r"button|pressed|detect)\b", re.I)),
+    ("relative",  re.compile(r"\b(that one|it back|again|undo|the other|"
+                             r"previous|last command|same for)\b", re.I)),
+    ("meta",      re.compile(r"^\s*(how many|what can|which pins|what is a|"
+                             r"what's a|list the|do you support|can you control)",
+                             re.I)),
+]
+# Anything left is either a named target or a truncation; a command-shaped line
+# with no numbers is the former, a short fragment the latter.
+_TRUNC = re.compile(r"^(?:turn|set|blink|flash|read|check|toggle|chase|stop|"
+                    r"switch|make|cancel|halt)\b[\w\s]{0,18}$", re.I)
 
 
-def accept_problem(text: str, category: int) -> str | None:
-    """Reject anything that is actually a legal command.
+def stratum_of(text: str) -> str:
+    for name, rx in STRATA:
+        if rx.search(text):
+            return name
+    if _TRUNC.match(text.strip()):
+        return "truncated"
+    return "named"
 
-    This is the failure that cost the most in the first corpus: 128 MASSIVE
-    rows of the form "turn on my <thing>" were carried in as <unknown>, which
-    trains the model to reject unfamiliar nouns. docs/GRAMMAR.md: structure
-    decides the parse, the alias table decides the execution.
 
-    Order matters. The capability check runs first, because categories 1-6 are
-    *supposed* to open with an ordinary command verb and then ask for something
-    the device cannot do -- running the collision detector on them first
-    quarantined "cut power to the mister an hour from now", a perfectly good
-    scheduling refusal.
+def accept_refusal(text: str) -> str | None:
+    """Reject a 'refusal' that is really a command.
+
+    The failure mode this guards: a line like "turn on pin 4" landing in the
+    refusals file poisons the false-accept metric directly, and there is nothing
+    downstream that would notice.
     """
-    if UNSUPPORTED.search(text):
+    got = label_gemini(text)
+    if got == DEFERRED or isinstance(got, str):
+        return None                            # deferred or unreadable: fine
+    try:
+        frames.validate(got)
+    except frames.ParseError:
         return None
-
-    rule = label_gemini(text)
-    if not isinstance(rule, str):
-        try:
-            frames.validate(rule)
-        except frames.ParseError:
-            rule = "unparseable"
-    if not isinstance(rule, str) and rule.action is not Action.UNKNOWN:
-        return f"rules parse it as {' '.join(frames.to_symbols(rule))}"
-
-    # `massive.collides` is deliberately not used here. It tests the opening
-    # verb and ignores the rest of the sentence, which is the right trade for
-    # mining MASSIVE -- there, dropping a borderline row costs nothing. Here it
-    # quarantined 40-odd perfectly good refusals ("switch pin 8 to blue", "put
-    # pin 21 at 2.5v", "tie pin 8 to pin 9"), all of which open like a command
-    # and then ask for something the grammar cannot express, and it still
-    # missed "what is the weather like today" in the other direction because
-    # READ_Q_T contains "what is {r}".
-    #
-    # label_gemini above accounts for the whole sentence instead, which is what
-    # the question actually is: can the grammar express this, or not?
-    return None
+    # The rules read a real command. If every value is legal it is not a
+    # refusal at all; if some value is out of range it belongs in the numeric
+    # file, which is also not here.
+    where = "executable" if frames.executable(got) else "out-of-range"
+    return f"rules read a {where} command: {' '.join(frames.to_symbols(got))}"
 
 
 # --------------------------------------------------------------------------
 
-SELF = {"gemini2_dev.jsonl", "gemini2_locked.jsonl"}
-
-
 def load_seen() -> set[str]:
-    """Texts already used in an eval set. Overlap between held-out sets would
-    double-count the same item across two reported numbers.
-
-    This script's own outputs are excluded, or a second run -- which the
-    protocol calls for after fixing anything the review file flagged -- would
-    dedupe the whole batch against the previous pass and emit nothing.
-    """
     seen = set()
-    for p in OUT.glob("*.jsonl"):
-        if p.name in SELF:
-            continue
-        for line in p.open():
-            seen.add(" ".join(json.loads(line)["text"].lower().split()))
+    for name in SEEN_SETS:
+        p = OUT / f"{name}.jsonl"
+        if p.exists() and p.name not in SELF:
+            seen |= {json.loads(l)["text"].lower().strip() for l in p.open()}
     return seen
 
 
-def load_train() -> set[str]:
+def train_texts() -> set[str]:
     p = CORPUS / "train.jsonl"
     if not p.exists():
         return set()
     return {json.loads(l)["text"].lower().strip() for l in p.open()}
 
 
-def stratified_halves(rows: list[dict], key, seed: int) -> tuple[list, list]:
-    """Split in half so both sides have the same composition. A dev/locked gap
-    then measures tuning, not a difference in what the two halves contain."""
-    rng = random.Random(seed)
-    buckets: dict = defaultdict(list)
-    for r in rows:
-        buckets[key(r)].append(r)
-    dev, locked = [], []
-    for k in sorted(buckets, key=str):
-        b = buckets[k]
-        rng.shuffle(b)
-        for i, r in enumerate(b):
-            (dev if i % 2 == 0 else locked).append(r)
-    rng.shuffle(dev)
-    rng.shuffle(locked)
-    return dev, locked
-
-
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--raw", type=Path, default=RAW)
     a = ap.parse_args()
 
-    OUT.mkdir(exist_ok=True)
-    if not a.raw.exists():
-        raise SystemExit(
-            f"{a.raw} does not exist. See data/eval_prompts/README.md -- run the "
-            "two prompts twice each and save the replies there.")
+    seen, review = load_seen(), []
+    rows: list[dict] = []
+    dropped: Counter = Counter()
 
-    seen = load_seen()
-    in_train = load_train()
-    kept: list[dict] = []
-    quarantine: list[str] = []
-    stats: Counter = Counter()
+    def add(text: str, f: Frame, stratum: str) -> None:
+        key = text.lower().strip()
+        if not key or key in seen:
+            dropped["duplicate"] += 1
+            return
+        seen.add(key)
+        rows.append({"text": text, "symbols": frames.to_symbols(f),
+                     "action": f.action.value, "source": "v1batch",
+                     "stratum": stratum})
 
-    def dedupe(text: str) -> bool:
-        k = " ".join(text.lower().split())
-        if not k or k in seen:
-            stats["duplicate"] += 1
-            return False
-        seen.add(k)
-        return True
-
-    # --- in-domain -----------------------------------------------------------
-    for path in sorted(a.raw.glob("indomain*")):
-        for o in read_jsonl_ish(path):
-            text = str(o.get("text", "")).strip()
-            stats["indomain_raw"] += 1
-            if not text or not dedupe(text):
+    # --- in-domain and numeric-edge ------------------------------------------
+    for kind in ("indomain", "numeric"):
+        for i in (1, 2):
+            path = RAW / f"v1_{kind}_{i}.txt"
+            if not path.exists():
+                print(f"missing {path.name}")
                 continue
-            try:
-                f = build_frame(o)
-            except (frames.ParseError, ValueError, KeyError, TypeError) as e:
-                quarantine.append(f"[invalid {path.name}] {text}\n    {e}")
-                stats["indomain_invalid"] += 1
-                continue
-            for problem in (span_problem(f, text), level_check(f, text),
-                            cross_check(f, text)):
-                if problem:
-                    quarantine.append(f"[review {path.name}] {text}\n    {problem}")
-                    stats["indomain_review"] += 1
-                    break
-            else:
-                kept.append({"text": text, "symbols": frames.to_symbols(f),
-                             "action": f.action.value, "source": "gemini2",
-                             "stratum": f.action.value,
-                             "in_train": " ".join(text.lower().split()) in in_train})
+            for o in read_jsonl_ish(path):
+                text = str(o.get("text", "")).strip()
+                try:
+                    f = build_frame(o)
+                except (frames.ParseError, ValueError) as e:
+                    review.append(f"[{kind}] {text}\n    unusable: {e}")
+                    dropped["malformed"] += 1
+                    continue
+                for check in (level_check, digits_present, cross_check):
+                    msg = check(f, text)
+                    if msg:
+                        review.append(f"[{kind}] {text}\n    {msg}")
+                        dropped["disagreement"] += 1
+                        break
+                else:
+                    edge = not frames.executable(f)
+                    add(text, f, "numeric" if edge else f.action.value)
 
-    # --- off-domain ----------------------------------------------------------
+    # --- off-domain -----------------------------------------------------------
     unknown = Frame(Action.UNKNOWN)
-    for path in sorted(a.raw.glob("offdomain*")):
-        for o in read_jsonl_ish(path):
-            text = str(o.get("text", "")).strip()
-            stats["offdomain_raw"] += 1
-            if not text or not dedupe(text):
+    for i in (1, 2):
+        path = RAW / f"v1_offdomain_{i}.txt"
+        if not path.exists():
+            print(f"missing {path.name}")
+            continue
+        for text in read_lines(path):
+            msg = accept_refusal(text)
+            if msg:
+                review.append(f"[offdomain] {text}\n    {msg}")
+                dropped["not a refusal"] += 1
                 continue
-            try:
-                cat = int(o.get("category", 0))
-            except (TypeError, ValueError):
-                cat = 0
-            problem = accept_problem(text, cat)
-            if problem:
-                quarantine.append(f"[not-a-refusal {path.name}] {text}\n    {problem}")
-                stats["offdomain_rejected"] += 1
-                continue
-            kept.append({"text": text, "symbols": frames.to_symbols(unknown),
-                         "action": "unknown", "source": "gemini2",
-                         "stratum": f"neg{cat}",
-                         "in_train": " ".join(text.lower().split()) in in_train})
+            add(text, unknown, "neg_" + stratum_of(text))
 
-    if not kept:
-        raise SystemExit(f"nothing usable in {a.raw}")
+    if not rows:
+        raise SystemExit("nothing ingested -- are the raw files in data/eval_raw/?")
 
-    dev, locked = stratified_halves(kept, lambda r: r["stratum"], a.seed)
-    for r in dev:
-        r["locked"] = False
-    for r in locked:
-        r["locked"] = True
+    # --- stratified split -----------------------------------------------------
+    # Same composition in both halves, so a dev-minus-locked gap after tuning
+    # measures overfitting rather than a difference in what the halves contain.
+    rng = random.Random(a.seed)
+    by_stratum: dict[str, list[dict]] = {}
+    for r in rows:
+        by_stratum.setdefault(r["stratum"], []).append(r)
+    new_dev, new_locked = [], []
+    for _, group in sorted(by_stratum.items()):
+        rng.shuffle(group)
+        half = len(group) // 2
+        new_dev += group[:half]
+        new_locked += group[half:]
 
-    for name, chunk in (("gemini2_dev", dev), ("gemini2_locked", locked)):
+    in_train = train_texts()
+    for half, name, old in ((new_dev, "v1_dev", "v1_gemini2_dev"),
+                            (new_locked, "v1_locked", "v1_gemini2_locked")):
+        locked = name.endswith("locked")
+        for r in half:
+            r["locked"] = locked
+            r["in_train"] = r["text"].lower().strip() in in_train
+        carried = [json.loads(l) for l in (OUT / f"{old}.jsonl").open()]
+        merged = carried + half
         with (OUT / f"{name}.jsonl").open("w") as fh:
-            for r in chunk:
+            for r in merged:
                 fh.write(json.dumps(r) + "\n")
-    (OUT / "gemini2_review.txt").write_text("\n".join(quarantine))
+        pos = sum(1 for r in merged if r["action"] != "unknown")
+        print(f"{name:<12} {len(merged):5,} rows  ({pos} in-domain / "
+              f"{len(merged) - pos} refusals)   +{len(half)} new")
 
-    def summarise(label: str, chunk: list[dict]) -> None:
-        pos = [r for r in chunk if r["action"] != "unknown"]
-        neg = [r for r in chunk if r["action"] == "unknown"]
-        leak = sum(r["in_train"] for r in chunk)
-        print(f"\n{label}: {len(chunk)} rows  "
-              f"({len(pos)} in-domain / {len(neg)} refusals)  "
-              f"verbatim in train: {leak}")
-        for act, n in Counter(r["action"] for r in pos).most_common():
-            print(f"    {act:<8} {n}")
-
-    print(f"parsed {stats['indomain_raw']} in-domain and "
-          f"{stats['offdomain_raw']} off-domain raw lines")
-    print(f"  duplicates dropped     {stats['duplicate']}")
-    print(f"  malformed annotations  {stats['indomain_invalid']}")
-    print(f"  gold disagreements     {stats['indomain_review']}")
-    print(f"  refusals that were not {stats['offdomain_rejected']}")
-    summarise("dev   ", dev)
-    summarise("locked", locked)
-    print(f"\nwrote {OUT}/gemini2_{{dev,locked}}.jsonl")
-    print(f"      {OUT}/gemini2_review.txt  -- {len(quarantine)} items to eyeball")
-    print("\nlocked rows are scored but not diagnosed: evaluate.py will not "
-          "print their failures without --unlock.")
+    (OUT / "v1_batch_review.txt").write_text("\n".join(review))
+    print(f"\nnew rows {len(rows):,}   dropped {dict(dropped)}")
+    print("by stratum:")
+    for k, v in Counter(r["stratum"] for r in rows).most_common():
+        print(f"  {k:<16}{v:5,}")
+    print(f"\nreview: {len(review)} lines -> {OUT}/v1_batch_review.txt")
+    print("Read it. That is reading *gold*, not model failures -- it does not "
+          "spend the locked half.")
 
 
 if __name__ == "__main__":

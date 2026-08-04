@@ -244,6 +244,23 @@ def validate(f: Frame) -> None:
         if not cond:
             raise ParseError(f"{a.value}: {msg}")
 
+    # Timing is optional for blink and seq. "chase 2 3 4 5" specifies none, and
+    # gpio_control.c already has defaults (500ms blink / 200ms sequence, count 0)
+    # -- so an omitted slot means "device default", not a malformed command.
+    #
+    # A count with no rate is legal: "blink pin 4 five times" means five cycles
+    # at the default rate, which is unambiguous. It used to be rejected, and the
+    # model answered it by inventing a 100ms rate and running forever -- a number
+    # nobody said, and the wrong end condition. A *rate* with no count stays
+    # illegal, because that would discard a number the speaker did say.
+    def timing_ok() -> None:
+        need(not (f.interval_ms is not None and f.count is None),
+             "a rate needs a count")
+
+    # Every action that takes a pin takes a *list* of pins. The asymmetry was
+    # the bug class: `set` accepted one target, `read` and `blink` one, `stop`
+    # one, and each of those limits produced a different silent failure when a
+    # speaker named two. Uniformity is the fix, not four separate patches.
     if a is Action.SET:
         # Several pins at one level is ordinary speech -- "turn on pins 4, 5 and
         # 6" -- and v0 could not say it. One target was not a considered choice,
@@ -261,25 +278,26 @@ def validate(f: Frame) -> None:
         need(f.level is not None, "needs a level")
         need(f.interval_ms is None and f.count is None, "takes no timing")
     elif a is Action.READ:
-        need(n == 1 and not has_all, "needs exactly one concrete target")
+        need(n >= 1 and not has_all, "needs at least one concrete target")
         need(f.level is None, "takes no level")
-    # Timing is optional for blink and seq. "chase 2 3 4 5" specifies none, and
-    # gpio_control.c already has defaults (500ms blink / 200ms sequence, count 0)
-    # -- so an omitted slot means "device default", not a malformed command.
     elif a is Action.BLINK:
-        need(n == 1, "needs exactly one target")
-        need((f.interval_ms is None) == (f.count is None),
-             "interval and count are specified together or not at all")
+        need(n >= 1, "needs at least one target")
+        need(not (has_all and n > 1), "<all> is the whole board, not a list item")
+        timing_ok()
     elif a is Action.SEQ:
         # Only the lower bound is structural: a chase of one pin is not a chase.
         # The upper bound is how many the hardware will run, so it moved to
         # range_check().
         need(n >= 2, "needs at least 2 targets")
         need(not has_all, "cannot chase <all>")
-        need((f.interval_ms is None) == (f.count is None),
-             "interval and count are specified together or not at all")
+        timing_ok()
     elif a is Action.STOP:
-        need(n <= 1, "takes at most one target")
+        # Zero targets means everything. Any other number is a list of pins to
+        # stop -- "stop pins 4 and 5" used to be unrepresentable and came back
+        # as <seq> pin4 pin5, which *started* an animation instead of ending
+        # one. The most dangerous shape found so far: not a wrong pin, a wrong
+        # verb, from the one command a user reaches for when something is wrong.
+        need(not has_all, "<stop> with no targets already means everything")
         need(f.level is None and f.interval_ms is None, "takes no slots")
 
     if f.count is not None:
@@ -405,6 +423,23 @@ def sample_target(rng: random.Random, pins: list[int], *,
     return Pin(sample_pin_number(rng, pins))
 
 
+# How often a pin-taking action names more than one. Low, because most commands
+# really do address a single pin -- but never zero, which is what v0 trained and
+# what made "stop pins 4 and 5" come back as a chase.
+MULTI_PIN_PROB = 0.18
+
+
+def _pin_list(rng: random.Random, pins: list[int], *,
+              allow_all: bool = True) -> list[Target]:
+    """One target, or several pins. Shared by set/read/blink/stop so the four
+    cannot drift apart again."""
+    t = sample_target(rng, pins, allow_all=allow_all)
+    if isinstance(t, All) or rng.random() >= MULTI_PIN_PROB:
+        return [t]
+    n = rng.randint(2, MAX_SEQ_PINS)
+    return [Pin(sample_pin_number(rng, pins)) for _ in range(n)]
+
+
 # Weighted so the corpus is not dominated by the rarest actions. `set` is what
 # people actually type. `alias`'s v0 share is redistributed rather than kept:
 # there is no alias action in v1.
@@ -423,22 +458,20 @@ def sample_frame(rng: random.Random, pins: list[int] = PINS_S3) -> Frame:
     if action is Action.SET:
         level = rng.choices([Level.HIGH, Level.LOW, Level.TOGGLE],
                             weights=[45, 45, 10])[0]
-        t = sample_target(rng, pins)
-        if isinstance(t, All) or rng.random() < 0.82:
-            targets = [t]                    # the common case: one target
-        else:
-            n = rng.randint(2, MAX_SEQ_PINS)
-            targets = [Pin(sample_pin_number(rng, pins)) for _ in range(n)]
-        f = Frame(action, targets, level=level)
+        f = Frame(action, _pin_list(rng, pins), level=level)
 
     elif action is Action.READ:
-        f = Frame(action, [sample_target(rng, pins, allow_all=False)])
+        f = Frame(action, _pin_list(rng, pins, allow_all=False))
 
     elif action is Action.BLINK:
-        timed = rng.random() < 0.78          # ~1 in 5 says just "blink pin 4"
-        f = Frame(action, [sample_target(rng, pins)],
-                  interval_ms=sample_interval(rng) if timed else None,
-                  count=sample_count(rng) if timed else None)
+        roll = rng.random()
+        if roll < 0.70:                      # a rate, and a count with it
+            iv, ct = sample_interval(rng), sample_count(rng)
+        elif roll < 0.84:                    # "blink pin 4 five times"
+            iv, ct = None, rng.randint(1, 20)
+        else:                                # "blink pin 4" -- device default
+            iv, ct = None, None
+        f = Frame(action, _pin_list(rng, pins), interval_ms=iv, count=ct)
 
     elif action is Action.SEQ:
         # Over-long chases stop at +4. Past that the utterance runs beyond
@@ -466,7 +499,9 @@ def sample_frame(rng: random.Random, pins: list[int] = PINS_S3) -> Frame:
                   count=sample_count(rng) if timed else None)
 
     else:  # STOP
-        targets = [] if rng.random() < 0.45 else [sample_target(rng, pins, allow_all=False)]
+        # No target means everything, which is most of what people say.
+        targets = ([] if rng.random() < 0.45
+                   else _pin_list(rng, pins, allow_all=False))
         f = Frame(action, targets)
 
     validate(f)

@@ -104,6 +104,96 @@ TRUNCATED = [
 ]
 
 
+def pin_range(rng: random.Random) -> str:
+    """"Turn on pins 4-8." A range of pins, which the grammar cannot express.
+
+    Refused rather than expanded, and the reason is what it did instead: "pins
+    4-8" came back as **pin 48** -- the two digits read as one number, and 48 is
+    a real pin on this board. "pins 4 to 8" fared no better, turning on 4 and 8
+    and skipping everything between. Expanding ranges is a reasonable feature
+    and belongs in a grammar change (a <range> slot the runtime enumerates), not
+    in a model left to guess.
+    """
+    lo = rng.choice(PINS_S3[:-4])
+    hi = lo + rng.randint(2, 8)
+    verb = rng.choice(["turn on", "turn off", "switch on", "switch off",
+                       "blink", "toggle", "chase", "cycle through", "read",
+                       "set high", "sweep across", "flash"])
+    ref = rng.choice([f"pins {lo}-{hi}", f"pins {lo} to {hi}",
+                      f"pins {lo} through {hi}", f"pin {lo} to pin {hi}",
+                      f"gpio {lo}-{hi}", f"{lo}-{hi}",
+                      f"pins {lo} thru {hi}", f"the range {lo} to {hi}"])
+    return f"{verb} {ref}"
+
+
+def exception_set(rng: random.Random) -> str:
+    """"Turn on all pins except 4 and 5." A set minus a subset.
+
+    The grammar has <all> or an explicit list, and nothing in between. This was
+    refused before it was ever trained -- purely because the phrasing was out of
+    distribution -- and the moment multi-pin commands were added properly,
+    <all> became the better match and "all pins except 4 and 5" started turning
+    on 4 and 5. The exact opposite of the request, from a shape that had one
+    example in 147,000 rows.
+
+    Accidental correctness is not correctness. It survives until the
+    distribution moves, and then it fails in whichever direction the model
+    happens to lean.
+    """
+    ps = rng.sample(PINS_S3, rng.randint(1, 3))
+    lst = (str(ps[0]) if len(ps) == 1
+           else ", ".join(map(str, ps[:-1])) + f" and {ps[-1]}")
+    head = rng.choice(["all pins", "everything", "every pin", "all the pins",
+                       "all gpio", "all of them"])
+    verb = rng.choice(["turn on", "turn off", "switch on", "switch off",
+                       "blink", "toggle", "stop"])
+    return rng.choice([
+        f"{verb} {head} except {'pin ' if rng.random() < 0.5 else ''}{lst}",
+        f"{verb} {head} but not {lst}",
+        f"{verb} {head} apart from pin {ps[0]}",
+        f"{verb} {head} other than pin {ps[0]}",
+        f"{verb} everything but pin {ps[0]}",
+        f"{verb} all but pin {ps[0]}",
+        f"{verb} the rest of the pins",
+        f"{verb} the other pins",
+        f"{verb} the remaining pins",
+        f"{verb} the first {rng.randint(2, 5)} pins",
+        f"{verb} the last {rng.randint(2, 5)} pins",
+        f"{verb} the odd pins", f"{verb} the even pins",
+        f"{verb} every other pin",
+    ])
+
+
+def duration(rng: random.Random) -> str:
+    """"Blink pin 4 for 10 seconds." A duration as an end condition.
+
+    docs/GRAMMAR.md has always listed this as unexpressible -- the tool counts
+    cycles, not time -- but nothing trained the refusal, so the model read "10
+    seconds" as a 1000ms rate and blinked forever. Wrong rate and wrong end
+    condition, from a sentence that names neither.
+    """
+    p = rng.choice(PINS_S3)
+    # Small second-counts on purpose. "for 10 seconds" collides head-on with
+    # interval_phrase's "every 10 seconds" (10,000ms) -- the only thing telling
+    # them apart is `for` against `every`, and with the tail weighted to 90 the
+    # model never saw enough of the overlap. It answered "blink pin 4 for 10
+    # seconds" with a 1000ms rate running forever.
+    n = rng.randint(2, 12) if rng.random() < 0.6 else rng.randint(2, 90)
+    unit = rng.choice(["seconds", "secs", "minutes", "mins", "hours",
+                       "seconds", "secs"])
+    verb = rng.choice(["blink", "flash", "strobe", "pulse"])
+    return rng.choice([
+        f"{verb} pin {p} for {n} {unit}",
+        f"{verb} pin {p} for the next {n} {unit}",
+        f"turn on pin {p} for {n} {unit}",
+        f"keep pin {p} high for {n} {unit}",
+        f"{verb} pin {p} over the next {n} {unit}",
+        f"run pin {p} for {n} {unit}",
+        f"{verb} pin {p} for half a minute",
+        f"turn on pin {p} for a couple of {unit}",
+    ])
+
+
 def relative_reference(rng: random.Random) -> str:
     """"Turn *that* one off." Every utterance is independent by design, so
     there is no previous turn to refer to -- deliberately unsupported, see
@@ -395,10 +485,15 @@ _BANKS = [
 ]
 # out_of_range's share is not redistributed here -- it moved to the positives
 # entirely (frames.sample_pin_number / sample_interval).
-_GEN = [(unsupported_capability, 20, "imperative"),
-        (conditional_wrapper, 14, "imperative"),
-        (offdomain_question, 12, "question"),
-        (relative_reference, 10, "imperative"),
+_GEN = [(unsupported_capability, 18, "imperative"),
+        (conditional_wrapper, 12, "imperative"),
+        (offdomain_question, 10, "question"),
+        (relative_reference, 8, "imperative"),
+        # Weighted like the near-misses they are: both were silent wrong actions
+        # before, not merely unhandled input.
+        (pin_range, 10, "imperative"),
+        (duration, 12, "imperative"),
+        (exception_set, 10, "imperative"),
         (gibberish, 4, "terse")]
 
 

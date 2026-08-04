@@ -111,14 +111,22 @@ class Speaker:
                  "the lot", "everything at once"])
         return self.pin(t.n)
 
+    # What joins the last two items of a list. "and" is not the only one people
+    # write, and the others were absent: "turn on pin 4 then pin 5" came back as
+    # pin 4 alone, dropping the pin after the unknown connector. Ordering words
+    # are included deliberately -- for a level change the order is cosmetic, so
+    # the right reading of "4 then 5" is both, not the first one.
+    _JOIN = ["and", "and", "and", "then", "and then", "plus", "as well as", "&"]
+
     def target_list(self, ts: list[Target]) -> str:
         rng = self.rng
+        join = rng.choice(self._JOIN)
         if all(isinstance(t, Pin) for t in ts) and rng.random() < 0.55:
             ns = [t.n for t in ts]
             head = rng.choice(["pins", "pins", "gpio", "gpios", "the pins"])
             style = rng.random()
             if style < 0.4:
-                body = ", ".join(str(n) for n in ns[:-1]) + f" and {ns[-1]}"
+                body = ", ".join(str(n) for n in ns[:-1]) + f" {join} {ns[-1]}"
             elif style < 0.7:
                 body = ", ".join(str(n) for n in ns)
             else:
@@ -127,7 +135,7 @@ class Speaker:
 
         refs = [self.target(t) for t in ts]
         if rng.random() < 0.75:
-            return ", ".join(refs[:-1]) + f" and {refs[-1]}"
+            return ", ".join(refs[:-1]) + f" {join} {refs[-1]}"
         return ", ".join(refs)
 
 
@@ -369,16 +377,26 @@ def _terse(f: Frame, rng: random.Random, sp: Speaker) -> str | None:
     a = f.action
     if a is Action.SET and f.level is not Level.TOGGLE:
         w = ("on", "high", "1") if f.level is Level.HIGH else ("off", "low", "0")
-        lvl, r = rng.choice(w), _set_ref(f, sp)
+        lvl, r = rng.choice(w), _ref(f, sp)
         return f"{lvl} {r}" if rng.random() < 0.5 else f"{r} {lvl}"
     if a is Action.SET:
-        return f"toggle {_set_ref(f, sp)}"
+        return f"toggle {_ref(f, sp)}"
     if a is Action.READ:
-        r = sp.target(f.targets[0])
+        r = _ref(f, sp)
         return rng.choice([f"read {r}", f"{r} state", f"{r} status", f"check {r}"])
     if a is Action.BLINK:
-        r = sp.target(f.targets[0])
+        r = _ref(f, sp)
         if f.interval_ms is None:
+            # A count with no rate: "blink 4 five times". The count must still
+            # be said -- it is the only number in the frame -- and it needs a
+            # marker. A bare trailing number ("blink pin 9 10") cannot be told
+            # from part of the target, and an ambiguous label teaches the model
+            # that the boundary is guesswork.
+            if f.count:
+                head = rng.choice(["blink", "flash"])
+                return rng.choice([f"{head} {r} x{f.count}",
+                                   f"{head} {r} {f.count} times",
+                                   f"{head} {r} count {f.count}"])
             return f"{rng.choice(['blink', 'flash', 'strobe'])} {r}"
         head = rng.choice(["blink", "flash"])
         ct = "" if f.count == 0 else f" {f.count}"
@@ -401,13 +419,14 @@ def _terse(f: Frame, rng: random.Random, sp: Speaker) -> str | None:
         ct = "" if f.count == 0 else f" {f.count}"
         return f"{head} {body} {f.interval_ms}ms{ct}"
     if a is Action.STOP:
-        return (f"stop {sp.target(f.targets[0])}" if f.targets
+        return (f"stop {_ref(f, sp)}" if f.targets
                 else rng.choice(["stop", "stop all", "halt", "kill chase"]))
     return None
 
 
-def _set_ref(f: Frame, sp: Speaker) -> str:
-    """The target phrase for a `set`, which may now name several pins."""
+def _ref(f: Frame, sp: Speaker) -> str:
+    """The target phrase. Every pin-taking action may name several pins, so all
+    of them go through here rather than reaching for targets[0]."""
     return (sp.target(f.targets[0]) if len(f.targets) == 1
             else sp.target_list(f.targets))
 
@@ -431,11 +450,11 @@ def realize(f: Frame, rng: random.Random) -> str:
         else:
             bank = ON_T if f.level is Level.HIGH else OFF_T
             mood = "imperative"
-        s = bank[rng.randrange(len(bank))].format(r=_set_ref(f, sp))
+        s = bank[rng.randrange(len(bank))].format(r=_ref(f, sp))
         return _decorate(s + sp.where(), rng, mood)
 
     if a is Action.READ:
-        r = sp.target(f.targets[0])
+        r = _ref(f, sp)
         kind = rng.random()
         if kind < 0.45:
             return _decorate(rng.choice(READ_Q_T).format(r=r) + sp.where(),
@@ -446,7 +465,7 @@ def realize(f: Frame, rng: random.Random) -> str:
         return _decorate(rng.choice(READ_FRAG_T).format(r=r), rng, "bare")
 
     if a is Action.BLINK:
-        s = rng.choice(BLINK_T).format(r=sp.target(f.targets[0]))
+        s = rng.choice(BLINK_T).format(r=_ref(f, sp))
         return _decorate(_with_timing(s, f, rng, "blinks"), rng)
 
     if a is Action.SEQ:
@@ -454,7 +473,7 @@ def realize(f: Frame, rng: random.Random) -> str:
         return _decorate(_with_timing(s, f, rng, "cycles"), rng)
 
     # STOP
-    s = (rng.choice(STOP_ONE_T).format(r=sp.target(f.targets[0]))
+    s = (rng.choice(STOP_ONE_T).format(r=_ref(f, sp))
          if f.targets else rng.choice(STOP_ALL_T))
     return _decorate(s, rng)
 
@@ -462,8 +481,11 @@ def realize(f: Frame, rng: random.Random) -> str:
 def _with_timing(s: str, f: Frame, rng: random.Random, unit: str) -> str:
     """Attach interval and count. Order varies because both orders are natural
     and a fixed one would let the model key on position instead of meaning."""
-    if f.interval_ms is None:            # unspecified: device default applies
-        return s
+    if f.interval_ms is None:
+        # No rate. If a count was given it is the only number in the frame, so
+        # it has to be said -- a silent one would be a label asking the model to
+        # invent it. With neither, the device default applies.
+        return s if not f.count else f"{s} {count_phrase(f.count, rng, unit)}"
     iv = interval_phrase(f.interval_ms, rng)
     ct = count_phrase(f.count, rng, unit)
     if not ct:

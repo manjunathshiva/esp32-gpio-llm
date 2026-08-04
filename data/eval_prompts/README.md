@@ -1,4 +1,65 @@
-# Wider eval batch — protocol
+# v1 batch — protocol
+
+The sets below were built for the v0 grammar and are described further down.
+This section is the v1 batch, and the reason it exists is not that the old one
+is wrong — it is that it cannot see far enough.
+
+**Why another round.** After migration the v1 sets hold 95 and 96 in-domain
+items. That is smaller than the `gemini` set abandoned for being too small, and
+at n=96 no corpus change can be told from seed noise. Worse, the migrated sets
+are structurally blind: they were collected against v0, so they contain no
+utterance v0 could not express — no multi-pin commands, and no out-of-range
+values, because v0 labelled those `<unknown>`. Both bugs found in v1 (multi-pin
+`set`, then multi-pin `stop` answering with `<seq>`) were invisible to them and
+had to be found by hand with LEDs attached.
+
+**Existing rows stay.** Everything already in `v1_*.jsonl` remains valid — a
+refusal is still a refusal. This batch *adds*, so the off-domain side grows from
+657 to roughly 1,150 rather than being rebuilt.
+
+## Runs
+
+Six, each in a **fresh** chat. Fresh matters: a second turn in the same chat
+sees the first 200 lines and steers away from them, which correlates the runs
+and breaks the assumption that the two halves are exchangeable.
+
+| prompt | runs | lines each | produces |
+|---|---:|---:|---|
+| `v1_indomain.md` | 2 | 200 | ordinary commands, incl. multi-pin and count-only |
+| `v1_numeric.md` | 2 | 200 | out-of-range pins, out-of-bounds rates, over-long chases |
+| `v1_offdomain.md` | 2 | 260 | 11 refusal categories |
+
+Save to `data/eval_raw/v1_indomain_{1,2}.txt`, `v1_numeric_{1,2}.txt`,
+`v1_offdomain_{1,2}.txt`, then run the ingest.
+
+Target after ingest, per half: ~395 in-domain (of which ~150 numeric-edge) and
+~575 off-domain. That is enough to resolve the substitution gate, which asks for
+n ≥ 300 and currently has 21.
+
+## `v1_numeric.md` is the one that did not exist before
+
+Out-of-range values are **in-domain** in v1: the model emits the number as
+spoken and `range_check` refuses it. So they need gold *frames*, not an
+`<unknown>` label, and the prompt says so three times because it is the natural
+thing for an annotator to get wrong — "switch off pin 100" invites the helpful
+correction to pin 10, which is precisely the bug being measured.
+
+## What `ingest_eval.py` needs before this can land
+
+It was written for the v0 format and will reject or mislabel these files:
+
+- `alias_name` is gone; `targets` are integers or the literal `"ALL"`, never
+  name strings
+- multi-pin targets are ordinary now, for `set`/`read`/`blink`/`stop`
+- a count with no rate is legal and must not be quarantined
+- numeric-edge rows must be accepted as **positives** — the current code would
+  see an out-of-range pin and treat the row as unlabellable
+- `cross_check` can widen: it was restricted to pin-numbered utterances because
+  the rule labeller misreads names, and in v1 every in-domain utterance is
+  pin-numbered
+
+The stratified dev/locked split, the `locked` flag, the `in_train` check and the
+review-file discipline all carry over unchanged.
 
 ## Why
 

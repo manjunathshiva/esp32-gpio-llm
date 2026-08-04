@@ -205,32 +205,40 @@ Verdict gpio_execute(const Command *c, char *output, size_t out_n)
     }
 
     case ACT_READ: {
-        int pin = c->pins[0];
-        pin_out(pin);
-        snprintf(output, out_n, "pin %d is %s", pin,
-                 gpio_get_level((gpio_num_t)pin) ? "high" : "low");
+        int k = 0;
+        for (int i = 0; i < c->n_pins; i++) {
+            pin_out(c->pins[i]);
+            k += snprintf(output + k, out_n - k, k ? ", pin %d is %s" : "pin %d is %s",
+                          c->pins[i],
+                          gpio_get_level((gpio_num_t)c->pins[i]) ? "high" : "low");
+            if (k >= (int)out_n) break;
+        }
         return VERDICT_EXECUTE;
     }
 
     case ACT_BLINK: {
         if (c->all) { snprintf(output, out_n, "cannot blink every pin at once");
                       return VERDICT_UNKNOWN; }
-        int pin = c->pins[0];
+        /* One slot per pin: each blinks on its own timer, so "blink pins 4 and
+         * 5 every 500ms" is two independent blinkers rather than a chase. */
         int ms = (interval == CMD_UNSET) ? DEFAULT_BLINK_MS : interval;
-        anim_slot_t *s = find_slot_by_pin(pin);
-        if (!s) s = find_free_slot();
-        if (!s) { snprintf(output, out_n, "all %d animation slots are busy",
-                           MAX_ANIM_SLOTS); return VERDICT_UNKNOWN; }
-        slot_stop(s);
-        pin_out(pin);
-        s->mode = ANIM_BLINK; s->pins[0] = pin; s->pin_count = 1;
-        s->level = 0; s->cycles_done = 0; s->cycles_total = count;
-        gpio_set_level((gpio_num_t)pin, 0);
-        ensure_slot_timer(s);
-        esp_timer_start_periodic(s->timer, (uint64_t)ms * 1000);
-        if (count) snprintf(output, out_n, "blinking pin %d every %dms, %d times",
-                            pin, ms, count);
-        else       snprintf(output, out_n, "blinking pin %d every %dms", pin, ms);
+        for (int i = 0; i < c->n_pins; i++) {
+            int pin = c->pins[i];
+            anim_slot_t *s = find_slot_by_pin(pin);
+            if (!s) s = find_free_slot();
+            if (!s) { snprintf(output, out_n, "all %d animation slots are busy",
+                               MAX_ANIM_SLOTS); return VERDICT_UNKNOWN; }
+            slot_stop(s);
+            pin_out(pin);
+            s->mode = ANIM_BLINK; s->pins[0] = pin; s->pin_count = 1;
+            s->level = 0; s->cycles_done = 0; s->cycles_total = count;
+            gpio_set_level((gpio_num_t)pin, 0);
+            ensure_slot_timer(s);
+            esp_timer_start_periodic(s->timer, (uint64_t)ms * 1000);
+        }
+        int k = snprintf(output, out_n, "blinking %d pin%s every %dms",
+                         c->n_pins, c->n_pins > 1 ? "s" : "", ms);
+        if (count) snprintf(output + k, out_n - k, ", %d times", count);
         return VERDICT_EXECUTE;
     }
 
@@ -264,10 +272,15 @@ Verdict gpio_execute(const Command *c, char *output, size_t out_n)
         if (c->n_pins == 0) {
             gpio_stop_all();
             snprintf(output, out_n, "stopped");
-        } else {
-            anim_slot_t *s = find_slot_by_pin(c->pins[0]);
+            return VERDICT_EXECUTE;
+        }
+        int k = 0;
+        for (int i = 0; i < c->n_pins; i++) {
+            anim_slot_t *s = find_slot_by_pin(c->pins[i]);
             if (s) slot_stop(s);
-            snprintf(output, out_n, "stopped pin %d", c->pins[0]);
+            k += snprintf(output + k, out_n - k, k ? ", %d" : "stopped pin %d",
+                          c->pins[i]);
+            if (k >= (int)out_n) break;
         }
         return VERDICT_EXECUTE;
     }
