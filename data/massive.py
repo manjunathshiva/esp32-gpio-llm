@@ -27,11 +27,15 @@ labelled**:
   3. `mine_onoff()` -- on/off phrasings dumped for a human to fold into
      realize.py's banks. Lexicon, not labels.
 
-Attribution is required by CC-BY-4.0. The *training* corpus is gitignored and
-rebuilt from this script, so the repo ships the recipe rather than the data.
-The held-out sets under `data/eval/` are the exception and are committed: they
-are the measurement instrument, and a number nobody else can reproduce is not
-worth much. See `data/eval/README.md` for the attribution that requires.
+Attribution is required by CC-BY-4.0. Neither the training corpus nor the
+held-out sets are committed -- both are rebuilt from this script -- so the repo
+ships the recipe rather than the data, and no MASSIVE-derived row is
+redistributed here. The credit in README.md stands regardless: the recipe is
+derived from the dataset even when the rows are not shipped.
+
+The cost of not publishing the held-out sets is that the numbers in README.md
+are not independently reproducible. That is a deliberate trade: the locked half
+is only held-out while it is unseen.
 """
 
 from __future__ import annotations
@@ -83,7 +87,7 @@ def _command_openings() -> tuple[str, ...]:
     filter cannot drift when a verb is added there.
 
     A row that opens with one of these is a structurally valid command whose
-    object happens to be a device we do not control. Per docs/GRAMMAR.md it must
+    object happens to be a device we do not control. Per data/frames.py it must
     be **dropped**, never labelled <unknown>: the model decides structure, and
     the alias table decides whether the target exists. Teaching it to reject
     "turn on my playlist" also teaches it to reject "turn on my aquarium pump",

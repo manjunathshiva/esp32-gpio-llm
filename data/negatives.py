@@ -14,14 +14,14 @@ ones that decide the false-accept rate.
 transcribes the number and gpio_control.c refuses it. Keeping them as <unknown>
 would train the exact reflex v1 removes, so they changed side rather than being
 deleted; the sampling now happens in frames.sample_pin_number and
-frames.sample_interval. See docs/V1-SCOPE.md, "Negatives flip label".
+frames.sample_interval. See the out-of-range sampling comment in data/frames.py.
 
 **What is a negative only until v2.** name_targeted() and alias_request() are
 debt. v1 has no alias table, so a name has nothing to resolve against and
 <unknown> is the only honest answer -- but the thing being rejected is the
 *shape* (verb + noun phrase), never a particular noun, which is why names.py
 generates from a space too large to memorise. Both carry source "v1_deferred"
-so v2 drops them in one move. See docs/GRAMMAR.md on why a model that learns to
+so v2 drops them in one move. See data/frames.py on why a model that learns to
 reject nouns is a model that rejects legitimate new aliases.
 """
 
@@ -52,7 +52,7 @@ OTHER_DOMAIN = [
 ]
 # Deliberately absent: "turn on the tv", "switch off the heater" and friends.
 # Those are structurally valid commands whose target is simply not in the alias
-# table, so they must fail at resolution, not at parse. See docs/GRAMMAR.md.
+# table, so they must fail at resolution, not at parse. See data/frames.py.
 
 CHITCHAT = [
     "hello", "hi", "hey there", "good morning", "good night", "how are you",
@@ -167,7 +167,7 @@ def exception_set(rng: random.Random) -> str:
 def duration(rng: random.Random) -> str:
     """"Blink pin 4 for 10 seconds." A duration as an end condition.
 
-    docs/GRAMMAR.md has always listed this as unexpressible -- the tool counts
+    data/frames.py has always listed this as unexpressible -- the tool counts
     cycles, not time -- but nothing trained the refusal, so the model read "10
     seconds" as a 1000ms rate and blinked forever. Wrong rate and wrong end
     condition, from a sentence that names neither.
@@ -197,7 +197,7 @@ def duration(rng: random.Random) -> str:
 def relative_reference(rng: random.Random) -> str:
     """"Turn *that* one off." Every utterance is independent by design, so
     there is no previous turn to refer to -- deliberately unsupported, see
-    docs/GRAMMAR.md section 4."""
+    data/frames.py (MAX_SEQ_PINS)."""
     return rng.choice([
         "turn that one off", "turn it back on", "do that again",
         "undo that", "the other one", "same for the next pin",

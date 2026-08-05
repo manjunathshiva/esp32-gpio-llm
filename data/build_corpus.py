@@ -40,7 +40,7 @@ NEG_FRACTION = 0.30
 # `v1_deferred` is capability this device will have in v2, not a permanent
 # refusal. It is a separate entry rather than folded into `synthetic` so that
 # dropping it is a one-line change and so its share is visible in the build
-# report -- see negatives.sample_deferred and docs/V1-SCOPE.md.
+# report -- see negatives.sample_deferred and README.md.
 NEG_MIX = {"massive_near": 0.16, "massive_far": 0.18, "synthetic": 0.24,
            "truncated": 0.12, "v1_deferred": 0.30}
 

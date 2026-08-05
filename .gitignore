@@ -37,3 +37,22 @@ firmware/device/espcontrol/bpe.h
 # release artifacts
 dist/
 firmware/device/espcontrol/build/
+
+# Held-out sets, the raw model dumps they were built from, and the tooling that
+# labels them. Kept locally, not published: the locked half only stays held-out
+# while it is unseen, and publishing it is the one way to guarantee a future
+# model has read it. The corpus generators above (frames.py, realize.py,
+# negatives.py, build_corpus.py) do stay tracked -- gen_assets.py and
+# c_check.py import frames, so release.sh cannot run without them.
+data/eval/
+data/eval_raw/
+data/eval_prompts/
+data/eval_human.md
+data/label_eval.py
+data/ingest_eval.py
+data/migrate_eval.py
+data/audit_corpus.py
+
+# Working notes and drafts.
+docs/
+ai_studio_code.txt

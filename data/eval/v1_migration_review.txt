@@ -1,2 +1,0 @@
-[gemini] pulse pin 48 with smooth dimming
-    rules read a runnable command in a v0 refusal: <blink> <pin> 4 8 <end>

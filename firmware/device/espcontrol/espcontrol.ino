@@ -9,7 +9,7 @@
 // 898 KB and the build stays fast. See README.md for the two flash commands.
 //
 // v1 understands pin numbers only. "turn on the desk lamp" answers <unknown> by
-// design, not by failure -- there is no alias table yet. See docs/V1-SCOPE.md.
+// design, not by failure -- there is no alias table yet. See README.md.
 
 #include "esp_partition.h"
 #include "esp_heap_caps.h"

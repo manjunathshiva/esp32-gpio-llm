@@ -4,20 +4,20 @@ A natural-language interface to GPIO pins that runs entirely on an ESP32. Type
 *"blink pin 4 twice a second"* and the pin blinks. There is no network of any
 kind — no WiFi, no cloud, no API key.
 
-The language model is ~230 KB and lives in the firmware binary.
+The language model is 312K parameters — a 1.2 MB fp32 payload in its own flash
+partition, mapped and read in place.
 
 **Status: running on an ESP32-S3.** Typed commands drive real pins; out-of-range
 input is refused by the hardware layer. Latency 113 ms – 2 s per command.
-Held-out exact-match is 95.8% ±1.0 and substitution 0 across three seeds, but
-false-accept (2.8%) and pin-copy (97.2%) still miss their gates, and the
-in-domain set is only 96 items — too small to resolve further tuning, so a wider
-one comes before more corpus work. Numbers and caveats:
-[`docs/V1-SCOPE.md`](docs/V1-SCOPE.md). Flashing:
+On a 466-item held-out set, three seeds: exact-match 90.4% ±2.0, false-accept
+5.0% ±1.7, pin copy 93.9% ±1.7, substitution 2.8% ±1.5. The gates are >95% and
+<2%, so **two of the four are not met** and this is not finished. The known
+cause of the largest remaining bucket is a corpus hole, not model capacity: see
+[Where it falls down](#where-it-falls-down). Flashing:
 [`firmware/device/README.md`](firmware/device/README.md).
 
 **v1 targets pins by number.** Names and aliases — *"blink the desk lamp"* — are
-deferred to v2 and currently return `<unknown>`; see
-[`docs/V1-SCOPE.md`](docs/V1-SCOPE.md) for why, and what it bought.
+deferred to v2 and currently return `<unknown>`.
 
 ## Quickstart — flash it and talk to it
 
@@ -62,7 +62,7 @@ Building from source, and what to do when it misbehaves:
 
 ## What it is
 
-A ~230K-parameter transformer, trained from scratch on synthetic pin-control
+A 312K-parameter transformer, trained from scratch on synthetic pin-control
 commands, that maps English onto a small symbol grammar. The runtime assembles
 the symbols into a command struct and drives the pin. The model never writes
 JSON, so malformed output is not representable.
@@ -121,8 +121,8 @@ femtoclaw has its own upstream, so the credit does not stop there — see
 That validation is kept deliberately intact, and v1 made it load-bearing rather
 than a second opinion. It checks the pin allowlist and
 `interval_ms ∈ [50,10000]` independently of the model, so a misparse is refused
-by the hardware layer rather than trusted. It is what makes a 230 KB model safe
-to ship with no fallback.
+by the hardware layer rather than trusted. It is what makes a 312K-parameter
+model safe to ship with no fallback.
 
 The first grammar quietly defeated it. Giving each allowlisted pin its own
 symbol made an illegal pin *unrepresentable*, which sounds like a stronger
@@ -130,8 +130,32 @@ guarantee and is a weaker one: a model that cannot say "pin 100" does not
 refuse, it says the nearest thing it can. On held-out data *"switch off pin
 100"* came back as pin 10 — a real pin, switched off, and by the time the frame
 reached the allowlist it was already valid. v1 emits pin numbers digit by digit
-so the check has something to reject. See [`docs/GRAMMAR.md`](docs/GRAMMAR.md)
-§1.
+so the check has something to reject. `data/frames.py` is the grammar: the
+symbol list, what `validate()` accepts, and what `range_check()` refuses.
+`firmware/common/command.h` mirrors it on the device side.
+
+## Where it falls down
+
+Two gates are unmet, and the largest single bucket has a known cause. Splitting
+the held-out interval rows by what the model has to do with the number, three
+seeds pooled:
+
+| what the utterance asks for | n | correct |
+|---|---:|---:|
+| copy a number that is written down (`every 500ms`) | 372 | 97% |
+| convert a unit (`every 2 seconds`, `at 5Hz`) | 63 | 48% |
+| convert a unit to a 5-digit result (`every 60 seconds`) | 36 | **0%** |
+
+The last row fails the same way every time — it drops exactly one zero:
+`60 seconds → 6000`, `90 seconds → 9000`, `15 seconds → 1500`. The corpus is
+why. Out-of-range intervals are drawn uniformly, so they are almost never round
+multiples of 1000, and a "seconds" phrasing is only ever generated for a round
+value. The result is that **every unit conversion in 147,000 training rows
+resolves to 3 or 4 digits, and none to 5**. The model learned a length prior —
+pad with zeros, stop at four digits — and applies it faithfully.
+
+It is a coverage hole, not a capacity limit: digit copying is at 97% on the same
+number lengths the conversions fail on.
 
 ## Note on the dataset
 

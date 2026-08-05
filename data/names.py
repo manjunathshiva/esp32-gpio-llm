@@ -4,7 +4,7 @@ The first corpus drew every Name target from a fixed list of 36 nouns, so the
 model learned to *recognise* those 36 rather than to copy an arbitrary span. On
 held-out data it answered <unknown> to "turn on the plug" and "turn off
 warning_led" -- names it had never seen -- which is precisely the failure
-docs/GRAMMAR.md warns about: a model that rejects unfamiliar nouns will also
+data/frames.py warns about: a model that rejects unfamiliar nouns will also
 reject a legitimate alias the user just created.
 
 So names are generated compositionally from large pools, plus invented words

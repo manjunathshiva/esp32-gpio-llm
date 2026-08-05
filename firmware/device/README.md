@@ -111,7 +111,7 @@ no SIMD, so the obvious lever if this needs to be faster is the matvec in
 `llm.h`, not the model size.
 
 `turn on the desk lamp` is v1 behaving as designed, not failing: pin numbers
-only, names deferred to v2. See `docs/V1-SCOPE.md`.
+only, names deferred to v2. See README.md.
 
 Note the two refusals in the middle. Pin 100 and the nine-pin chase both reached
 the runtime *intact* — the chase was refused with a count of 9, not quietly

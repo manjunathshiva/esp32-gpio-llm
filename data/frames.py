@@ -8,8 +8,8 @@ The symbol encoder here and the decoder in command.h must agree exactly --
 there are no names in the token stream, only ordered slots. Change one, change
 the other. (Same contract as export.py's tensor `plan` and llm_load().)
 
-**v1 targets pins by number only.** No names, no aliases -- see docs/V1-SCOPE.md
-for why, and section "Pins are copied digits" in docs/GRAMMAR.md for the part
+**v1 targets pins by number only.** No names, no aliases -- see README.md
+for why, and the digit-wise pin comment in data/frames.py for the part
 that matters most: pin numbers are emitted digit-wise, exactly like intervals,
 and the *runtime* decides whether a number is a GPIO on this board. The model
 transcribes; it does not validate.
@@ -20,7 +20,7 @@ produce a refusal, it produces the nearest legal one. "switch off pin 100" came
 back as <set> <p10> <low>: the wrong physical pin, actuated silently. Range is
 a hardware fact, so it belongs with the hardware.
 
-See docs/GRAMMAR.md.
+See data/frames.py.
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ PINS_S3 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 PINS_WROOM = [2, 4, 5, 12, 13, 14, 15, 18, 19, 22, 23, 25, 26, 27, 32, 33]
 
 INTERVAL_MIN, INTERVAL_MAX = 50, 10000      # gpio_control.c bounds
-MAX_SEQ_PINS = 6                            # see docs/GRAMMAR.md section 4
+MAX_SEQ_PINS = 6                            # see data/frames.py (MAX_SEQ_PINS)
 
 # Longest digit run the parser will accept in any numeric slot. Not a range
 # check -- a range check has a value to report. This rejects a generation that
@@ -230,7 +230,7 @@ def from_symbols(syms: list[str]) -> Frame:
 
 
 def validate(f: Frame) -> None:
-    """Enforce the per-action shape in docs/GRAMMAR.md -- which slots an action
+    """Enforce the per-action shape in data/frames.py -- which slots an action
     takes, and how many. The sampler and the parser both go through this, so
     they cannot drift apart.
 
@@ -370,7 +370,7 @@ COMMON_COUNTS = [0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 10, 12, 20]
 # without judging it. It only learns that if out-of-range numbers are ordinary
 # things it has seen said. In v0 these were *negatives*, which trained exactly
 # the reflex being removed -- so they do not merely get deleted, they change
-# side. See docs/V1-SCOPE.md, "Negatives flip label".
+# side. See the out-of-range sampling comment in data/frames.py.
 #
 # The rate is a balance: too low and the prior stays "a number after 'pin' is
 # legal", which is the substitution bug; too high and the corpus stops looking

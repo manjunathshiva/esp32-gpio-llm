@@ -73,6 +73,13 @@ def main() -> int:
     # Newlines would break the line-based harness; there are none in the sets,
     # but a stray one would silently shift every later comparison by one.
     texts = [t for t in texts if "\n" not in t and t.strip()]
+    # The eval sets are gitignored, so a fresh clone has none of them. Without
+    # this the gate compares zero utterances and reports PASS -- a release gate
+    # that passes because it checked nothing is worse than no gate at all.
+    if not texts:
+        sys.exit(f"no utterances found for {', '.join(a.splits)} in "
+                 f"{ROOT / 'data' / 'eval'} -- the held-out sets are not "
+                 f"published; regenerate or copy them in before releasing.")
     print(f"{len(texts)} utterances from {', '.join(a.splits)}")
 
     proc = subprocess.run([BIN, a.model], input="\n".join(texts) + "\n",
