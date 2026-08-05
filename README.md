@@ -8,11 +8,12 @@ The language model is 312K parameters — a 1.2 MB fp32 payload in its own flash
 partition, mapped and read in place.
 
 **Status: running on an ESP32-S3.** Typed commands drive real pins; out-of-range
-input is refused by the hardware layer. Latency 113 ms – 2 s per command.
-On a 466-item held-out set, three seeds: exact-match 90.4% ±2.0, false-accept
-5.0% ±1.7, pin copy 93.9% ±1.7, substitution 2.8% ±1.5. The gates are >95% and
-<2%, so **two of the four are not met** and this is not finished. The known
-cause of the largest remaining bucket is a corpus hole, not model capacity: see
+input is refused by the hardware layer. Latency 150 ms – 1.5 s per command,
+measured on the board.
+
+On a 466-item held-out set, three seeds: exact-match 91.7%, false-accept 4.4%,
+pin copy 94.7%, substitution 0.8%. The gates are >95%, <2%, >99% and zero, so
+**three of the four are not met** and this is not finished. See
 [Where it falls down](#where-it-falls-down). Flashing:
 [`firmware/device/README.md`](firmware/device/README.md).
 
@@ -30,24 +31,37 @@ write it at offset 0:
 ```sh
 pip install esptool
 esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX --baud 921600 \
-  write_flash 0x0 espcontrol-esp32s3-v0.1.0.bin
+  write_flash 0x0 espcontrol-esp32s3-v0.2.1.bin
 ```
 
-Open a serial monitor at **115200** and type:
+Open a serial monitor at **115200** and type — this is a real session on the
+board, timings included:
 
 ```
 > turn on pin 4
-pin 4 high   (378ms)
+pin 4 high   (515ms)
 
-> blink pin 4 every 500ms
-blinking pin 4 every 500ms   (765ms)
+> blink pin 4 every 5 seconds 3 times
+blinking 1 pin every 5000ms, 3 times   (1155ms)
 
-> turn on pins 4, 5 and 6
-pin 4, 5, 6 high   (726ms)
+> chase pins 4 5 6 every 1 second
+chasing 3 pins every 1000ms   (1429ms)
+
+> turn on pin 4 5 and 6
+pin 4, 5, 6 high   (992ms)
 
 > switch off pin 100
-refused: pin 100 is not a GPIO on this board   (571ms)
+refused: pin 100 is not a GPIO on this board   (779ms)
+
+> blink pin 4 every 60 seconds
+refused: interval 60000ms is outside 50-10000ms   (1101ms)
 ```
+
+The last two are the design working rather than the model failing. The model
+transcribes what it heard — `100`, `60000` — digit by digit, and the hardware
+layer refuses it **by name**. An earlier grammar gave each legal pin its own
+symbol, which made "pin 100" unsayable; the model then answered with pin 10 and
+switched off a real pin, silently. See [Where it falls down](#where-it-falls-down).
 
 To see something happen, put an LED and a **220Ω–1kΩ resistor** in series
 between GPIO 4 and GND — long leg to the pin side. Never wire an LED without the
@@ -140,22 +154,37 @@ Two gates are unmet, and the largest single bucket has a known cause. Splitting
 the held-out interval rows by what the model has to do with the number, three
 seeds pooled:
 
-| what the utterance asks for | n | correct |
-|---|---:|---:|
-| copy a number that is written down (`every 500ms`) | 372 | 97% |
-| convert a unit (`every 2 seconds`, `at 5Hz`) | 63 | 48% |
-| convert a unit to a 5-digit result (`every 60 seconds`) | 36 | **0%** |
+| what the utterance asks for | n | v0.1.0 | v0.2.1 |
+|---|---:|---:|---:|
+| copy a number that is written down (`every 500ms`) | 372 | 97% | 98% |
+| convert a unit (`every 2 seconds`, `at 5Hz`) | 63 | 48% | 86% |
+| convert a unit to a 5-digit result (`every 60 seconds`) | 36 | **0%** | **94%** |
 
-The last row fails the same way every time — it drops exactly one zero:
-`60 seconds → 6000`, `90 seconds → 9000`, `15 seconds → 1500`. The corpus is
-why. Out-of-range intervals are drawn uniformly, so they are almost never round
-multiples of 1000, and a "seconds" phrasing is only ever generated for a round
-value. The result is that **every unit conversion in 147,000 training rows
-resolves to 3 or 4 digits, and none to 5**. The model learned a length prior —
-pad with zeros, stop at four digits — and applies it faithfully.
+The last row used to fail the same way every time — dropping exactly one zero:
+`60 seconds → 6000`, `90 seconds → 9000`, `15 seconds → 1500`. The corpus was
+why. Out-of-range intervals were drawn uniformly, so they almost never landed on
+a round multiple of 1000, and a "seconds" phrasing is only ever generated for a
+round value. The result was that **every unit conversion in 147,000 training
+rows resolved to 3 or 4 digits, and none to 5**. The model had learned a length
+prior — pad with zeros, stop at four digits — and applied it faithfully.
 
-It is a coverage hole, not a capacity limit: digit copying is at 97% on the same
-number lengths the conversions fail on.
+It was a coverage hole, not a capacity limit: digit copying was already at 97%
+on the very number lengths the conversions failed on. Fixing the generator
+closed it without touching the architecture, the parameter count or the training
+schedule. Three neighbouring forms turned out to have the same problem: `at 5Hz`
+occurred 3 times in the corpus (all inside refusals), `every 2 sec` and
+`every 30s` zero times, and "minutes" appeared **only** in refusals — so the
+model had learned that minutes mean "reject", which reads as caution rather than
+as a gap.
+
+What that bought, three seeds on the held-out set: substitution 2.8% → **0.8%**
+(p = 0.010). Exact-match, false-accept and pin copy moved by less than noise
+(p = 0.23, 0.42) and are not claimed as improvements.
+
+**Two gates remain unmet**: false-accept 4.4% against a <2% target, pin copy
+94.7% against >99%. The largest remaining false-accept bucket is name-addressed
+commands ("turn on the desk lamp"), which v1 defers to v2 and is supposed to
+refuse.
 
 ## Note on the dataset
 

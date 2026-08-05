@@ -11,10 +11,14 @@
 # flashes it with a single esptool command and needs no toolchain, no Python and
 # no training run.
 #
-# The three gates below are the point of this script. They are cheap, they catch
+# The four gates below are the point of this script. They are cheap, they catch
 # different things, and a release that skips them is a release nobody can trust:
 # a tokenizer mismatch or a symbols.h regenerated without a matching export
 # produces confident nonsense on device, with nothing in the logs.
+#
+# Gate 0 exists because gates 1-3 all run on the host and none of them can see
+# partitions.csv. v0.2.0 passed all three and bricked the device on its first
+# command: a 1219 KB model written into a 1024 KB partition.
 set -euo pipefail
 
 VERSION="${1:-}"
@@ -49,15 +53,38 @@ uv run python src/export.py "$RUN_TAG"
 step "generate device headers"
 uv run python src/gen_assets.py | head -2
 
-step "gate 1/3: C forward pass vs PyTorch golden"
+step "gate 0/4: model.bin fits the model partition"
+# The three gates below all run on the host, so none of them can see
+# partitions.csv -- and v0.2.0 shipped a 1219 KB model into a 1024 KB partition
+# with all three passing. esptool merge_bin writes at the offset it is told
+# regardless of where the partition ends, and the sketch mmaps only part->size,
+# so the overflow does not appear until the first forward pass touches a tensor
+# past the mapped region and the device dies with an MMU entry fault.
+PART_CSV="$ROOT/firmware/device/espcontrol/partitions.csv"
+# awk pulls the field; bash converts it. strtonum() is a gawk extension and
+# macOS ships BSD awk, so parsing the hex in awk fails on the machine this is
+# most often run from.
+PART_HEX=$(awk -F',' '/^model,/ {gsub(/[ \t]/,"",$5); print $5}' "$PART_CSV")
+[ -n "$PART_HEX" ] || { echo "no 'model' row in $PART_CSV" >&2; exit 1; }
+PART_BYTES=$((PART_HEX))
+MODEL_BYTES=$(wc -c < "$ROOT/firmware/model/model.bin" | tr -d ' ')
+printf 'model.bin %s bytes into a %s byte partition\n' "$MODEL_BYTES" "$PART_BYTES"
+if [ "$MODEL_BYTES" -gt "$PART_BYTES" ]; then
+  echo "FAIL: model.bin overflows the 'model' partition by $((MODEL_BYTES - PART_BYTES)) bytes." >&2
+  echo "      Grow the model line in $PART_CSV, or shrink the model." >&2
+  exit 1
+fi
+echo "PASS: fits with $((PART_BYTES - MODEL_BYTES)) bytes spare"
+
+step "gate 1/4: C forward pass vs PyTorch golden"
 cc -O3 -o /tmp/verify firmware/host_verify/verify.c -lm
 /tmp/verify firmware/model/model.bin firmware/model/golden.txt | tail -2
 
-step "gate 2/3: device tokenizer vs training tokenizer"
+step "gate 2/4: device tokenizer vs training tokenizer"
 cc -O3 -o /tmp/tok_test firmware/host_verify/tok_test.c
 uv run python src/tok_check.py | tail -1
 
-step "gate 3/3: whole chain vs PyTorch over held-out text"
+step "gate 3/4: whole chain vs PyTorch over held-out text"
 cc -O3 -Ifirmware/generated -o /tmp/repl firmware/host_verify/repl.c -lm
 # --run must be threaded through: c_check compares the C runtime against a
 # PyTorch checkpoint, and its default is not necessarily the one being shipped.
@@ -101,9 +128,11 @@ esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX --baud 921600 \\
 
 Then open a serial monitor at 115200 and type a command.
 
-**Built from \`runs/cmd-$RUN_TAG.pt\`.** All three host gates passed before this
-image was produced: C-vs-PyTorch forward pass, device tokenizer vs training
-tokenizer, and the whole chain over every held-out utterance.
+**Built from \`runs/cmd-$RUN_TAG.pt\`.** All four gates passed before this image
+was produced: model.bin fits the flash partition it is written into, the C
+forward pass matches the PyTorch golden, the device tokenizer matches the
+training tokenizer, and the whole chain reproduces PyTorch over every held-out
+utterance.
 
 \`model.bin\` is attached separately for anyone building the sketch themselves.
 NOTES

@@ -1,9 +1,21 @@
 # espcontrol partition table.
 #
-# The model is data, not code: 898 KB of fp32 weights in their own partition,
+# The model is data, not code: fp32 weights in their own partition,
 # memory-mapped at boot. Keeping it out of the app means a firmware change
 # reflashes ~1 MB of sketch instead of ~2 MB, and `model.bin` only gets rewritten
 # when src/export.py runs again.
+#
+# **The model partition must be at least as large as firmware/model/model.bin.**
+# It was 0x100000 while the model was 898 KB, and stayed 0x100000 when the
+# architecture went from 4 layers to 6 and the model grew to 1219 KB. Nothing
+# complained: esptool merge_bin writes the model at 0x210000 regardless of where
+# the partition ends, and the sketch mmaps only `part->size` -- so every tensor
+# past 1024 KB became a pointer into unmapped flash and the first forward pass
+# died with an MMU entry fault. scripts/release.sh now checks this before
+# building; do not remove that check.
+#
+# 0x1E0000 ends at 0x3F0000, which keeps the table valid on a 4 MB board with
+# 64 KB to spare. Growing it further means dropping 4 MB support.
 #
 # Sized for 4 MB flash and up. Subtype 0x40 is arbitrary-but-ours; the sketch
 # looks the partition up by it, so do not renumber without changing map_model().
@@ -12,4 +24,4 @@
 nvs,        data, nvs,      0x9000,   0x5000,
 otadata,    data, ota,      0xe000,   0x2000,
 app0,       app,  ota_0,    0x10000,  0x200000,
-model,      data, 0x40,     0x210000, 0x100000,
+model,      data, 0x40,     0x210000, 0x1E0000,
