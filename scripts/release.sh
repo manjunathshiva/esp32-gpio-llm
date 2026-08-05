@@ -59,7 +59,11 @@ uv run python src/tok_check.py | tail -1
 
 step "gate 3/3: whole chain vs PyTorch over held-out text"
 cc -O3 -Ifirmware/generated -o /tmp/repl firmware/host_verify/repl.c -lm
-uv run python src/c_check.py | tail -1
+# --run must be threaded through: c_check compares the C runtime against a
+# PyTorch checkpoint, and its default is not necessarily the one being shipped.
+# Without this the gate scores this release's model.bin against a different
+# checkpoint's weights, which is not the comparison it claims to make.
+uv run python src/c_check.py --run "runs/cmd-$RUN_TAG.pt" | tail -1
 
 step "compile sketch"
 ./firmware/device/sync.sh > /dev/null

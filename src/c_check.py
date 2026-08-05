@@ -55,7 +55,11 @@ def torch_ids(dec: Decoder, text: str, max_new: int = 40) -> list[int]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--run", type=Path, default=ROOT / "runs" / "cmd-v1-s0.pt")
+    # Kept in step with scripts/release.sh's RUN_TAG. release.sh passes --run
+    # explicitly, so this default only affects manual invocation -- but a stale
+    # default here is the same trap as a stale tokenizer: it compares against
+    # the wrong checkpoint and says PASS or FAIL about something you did not ask.
+    ap.add_argument("--run", type=Path, default=ROOT / "runs" / "cmd-v2-s1.pt")
     ap.add_argument("--model", default=str(ROOT / "firmware" / "model" / "model.bin"))
     ap.add_argument("--splits", nargs="+", default=SPLITS)
     ap.add_argument("--limit", type=int, default=400)
