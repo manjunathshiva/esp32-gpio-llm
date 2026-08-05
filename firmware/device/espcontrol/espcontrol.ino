@@ -1,12 +1,12 @@
 // espcontrol -- natural-language GPIO on an ESP32-S3, with no network.
 //
 // Type "blink pin 4 twice a second" over serial and pin 4 blinks. The whole
-// path is on-chip: BPE encode (tokenizer.h) -> 230K-parameter transformer
+// path is on-chip: BPE encode (tokenizer.h) -> 312K-parameter transformer
 // (llm.h) -> emitted symbols -> Command (command.h) -> GPIO (gpio_control.c).
 //
 // The model is *not* linked into the sketch. It lives in its own flash
 // partition and is memory-mapped, so a firmware change does not mean reflashing
-// 898 KB and the build stays fast. See README.md for the two flash commands.
+// 1219 KB and the build stays fast. See README.md for the two flash commands.
 //
 // v1 understands pin numbers only. "turn on the desk lamp" answers <unknown> by
 // design, not by failure -- there is no alias table yet. See README.md.

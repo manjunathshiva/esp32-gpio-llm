@@ -2,8 +2,8 @@
 logits reference so the C port can be proven correct before it touches hardware.
 
 **fp32, not quantized.** esp32-tinyllm quantizes because a 28.9M-parameter model
-does not otherwise fit; this one is 229,952 parameters -- 898 KB fp32, which an
-ESP32-S3 holds in flash without noticing. Quantization would buy ~670 KB nobody
+does not otherwise fit; this one is 312,128 parameters -- 1219 KB fp32, which an
+ESP32-S3 holds in flash without noticing. Quantization would buy ~900 KB nobody
 needs and cost the thing that matters most right now: an exact host check.
 `verify.c` can demand near-bit-level agreement instead of a tolerance, so a
 C-vs-PyTorch mismatch means a porting bug and never "probably rounding".

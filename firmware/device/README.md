@@ -1,13 +1,13 @@
 # Flashing espcontrol
 
 Two artifacts go on the board and they flash separately: the **sketch** (~1 MB)
-and the **model** (898 KB, its own partition). Firmware changes only need the
+and the **model** (1219 KB, its own partition). Firmware changes only need the
 first; the model is rewritten only when `src/export.py` runs again.
 
 ## 0. Build the assets (host)
 
 ```sh
-uv run python src/export.py v1-s0        # firmware/model/model.bin + golden.txt
+uv run python src/export.py v2-s1        # firmware/model/model.bin + golden.txt
 uv run python src/gen_assets.py          # firmware/generated/{bpe.h,symbols.h}
 ./firmware/device/sync.sh                # flatten sources into the sketch dir
 ```
