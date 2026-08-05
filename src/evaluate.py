@@ -95,6 +95,23 @@ class Decoder:
 
         self.tok = Tokenizer.from_file(str(ROOT / "data" / "bpe.json"))
         self.meta = json.loads((ROOT / "data" / "meta.json").read_text())
+
+        # A checkpoint stores ids, and prepare.py reassigns them every time the
+        # corpus is rebuilt. Scoring across that boundary does not fail loudly:
+        # digits keep decoding correctly while reserved symbols swap places, so
+        # the run reads as a model that mysteriously forgot which action was
+        # which. Refuse instead of reporting a number that means nothing.
+        from train import tokenizer_fingerprint  # noqa: E402  (needs src/ path)
+        want, have = ck.get("tok_fp"), tokenizer_fingerprint()
+        if want is None:
+            print(f"warning: {run.name} predates the tokenizer fingerprint; "
+                  f"its ids may not match data/bpe.json. Retrain to be sure.",
+                  file=sys.stderr)
+        elif want != have:
+            sys.exit(f"{run.name} was trained against tokenizer {want}, but "
+                     f"data/bpe.json is {have}. The corpus has been rebuilt "
+                     f"since; retrain, or restore the matching bpe.json.")
+
         self.inv = {v: k for k, v in self.tok.get_vocab().items()}
         self.reserved = set(self.meta["reserved"])
         self.go = self.meta["go"]

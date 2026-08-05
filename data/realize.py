@@ -171,10 +171,32 @@ def interval_phrase(ms: int, rng: random.Random) -> str:
     if ms % 1000 == 0:
         s = ms // 1000
         unit = "second" if s == 1 else "seconds"
+        # The abbreviations were absent entirely: "30s" and "2 sec" matched zero
+        # of 147,000 rows while the held-out set used them freely. A form the
+        # corpus never contains is not a rare form, it is an unknown one.
         forms += [f"every {s} {unit}", f"at {s} {unit} intervals",
-                  f"every {NUM_WORDS.get(s, s)} {unit}"]
+                  f"every {NUM_WORDS.get(s, s)} {unit}",
+                  f"every {s}s", f"at {s}s", f"{s}s apart",
+                  f"every {s} sec", f"at {s} sec", f"every {s} secs",
+                  f"speed {s} {unit}", f"interval {s} {unit}"]
     if ms % 1000 == 500:
         forms.append(f"every {ms / 1000:g} seconds")
+    # Minutes are the only way a speaker states an interval this long, and the
+    # only surface form whose conversion is x60000. Without it the six-digit
+    # values sample_interval now draws would only ever appear written out in
+    # milliseconds, which is not how anyone says them.
+    if ms % 60000 == 0:
+        m = ms // 60000
+        unit = "minute" if m == 1 else "minutes"
+        forms += [f"every {m} {unit}", f"at {m} {unit} intervals",
+                  f"every {NUM_WORDS.get(m, m)} {unit}", f"at {m} {unit} rate"]
+    # Hertz. Also absent -- three matches in the whole corpus, all of them
+    # inside MASSIVE negatives, against six in the dev set alone. Only emitted
+    # when the frequency is a whole number, because "at 6.7Hz" is not something
+    # a person types and a non-integer would teach the model to round.
+    if ms and 1000 % ms == 0:
+        hz = 1000 // ms
+        forms += [f"at {hz}Hz", f"at {hz} Hz", f"{hz}Hz", f"at {hz}hz"]
     forms += RATE_WORDS.get(ms, [])
     forms += SPEED_WORDS.get(ms, [])
     return rng.choice(forms)

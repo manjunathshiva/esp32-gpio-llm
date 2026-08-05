@@ -22,6 +22,7 @@ data/*_tok.u16
 data/*_mask.u8
 data/meta.json
 data/v0_artifacts/
+data/v1_artifacts/
 
 # Copies made by firmware/device/sync.sh so the Arduino build can see them.
 # The originals live in firmware/common; editing these is editing a copy that

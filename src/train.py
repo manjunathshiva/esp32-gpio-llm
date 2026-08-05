@@ -29,6 +29,25 @@ DATA = ROOT / "data"
 RUNS = ROOT / "runs"
 
 
+def tokenizer_fingerprint() -> str:
+    """Identify the tokenizer a checkpoint was trained against.
+
+    A checkpoint stores token *ids*. `prepare.py` retrains the BPE whenever the
+    corpus is rebuilt, and the symbol ids move when it does -- so a checkpoint
+    scored against a tokenizer it was not trained on decodes one reserved symbol
+    as another. It does not crash and it does not look like a bug: pins copy
+    perfectly, actions come out wrong, and the run reads like a model that
+    failed to learn. That cost a full evaluation round, so the fingerprint is
+    written into every run and checked on load.
+    """
+    import hashlib
+
+    h = hashlib.sha256()
+    for p in (DATA / "bpe.json", DATA / "meta.json"):
+        h.update(p.read_bytes())
+    return h.hexdigest()[:16]
+
+
 def get_device() -> str:
     if torch.backends.mps.is_available():
         return "mps"
@@ -147,10 +166,12 @@ def main() -> None:
                   f"symbol-acc {acc:.4f}  {time.time() - t0:.0f}s", flush=True)
 
     elapsed = time.time() - t0
-    torch.save({"cfg": cfg.__dict__, "state": model.state_dict()}, RUNS / f"{name}.pt")
+    fp = tokenizer_fingerprint()
+    torch.save({"cfg": cfg.__dict__, "state": model.state_dict(), "tok_fp": fp},
+               RUNS / f"{name}.pt")
     (RUNS / f"{name}.json").write_text(json.dumps({
         "cfg": cfg.__dict__, "params": model.param_count(), "steps": a.steps,
-        "batch_size": a.batch_size, "lr": a.lr, "seed": a.seed,
+        "batch_size": a.batch_size, "lr": a.lr, "seed": a.seed, "tok_fp": fp,
         "best_val": best, "seconds": elapsed, "history": hist}, indent=2))
     print(f"\n{elapsed:.0f}s   best val {best:.4f}   -> runs/{name}.pt")
 

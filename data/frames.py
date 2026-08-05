@@ -360,8 +360,13 @@ EXAMPLE_NAMES = ["lamp", "fan", "buzzer", "heater", "valve", "relay", "siren",
 # Intervals with a natural English form, sampled more often than arbitrary
 # values because that is what people actually say. The arbitrary tail is what
 # forces the model to copy digits rather than memorize buckets.
+#
+# The whole-second values above 3000 are here for a specific reason: they are
+# the only in-range intervals a speaker says in seconds, and 10000 is the only
+# legal one whose seconds form crosses into five digits. See SECONDS_INTERVALS.
 ROUND_INTERVALS = [50, 100, 150, 200, 250, 300, 400, 500, 750,
-                   1000, 1500, 2000, 2500, 3000, 5000]
+                   1000, 1500, 2000, 2500, 3000, 4000, 5000,
+                   6000, 7000, 8000, 9000, 10000]
 COMMON_COUNTS = [0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 10, 12, 20]
 
 # --- out-of-range sampling ---------------------------------------------------
@@ -370,7 +375,8 @@ COMMON_COUNTS = [0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 10, 12, 20]
 # without judging it. It only learns that if out-of-range numbers are ordinary
 # things it has seen said. In v0 these were *negatives*, which trained exactly
 # the reflex being removed -- so they do not merely get deleted, they change
-# side. See the out-of-range sampling comment in data/frames.py.
+# side: an out-of-range number is a positive that range_check() refuses, not a
+# negative the model learns to reject.
 #
 # The rate is a balance: too low and the prior stays "a number after 'pin' is
 # legal", which is the substitution bug; too high and the corpus stops looking
@@ -400,11 +406,43 @@ def sample_pin_number(rng: random.Random, pins: list[int],
     return rng.randint(100, 199)
 
 
+# Out-of-range intervals a speaker states in seconds or minutes, rather than as
+# a millisecond count. These exist because of a measured hole, not for variety.
+#
+# The high branch used to be `randint(10001, 200000)` alone. Uniform draws land
+# on a multiple of 1000 about once in a thousand, and realize.interval_phrase
+# only offers a "seconds" wording when `ms % 1000 == 0` -- so across 147,000
+# rows, *every* unit conversion in the corpus resolved to 3 or 4 digits and none
+# to 5. The model learned the length, not the operation: it answered "every 60
+# seconds" with 6000 and "every 90 seconds" with 9000, dropping exactly one
+# zero, every time, on every seed.
+#
+# Copying is not the weak side -- five- and six-digit intervals written out in
+# full were already transcribed correctly ~95% of the time. So this reallocates
+# the high branch toward round values rather than widening it: the arbitrary
+# tail that trains copying shrinks to a quarter, which costs nothing measurable,
+# and buys the only thing missing, a conversion whose answer is long.
+SECONDS_INTERVALS = [n * 1000 for n in
+                     (11, 12, 15, 20, 25, 30, 40, 45, 50, 60, 75, 90, 120, 180)]
+MINUTES_INTERVALS = [n * 60000 for n in (2, 3, 4, 5, 10)]   # 6 digits, phrased
+                                                            # "every 3 minutes"
+
+
 def sample_interval(rng: random.Random,
                     oor_prob: float = OOR_INTERVAL_PROB) -> int:
     if rng.random() < oor_prob:
-        return (rng.randint(1, INTERVAL_MIN - 1) if rng.random() < 0.4
-                else rng.randint(INTERVAL_MAX + 1, 200000))
+        if rng.random() < 0.4:
+            return rng.randint(1, INTERVAL_MIN - 1)
+        roll = rng.random()
+        if roll < 0.55:
+            return rng.choice(SECONDS_INTERVALS)
+        if roll < 0.75:
+            return rng.choice(MINUTES_INTERVALS)
+        # The arbitrary tail. Kept because it is what forces digit-by-digit
+        # copying of a number with no round structure to lean on. Capped at six
+        # digits: frames.MAX_DIGITS and command.h's CMD_MAX_DIGITS both refuse
+        # a seventh, so generating one would train an unparseable output.
+        return rng.randint(INTERVAL_MAX + 1, 200000)
     if rng.random() < 0.75:
         return rng.choice(ROUND_INTERVALS)
     return rng.randint(INTERVAL_MIN, INTERVAL_MAX)
