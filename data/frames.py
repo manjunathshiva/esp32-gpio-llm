@@ -103,11 +103,13 @@ class Name:
     s: str
 
     def norm(self) -> str:
-        """The form the alias table matches on. Case and run-length of spaces
-        are not meaningful in a name someone typed, and the device folds them
-        the same way -- so scoring must too, or a correct copy of "Desk Lamp"
-        reads as a miss."""
-        return " ".join(self.s.split()).casefold()
+        """The form the alias table matches on. Case, spacing and the choice
+        between "status_led", "status-led" and "status led" are not meaningful
+        in a name someone typed, and alias.h's alias_norm folds all of them --
+        so scoring must fold them too, or a copy the device would resolve
+        correctly reads as a miss here. The two are a mirror; change both."""
+        out = self.s.replace("_", " ").replace("-", " ")
+        return " ".join(out.split()).casefold()
 
 
 Target = Pin | All | Name
