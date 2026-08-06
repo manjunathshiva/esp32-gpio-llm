@@ -81,11 +81,14 @@ chasing 4 pins every 200ms   (1210ms)
 refused: I don't know "aquarium pump"   (1101ms)
 ```
 
-The last two are the design working rather than the model failing. The model
-transcribes what it heard — `100`, `60000` — digit by digit, and the hardware
-layer refuses it **by name**. An earlier grammar gave each legal pin its own
-symbol, which made "pin 100" unsayable; the model then answered with pin 10 and
-switched off a real pin, silently. See [Where it falls down](#where-it-falls-down).
+The three refusals are the design working rather than the model failing, and
+they are all the same mechanism. The model transcribes what it heard — `100`,
+`60000`, `aquarium pump` — and a layer that owns the relevant facts refuses it
+*by value* or *by name*. An earlier grammar gave each legal pin its own symbol,
+which made "pin 100" unsayable; the model then answered with pin 10 and switched
+off a real pin, silently. Doing the same to names would have rebuilt that bug
+one level up, so the model must be able to say a name that does not resolve.
+See [Where it falls down](#where-it-falls-down).
 
 To see something happen, put an LED and a **220Ω–1kΩ resistor** in series
 between GPIO 4 and GND — long leg to the pin side. Never wire an LED without the
