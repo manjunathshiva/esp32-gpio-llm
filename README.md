@@ -25,8 +25,9 @@ set, 612 valid commands and 417 utterances it must refuse, three seeds:
 | refuses, or is refused downstream — nothing moves | 11.1% | wrong but harmless |
 
 Accuracy numbers, for completeness: exact-match 84.4%, false-accept 13.3%, pin
-copy 91.3%, substitution 1.8%, against gates of >95%, <2%, >99% and zero. **Three
-of four are unmet.**
+copy 91.3%, substitution 1.8%, against gates of >95%, <2%, >99% and zero. **All
+four are unmet.** Substitution used to be reported as passing; it was reading
+0/21 per seed on the v1 set, and at n=201 it is 1.8%.
 
 Note the gap between "false-accept 13.3%" and "moves a pin 5.1%". Most rejected
 input that gets parsed anyway resolves to a *name* the device does not have, so
@@ -239,7 +240,7 @@ symbol list, what `validate()` accepts, and what `range_check()` refuses.
 
 ## Where it falls down
 
-Three gates are unmet. The v0.2.x interval work below is kept because the method
+All four gates are unmet. The v0.2.x interval work below is kept because the method
 is the point: splitting the held-out rows by what the model has to *do* with the
 number, rather than by what the number looks like, three seeds pooled.
 
@@ -270,9 +271,15 @@ What that bought, three seeds on the held-out set: substitution 2.8% → **0.8%*
 (p = 0.010). Exact-match, false-accept and pin copy moved by less than noise
 (p = 0.23, 0.42) and are not claimed as improvements.
 
-**Three gates remain unmet in v2** (locked half, three seeds): exact-match
+**All four gates remain unmet in v2** (locked half, three seeds): exact-match
 84.4% against >95%, false-accept 13.3% against <2%, pin copy 91.3% against
->99%. Substitution passes at 1.8%.
+>99%, substitution 1.8% against zero.
+
+Substitution was previously reported as passing here, which was wrong twice
+over: 1.8% is not zero, and the v1 reading it was compared against was 0/21 per
+seed — a denominator `docs/V1-SCOPE.md` already flagged as too small to be
+evidence. The v2 set carries 201 substitution probes per seed. The rate did not
+necessarily rise; the instrument got big enough to see it.
 
 **False-accept regressed on purpose, and it is the cost of the feature.** It
 was 8.6% with names alone and 13.3% once naming-by-voice was added; a fifth of
