@@ -11,14 +11,23 @@ partition, mapped and read in place.
 input is refused by the hardware layer. Latency 150 ms – 1.5 s per command,
 measured on the board.
 
-On a 466-item held-out set, three seeds: exact-match 91.7%, false-accept 4.4%,
-pin copy 94.7%, substitution 0.8%. The gates are >95%, <2%, >99% and zero, so
-**three of the four are not met** and this is not finished. See
-[Where it falls down](#where-it-falls-down). Flashing:
+On a 612-item held-out set — the locked half, three seeds: exact-match 84.4%,
+false-accept 13.3%, pin copy 91.3%, substitution 1.8%. The gates are >95%, <2%,
+>99% and zero, so **three of the four are not met** and this is not finished.
+See [Where it falls down](#where-it-falls-down). Flashing:
 [`firmware/device/README.md`](firmware/device/README.md).
 
-**v1 targets pins by number.** Names and aliases — *"blink the desk lamp"* — are
-deferred to v2 and currently return `<unknown>`.
+These are not comparable with the v0.2.x numbers below. v2 made names a
+positive, which roughly doubled the in-domain set and added its hardest half —
+a different denominator, not a regression in the pin-numbered path, which is
+88–90% either way. False-accept *is* a regression, and deliberate; see
+[Where it falls down](#where-it-falls-down).
+
+**Naming.** *"Call pin 4 the desk lamp"*, then *"turn on the desk
+lamp"*. The model copies the name out of what you typed and the device resolves
+it against a table you built, so a name it does not know is refused **by name**
+rather than swapped for the nearest one it does know. Names persist across a
+power cycle.
 
 ## Quickstart — flash it and talk to it
 
@@ -31,7 +40,7 @@ write it at offset 0:
 ```sh
 pip install esptool
 esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX --baud 921600 \
-  write_flash 0x0 espcontrol-esp32s3-v0.2.1.bin
+  write_flash 0x0 espcontrol-esp32s3-v0.3.0.bin
 ```
 
 Open a serial monitor at **115200** and type — this is a real session on the
@@ -55,6 +64,21 @@ refused: pin 100 is not a GPIO on this board   (779ms)
 
 > blink pin 4 every 60 seconds
 refused: interval 60000ms is outside 50-10000ms   (1101ms)
+
+> call pin 4 the desk lamp
+"desk lamp" -> 4   (833ms)
+
+> turn on the desk lamp
+pin 4 high   (673ms)
+
+> name gpios 5, 6, 7 and 8 the porch lights
+"porch lights" -> 5 6 7 8   (1651ms)
+
+> chase the porch lights 200ms 5
+chasing 4 pins every 200ms   (1210ms)
+
+> switch off the aquarium pump
+refused: I don't know "aquarium pump"   (1101ms)
 ```
 
 The last two are the design working rather than the model failing. The model
@@ -150,9 +174,9 @@ symbol list, what `validate()` accepts, and what `range_check()` refuses.
 
 ## Where it falls down
 
-Two gates are unmet, and the largest single bucket has a known cause. Splitting
-the held-out interval rows by what the model has to do with the number, three
-seeds pooled:
+Three gates are unmet. The v0.2.x interval work below is kept because the method
+is the point: splitting the held-out rows by what the model has to *do* with the
+number, rather than by what the number looks like, three seeds pooled.
 
 | what the utterance asks for | n | v0.1.0 | v0.2.1 |
 |---|---:|---:|---:|
@@ -181,10 +205,36 @@ What that bought, three seeds on the held-out set: substitution 2.8% → **0.8%*
 (p = 0.010). Exact-match, false-accept and pin copy moved by less than noise
 (p = 0.23, 0.42) and are not claimed as improvements.
 
-**Two gates remain unmet**: false-accept 4.4% against a <2% target, pin copy
-94.7% against >99%. The largest remaining false-accept bucket is name-addressed
-commands ("turn on the desk lamp"), which v1 defers to v2 and is supposed to
-refuse.
+**Three gates remain unmet in v2** (locked half, three seeds): exact-match
+84.4% against >95%, false-accept 13.3% against <2%, pin copy 91.3% against
+>99%. Substitution passes at 1.8%.
+
+**False-accept regressed on purpose, and it is the cost of the feature.** It
+was 8.6% with names alone and 13.3% once naming-by-voice was added; a fifth of
+the false accepts parse as `<alias>`. Losing 25 easy refusals from the
+denominator explains about half a point of that, so most of it is real:
+**adding positives of a shape makes the model readier to accept that shape.**
+The same tax showed up twice before — closing a long-pin-list coverage gap cost
+1.5 points, and tripling the corpus cost 3.6 — which makes it the most reliable
+finding in the project and the one to design around next.
+
+Named targets are the weak half: 72.2% against 88.9% for pin-numbered ones on
+the locked set, with a 5–7 point seed spread where pin-numbered sits under 1.
+The cause of the *original* 20-point gap was vocabulary rather than model
+capacity. Held-out names built only from the generator's own word pools were
+copied 89% of the time and names containing any other word 56%, while span
+length did nothing once vocabulary was held fixed (90.0% for 5+ token names
+against 88.4% for short ones). A controlled probe made it plain: the model
+copied invented nonsense (`zibmuk valve`) 90% of the time and ordinary English
+it had not seen in that slot (`coffee maker`) 43%.
+
+Counting words by which side of the corpus they appear on said why. `coffee`
+occurred 2,080 times, every one inside a refusal, so the model had learned it
+meant *reject*; `cutter` occurred nowhere at all, so `enable laser cutter` came
+back as `laser`. Every word that copied correctly — `lamp`, `fan`, `relay` —
+appeared on both sides at 75–90% positive. Fixing the generator's vocabulary,
+with no change to the architecture, took out-of-pool name copy from 56.4% to
+78.2% and the English probe from 43.3% to 80.0%.
 
 ## Note on the dataset
 
