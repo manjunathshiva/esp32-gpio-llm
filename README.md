@@ -11,17 +11,59 @@ partition, mapped and read in place.
 input is refused by the hardware layer. Latency 150 ms – 1.5 s per command,
 measured on the board.
 
-On a 612-item held-out set — the locked half, three seeds: exact-match 84.4%,
-false-accept 13.3%, pin copy 91.3%, substitution 1.8%. The gates are >95%, <2%,
->99% and zero, so **three of the four are not met** and this is not finished.
-See [Where it falls down](#where-it-falls-down). Flashing:
-[`firmware/device/README.md`](firmware/device/README.md).
+### How often does it move the wrong pin?
 
-These are not comparable with the v0.2.x numbers below. v2 made names a
-positive, which roughly doubled the in-domain set and added its hardest half —
-a different denominator, not a regression in the pin-numbered path, which is
-88–90% either way. False-accept *is* a regression, and deliberate; see
-[Where it falls down](#where-it-falls-down).
+That is the only question worth leading with for something wired to hardware,
+and this README used to lead with accuracy instead. Locked half of the held-out
+set, 612 valid commands and 417 utterances it must refuse, three seeds:
+
+| | rate | |
+|---|---|---|
+| **moves the wrong pin on a valid command** | **4.5% ± 0.7%** | the real failure |
+| **moves a pin on input it should refuse** | **5.1% ± 1.3%** | the other real failure |
+| answers correctly | 84.4% ± 1.5% | |
+| refuses, or is refused downstream — nothing moves | 11.1% | wrong but harmless |
+
+Accuracy numbers, for completeness: exact-match 84.4%, false-accept 13.3%, pin
+copy 91.3%, substitution 1.8%, against gates of >95%, <2%, >99% and zero. **Three
+of four are unmet.**
+
+Note the gap between "false-accept 13.3%" and "moves a pin 5.1%". Most rejected
+input that gets parsed anyway resolves to a *name* the device does not have, so
+it is refused by name and nothing happens. Exact-match cannot see any of this —
+it charges one point for "I don't understand" and one point for switching off
+the wrong pin. `src/evaluate.py`'s `outcome()` is what separates them, and it
+exists because a reader pointed out that an evaluation which cannot is
+measuring the wrong thing.
+
+Not comparable with the v0.2.x numbers below: v2 made names a positive, which
+roughly doubled the in-domain set and added its hardest half. The pin-numbered
+path is 88–90% either way.
+
+### Would a hand-written parser be better?
+
+For this command grammar, on the metric that matters: **yes**, and it is worth
+saying so at the top rather than leaving it implied. Same held-out set, against
+the rule-based parser already in this repo (`data/label_eval.py`):
+
+| | model | parser |
+|---|---|---|
+| correct | **84.4%** | 41.7% |
+| said "I don't understand" | 4.8% | 58.3% |
+| **did the wrong thing** | 10.8% | **0.0%** |
+| accepted off-domain input | 13.3% | **0.0%** |
+
+The parser never mis-parses; it abstains. It meets the <2% safety target this
+model has missed in every release, and since that parser was written to label
+gold and is deliberately conservative, 41.7% is a floor rather than a ceiling.
+
+What the model buys is coverage — roughly double, over surface variation nobody
+enumerated (`kill the blinking on 13`, `solarium fan off`, `reding patio
+lights`). What it costs is that it always answers. The interesting architecture
+is neither on its own: parser first, model only on what the parser abstains
+from, hardware refusing out-of-range values regardless.
+
+Flashing: [`firmware/device/README.md`](firmware/device/README.md).
 
 **Naming.** *"Call pin 4 the desk lamp"*, then *"turn on the desk
 lamp"*. The model copies the name out of what you typed and the device resolves
@@ -115,10 +157,30 @@ returns `<unknown>` and the device says it did not understand — there is no
 fallback to ask, which is why the reject path is a trained output class rather
 than a confidence heuristic bolted on afterwards.
 
-On-device NLU for closed command domains is well-trodden ground commercially.
-The point here is not novelty: it is that the entire stack — tokenizer,
-training, quantization, inference, pin control — is a few thousand lines you can
-read end to end.
+**Not an argument that a transformer is the right tool for this job.** It is
+not, and the table above says so with numbers: a deterministic parser is
+smaller, exhaustively testable, and cannot hallucinate a GPIO action. The model
+costs 1.2 MB of flash and 302 KB of PSRAM for the KV cache; the parser path's
+entire runtime state is a 288-byte command struct and a 1.3 KB alias table.
+The 1.2 MB partition exists solely to hold weights.
+
+What the model is, is an *instrument*. Making invalid outputs unrepresentable —
+which is what everyone reaches for when they want a model to be safe — turned
+out to produce substitution rather than refusal: a grammar in which "pin 100"
+could not be said answered "pin 10" and switched off a real pin. A parser
+cannot exhibit that failure, which is exactly why a parser cannot teach you
+about it. The finding transfers to GBNF grammars, JSON-schema mode and
+function-calling APIs, which are used where the input space is open and a
+parser genuinely is not an option.
+
+That claim is an argument from mechanism, not a measurement. It has not been
+tested against a real constrained-decoding stack, and it is the strongest thing
+this project asserts on the least evidence.
+
+On-device NLU for closed command domains is also well-trodden ground
+commercially. The point here is not novelty: it is that the entire stack —
+tokenizer, training, quantization, inference, pin control — is a few thousand
+lines you can read end to end, including the parts that are wrong.
 
 ## Plan
 
