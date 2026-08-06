@@ -45,9 +45,19 @@ import random
 from functools import lru_cache
 from pathlib import Path
 
-ADJ = [
+# Split out, not removed. A colour is a perfectly ordinary thing to call a
+# device after ("the red lamp"), so these stay in ADJ and keep building names.
+# They are named separately because negatives.unsupported_capability needs the
+# same list to build the one utterance that teaches the distinction -- a colour
+# inside a name *and* a colour as the thing being set, in one sentence. Keeping
+# two hand-maintained copies is how the two sides drift apart.
+ADJ_COLOUR = [
     "red", "green", "blue", "white", "amber", "yellow", "purple", "orange",
-    "pink", "teal", "big", "small", "little", "main", "spare", "front", "back",
+    "pink", "teal",
+]
+
+ADJ = ADJ_COLOUR + [
+    "big", "small", "little", "main", "spare", "front", "back",
     "left", "right", "top", "bottom", "upper", "lower", "inner", "outer",
     "north", "south", "east", "west", "primary", "secondary", "backup", "old",
     "new", "first", "second", "third", "hot", "cold", "warm", "quiet", "loud",

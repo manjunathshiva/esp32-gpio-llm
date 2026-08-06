@@ -109,6 +109,42 @@ TRUNCATED = [
 ]
 
 
+# --- what a near-miss refusal is allowed to point at --------------------------
+#
+# v2 gave the positives a whole new target type and not one of the near-miss
+# generators below followed: every "unsupported modifier" refusal the model had
+# ever seen was attached to a pin *number*. Measured on the shipping model, one
+# template family per row, 180 utterances each, three seeds:
+#
+#     family         refuses, pin target   name target
+#     conditional               88.9%         36.1%
+#     duration                 100.0%         66.7%
+#     analog                    86.1%        100.0%
+#
+# analog is the control, and it is why this is a target-coverage bug rather
+# than a modifier-strength one: unsupported_capability already put names in its
+# refusals and it is the one family with no gap. So the fix is to give the
+# other generators the same thing, not to add another bank of literals.
+NAME_TARGET_PROB = 0.42
+
+
+def _ref(rng: random.Random, pin: int) -> str:
+    """A target for a near-miss refusal: a pin number, or a name.
+
+    The name goes through realize.Speaker, the same realizer the positives use.
+    Rolling our own surface form here would hand the model a cue that has
+    nothing to do with the modifier -- the failure this file's header warns
+    about for punctuation, one level up.
+
+    Sampled rather than taken from frames.EXAMPLE_NAMES. The positives build
+    names combinatorially, so a refusal pinned to one of eleven stock names can
+    be learned as "dim *that* lamp" instead of "dim anything".
+    """
+    if rng.random() < NAME_TARGET_PROB:
+        return realize.Speaker(rng).name(names.sample_name(rng))
+    return f"pin {pin}"
+
+
 def pin_range(rng: random.Random) -> str:
     """"Turn on pins 4-8." A range of pins, which the grammar cannot express.
 
@@ -166,6 +202,13 @@ def exception_set(rng: random.Random) -> str:
         f"{verb} the last {rng.randint(2, 5)} pins",
         f"{verb} the odd pins", f"{verb} the even pins",
         f"{verb} every other pin",
+        # Same shape with a name carved out. Not measured separately from the
+        # pin forms, but it is the same generator missing the same target type
+        # as duration and conditional_wrapper, and "everything except the desk
+        # lamp" is what a person actually says.
+        f"{verb} everything except {realize.Speaker(rng).name(names.sample_name(rng))}",
+        f"{verb} all of them but {realize.Speaker(rng).name(names.sample_name(rng))}",
+        f"{verb} every pin apart from {realize.Speaker(rng).name(names.sample_name(rng))}",
     ])
 
 
@@ -177,7 +220,12 @@ def duration(rng: random.Random) -> str:
     seconds" as a 1000ms rate and blinked forever. Wrong rate and wrong end
     condition, from a sentence that names neither.
     """
-    p = rng.choice(PINS_S3)
+    # r is a pin *or* a name: the duration is what makes this unexpressible and
+    # the target has nothing to do with it, but before _ref existed every one
+    # of these said "pin N" and the model refused "blink pin 4 for 10 seconds"
+    # 100% of the time while letting "blink the desk lamp for 10 seconds"
+    # through a third of the time.
+    r = _ref(rng, rng.choice(PINS_S3))
     # Small second-counts on purpose. "for 10 seconds" collides head-on with
     # interval_phrase's "every 10 seconds" (10,000ms) -- the only thing telling
     # them apart is `for` against `every`, and with the tail weighted to 90 the
@@ -188,14 +236,14 @@ def duration(rng: random.Random) -> str:
                        "seconds", "secs"])
     verb = rng.choice(["blink", "flash", "strobe", "pulse"])
     return rng.choice([
-        f"{verb} pin {p} for {n} {unit}",
-        f"{verb} pin {p} for the next {n} {unit}",
-        f"turn on pin {p} for {n} {unit}",
-        f"keep pin {p} high for {n} {unit}",
-        f"{verb} pin {p} over the next {n} {unit}",
-        f"run pin {p} for {n} {unit}",
-        f"{verb} pin {p} for half a minute",
-        f"turn on pin {p} for a couple of {unit}",
+        f"{verb} {r} for {n} {unit}",
+        f"{verb} {r} for the next {n} {unit}",
+        f"turn on {r} for {n} {unit}",
+        f"keep {r} high for {n} {unit}",
+        f"{verb} {r} over the next {n} {unit}",
+        f"run {r} for {n} {unit}",
+        f"{verb} {r} for half a minute",
+        f"turn on {r} for a couple of {unit}",
     ])
 
 
@@ -301,11 +349,29 @@ def unsupported_capability(rng: random.Random) -> str:
     what a held-out set contained, but every string here is generated -- copying
     the eval lines into training would destroy the measurement.
     """
-    p, nm = rng.choice(PINS_S3), rng.choice(EXAMPLE_NAMES)
+    p = rng.choice(PINS_S3)
+    # Mostly sampled, because eleven stock names are few enough to memorise:
+    # the refusal has to attach to "dim <anything>", not to "dim the lamp".
+    # EXAMPLE_NAMES is kept in the mix so the shortest, most common forms do
+    # not vanish from the negatives entirely.
+    nm = (rng.choice(EXAMPLE_NAMES) if rng.random() < 0.25
+          else names.sample_name(rng))
     pct, secs = rng.choice([10, 20, 25, 30, 50, 60, 75, 80, 90]), rng.randint(2, 90)
     colour = rng.choice(["red", "green", "blue", "yellow", "purple", "cyan",
                          "magenta", "warm white", "orange", "pink"])
+    # A colour word is legal *inside* a name and illegal as the thing being
+    # set -- names.ADJ has supplied "the orange bank" since v2.0 while this
+    # generator has supplied "change pin 2 to blue", which left orange 65%
+    # positive and purple 92% and colour the worst-refusing family of all
+    # (17.9% of colour refusals moved a pin). Pairing both roles in one
+    # utterance is the only form that can teach the position rather than the
+    # word.
+    cname = f"{rng.choice(names.ADJ_COLOUR)} {rng.choice(names.DEVICE)}"
     return rng.choice([
+        f"set the {cname} to {colour}", f"make the {cname} {colour}",
+        f"change the {cname} to {colour}",
+        f"turn the {cname} {colour}",
+        f"set the {cname} to {rng.choice(['half', 'full'])} brightness",
         # analogue / PWM
         f"set pin {p} to {pct} percent", f"set pin {p} brightness to {pct}%",
         f"dim {nm} to half brightness", f"dim pin {p}", f"dim {nm}",
@@ -398,10 +464,16 @@ def conditional_wrapper(rng: random.Random) -> str:
     """A legal command wrapped in a condition or a delay, which the grammar has
     no way to express. Both orders, because both leaked."""
     p, q = rng.sample(PINS_S3, 2)
+    # The wrapped command takes a name as readily as a pin. This was the worst
+    # of the measured gaps -- 88.9% refused with a pin target against 36.1%
+    # with a name -- because every conditional the model had seen wrapped a
+    # pin-numbered command, so "turn on the desk lamp when it gets dark" had
+    # only the condition to go on and the condition alone did not carry it.
+    r = _ref(rng, p)
     cmd = rng.choice([
-        f"blink pin {p}", f"turn on pin {p}", f"turn off pin {p}",
-        f"toggle pin {p}", f"stop blink on pin {p}",
-        f"chase on {p} {q}", f"set pin {p} high", f"read pin {p}",
+        f"blink {r}", f"turn on {r}", f"turn off {r}",
+        f"toggle {r}", f"stop blink on {r}",
+        f"chase on {p} {q}", f"set {r} high", f"read {r}",
     ])
     cond = rng.choice([
         f"if pin {q} is high", f"if pin {q} turns off", f"when pin {q} goes low",
