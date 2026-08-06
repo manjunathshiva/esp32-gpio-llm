@@ -119,13 +119,14 @@ class Decoder:
         # digits keep decoding correctly while reserved symbols swap places, so
         # the run reads as a model that mysteriously forgot which action was
         # which. Refuse instead of reporting a number that means nothing.
-        from train import tokenizer_fingerprint  # noqa: E402  (needs src/ path)
+        # noqa: E402 on both -- these need src/ on the path.
+        from train import tokenizer_fingerprint, legacy_fingerprint
         want, have = ck.get("tok_fp"), tokenizer_fingerprint()
         if want is None:
             print(f"warning: {run.name} predates the tokenizer fingerprint; "
                   f"its ids may not match data/bpe.json. Retrain to be sure.",
                   file=sys.stderr)
-        elif want != have:
+        elif want != have and want != legacy_fingerprint():
             sys.exit(f"{run.name} was trained against tokenizer {want}, but "
                      f"data/bpe.json is {have}. The corpus has been rebuilt "
                      f"since; retrain, or restore the matching bpe.json.")

@@ -14,6 +14,7 @@ is not comparable to anything from the other project.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import time
@@ -40,8 +41,32 @@ def tokenizer_fingerprint() -> str:
     failed to learn. That cost a full evaluation round, so the fingerprint is
     written into every run and checked on load.
     """
-    import hashlib
+    # Only the fields that decide what an id *means*. meta.json also carries
+    # n_train/n_val, and hashing the whole file made every corpus rebuild
+    # invalidate every existing checkpoint even when the id map was byte-for-
+    # byte identical -- which takes away the before/after comparison that is
+    # the point of rebuilding the corpus in the first place. A guard that
+    # cannot distinguish "the ids moved" from "the corpus has more rows" fires
+    # on the wrong event, and this one fired on a row count.
+    h = hashlib.sha256()
+    h.update((DATA / "bpe.json").read_bytes())
+    meta = json.loads((DATA / "meta.json").read_text())
+    h.update(json.dumps({k: meta[k] for k in
+                         ("vocab", "seq_len", "pad", "go", "reserved")},
+                        sort_keys=True).encode())
+    return h.hexdigest()[:16]
 
+
+def legacy_fingerprint() -> str:
+    """The pre-2026-08 scheme: sha256 over the whole of bpe.json + meta.json.
+
+    Kept so checkpoints written before the fix above stay scorable *when the
+    id map genuinely has not moved* -- this reproduces their stored hash only
+    if meta.json is still byte-identical, which is the conservative half of the
+    old guard. A checkpoint from a differently-sized corpus will not match here
+    and should not: under the old scheme there is no way to tell from the hash
+    alone whether its ids moved, so it has to be retrained or verified by hand.
+    """
     h = hashlib.sha256()
     for p in (DATA / "bpe.json", DATA / "meta.json"):
         h.update(p.read_bytes())
