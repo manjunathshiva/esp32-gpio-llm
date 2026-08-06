@@ -5,6 +5,18 @@ This is the metric that matters. `train.py`'s symbol accuracy is teacher-forced
 exactly the failure that breaks a device: one wrong symbol early derailing the
 rest. Here the model runs on its own output.
 
+**Two of these count answers; two count pins, and those two are the gates that
+matter on hardware.** exact-match charges one point for "I don't understand"
+and one point for switching off the wrong pin. On a bench those are the same
+miss; on a device wired to something they are not remotely the same event, and
+scoring them alike is how a safety regression hides inside an accuracy number.
+`outcome()` splits every miss by physical consequence, and the two WRONG-PIN
+rates are reported next to the four below. Added after a reader pointed out
+that an evaluation which cannot tell those apart is measuring the wrong thing;
+he was right, and the split moved the reported picture in both directions --
+the headline false-accept overstated real danger about threefold, while
+exact-match was hiding a genuine wrong-pin rate inside its miss bucket.
+
 Four numbers are reported, and all four gate the C runtime work:
 
   exact-match   fraction of in-domain commands whose parsed frame equals the
@@ -52,6 +64,7 @@ import json
 import math
 import sys
 from collections import Counter
+from enum import Enum
 from pathlib import Path
 
 import torch
@@ -206,6 +219,53 @@ def _pins(f: frames.Frame | None) -> list[int]:
                                  if isinstance(t, frames.Pin)]
 
 
+class Outcome(str, Enum):
+    """What a prediction would physically do, not how it scores.
+
+    exact-match cannot tell these apart: answering "I don't understand" and
+    switching off the wrong pin are both one miss. On a device wired to real
+    hardware they are not remotely the same event, and lumping them is how a
+    safety regression hides inside an accuracy number. This is the split.
+
+    The rule for names carries an assumption worth stating. A predicted name
+    that differs from gold is treated as *not resolving*, so the device refuses
+    it by name and nothing moves -- which is what the copy-and-resolve design
+    exists to guarantee, and what the mangled spans in practice look like
+    ("debug_urn", "main smen", "_led"). It is not free: if the user's alias
+    table happens to contain the mangled name, the device acts on the wrong
+    device and this classifier calls it safe. Nothing here can see that table,
+    so the assumption is the honest floor, not a guarantee.
+    """
+    CORRECT = "correct"
+    REFUSED = "refused"                    # <unknown> or malformed: nothing moves
+    REFUSED_BY_RANGE = "refused_by_range"  # wrong, but not runnable on this board
+    REFUSED_BY_NAME = "refused_by_name"    # wrong, and names something unresolvable
+    WRONG_ACTION = "wrong_action"          # wrong, and a pin actually moves
+
+
+def _names(f: frames.Frame | None) -> list[str]:
+    return [] if f is None else [t.norm() for t in f.targets
+                                 if isinstance(t, frames.Name)]
+
+
+def outcome(got: frames.Frame | None, gold: frames.Frame) -> Outcome:
+    """Classify one prediction by physical consequence.
+
+    Used for both halves of the set. For a refusal, gold is <unknown>, so any
+    frame that is not <unknown> is wrong and the same downstream question
+    applies: does it reach the pins?
+    """
+    if got is not None and got.key() == gold.key():
+        return Outcome.CORRECT
+    if got is None or got.action is frames.Action.UNKNOWN:
+        return Outcome.REFUSED
+    if not frames.executable(got):
+        return Outcome.REFUSED_BY_RANGE
+    if _names(got) and _names(got) != _names(gold):
+        return Outcome.REFUSED_BY_NAME
+    return Outcome.WRONG_ACTION
+
+
 def _runs(f: frames.Frame | None) -> bool:
     """Would the device actually do something? Anything else -- <unknown>, a
     malformed generation, a frame range_check refuses -- actuates no pin."""
@@ -219,6 +279,12 @@ def score(dec: "Decoder", rows: list[dict], constrained: bool = False,
     sweep.py scores identically rather than reimplementing the comparison."""
     pos_ok = pos_n = neg_bad = neg_loose = neg_n = malformed = 0
     pin_ok = pin_n = sub_bad = sub_n = 0
+    # Physical-consequence tallies, kept apart for the two halves: a wrong pin
+    # on a valid command and a wrong pin on "what's the weather" are different
+    # failures with the same result.
+    pos_outcome: Counter = Counter()
+    neg_outcome: Counter = Counter()
+    danger: list[tuple[str, str, str]] = []
     fails: list[tuple[str, str, str]] = []
     subs: list[tuple[str, str, str]] = []
     by_action: Counter = Counter()
@@ -231,7 +297,12 @@ def score(dec: "Decoder", rows: list[dict], constrained: bool = False,
         if got is None:
             malformed += 1
 
+        oc = outcome(got, gold)
+        if oc is Outcome.WRONG_ACTION and len(danger) < max(show, 8):
+            danger.append((r["text"], " ".join(r["symbols"]), " ".join(syms)))
+
         if gold.action is frames.Action.UNKNOWN:
+            neg_outcome[oc] += 1
             neg_n += 1
             if got is None or got.action is not frames.Action.UNKNOWN:
                 neg_loose += 1
@@ -241,6 +312,7 @@ def score(dec: "Decoder", rows: list[dict], constrained: bool = False,
                 if len(fails) < show:
                     fails.append((r["text"], "<unknown>", " ".join(syms)))
         else:
+            pos_outcome[oc] += 1
             pos_n += 1
             by_action[gold.action.value] += 1
             if got is not None and got.key() == gold.key():
@@ -271,7 +343,15 @@ def score(dec: "Decoder", rows: list[dict], constrained: bool = False,
             "pin_n": pin_n, "sub_bad": sub_bad, "sub_n": sub_n,
             "malformed": malformed, "fails": fails, "subs": subs,
             "by_action": by_action, "by_action_ok": by_action_ok,
-            "by_source_bad": by_source_bad}
+            "by_source_bad": by_source_bad,
+            "pos_outcome": pos_outcome, "neg_outcome": neg_outcome,
+            "danger": danger,
+            # The two gates that ask whether a pin moved. Reported separately
+            # because they are different failures: acting wrongly on a real
+            # command, and acting at all on something that should have been
+            # refused.
+            "pos_danger": pos_outcome[Outcome.WRONG_ACTION],
+            "neg_danger": neg_outcome[Outcome.WRONG_ACTION]}
 
 
 def main() -> None:
@@ -315,6 +395,19 @@ def main() -> None:
     print(rate("pin copy     (in-domain) ", s["pin_ok"], s["pin_n"]))
     print(rate("substitution (off-board) ", s["sub_bad"], s["sub_n"]))
     print(f"malformed generations    : {s['malformed']}")
+
+    # The safety pair. Everything above counts answers; these two count pins.
+    # A model that refuses is wrong and harmless; one that drives the wrong pin
+    # is wrong and not, and exact-match charges them the same single point.
+    print()
+    print(rate("WRONG PIN MOVED (valid cmd)", s["pos_danger"], s["pos_n"]))
+    print(rate("PIN MOVED (should refuse)  ", s["neg_danger"], s["neg_n"]))
+    print("  where the rest of the misses went:")
+    for half, oc, n in (("valid   ", s["pos_outcome"], s["pos_n"]),
+                        ("refusals", s["neg_outcome"], s["neg_n"])):
+        parts = ", ".join(f"{k.value}={v}" for k, v in sorted(oc.items())
+                          if k is not Outcome.CORRECT and v)
+        print(f"    {half} n={n}: {parts or 'none'}")
 
     print("\nby action:")
     by_action, by_action_ok = s["by_action"], s["by_action_ok"]

@@ -60,8 +60,13 @@ def main() -> None:
         runs.append((s, p))
 
     splits = {name: load_split(name) for name in a.splits}
+    # The last two count pins rather than answers. They are last in the list
+    # and first in importance: a seed that trades one exact-match point for a
+    # wrong physical action is not a better seed, and only these two can say so.
     METRICS = [("exact", "pos_ok", "pos_n"), ("false", "neg_bad", "neg_n"),
-               ("pin", "pin_ok", "pin_n"), ("sub", "sub_bad", "sub_n")]
+               ("pin", "pin_ok", "pin_n"), ("sub", "sub_bad", "sub_n"),
+               ("wrongpin", "pos_danger", "pos_n"),
+               ("moved", "neg_danger", "neg_n")]
     results: dict[str, dict[str, list[float]]] = {
         name: {m: [] for m, _, _ in METRICS} for name in a.splits}
 
@@ -75,12 +80,15 @@ def main() -> None:
                   f"exact {s['pos_ok']:4d}/{s['pos_n']:<4d} "
                   f"false {s['neg_bad']:3d}/{s['neg_n']:<4d} "
                   f"pin {s['pin_ok']:4d}/{s['pin_n']:<4d} "
-                  f"sub {s['sub_bad']:3d}/{s['sub_n']:<4d}", flush=True)
+                  f"sub {s['sub_bad']:3d}/{s['sub_n']:<4d} "
+                  f"wrongpin {s['pos_danger']:3d} moved {s['neg_danger']:3d}",
+                  flush=True)
 
     seeds = " ".join(str(s) for s in a.seeds)
     print(f"\ntag {a.tag}   seeds {seeds}   n={len(runs)}\n")
     print(f"{'split':<18}{'exact-match':<18}{'false-accept':<18}"
-          f"{'pin copy':<18}{'substitution':<18}{'in-domain n':>12}")
+          f"{'pin copy':<18}{'substitution':<18}"
+          f"{'WRONG PIN':<18}{'PIN MOVED(neg)':<18}{'in-domain n':>12}")
     for name in a.splits:
         rows = splits[name]
         pos_n = sum(1 for r in rows if r["action"] != "unknown")
