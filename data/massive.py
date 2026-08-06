@@ -76,6 +76,28 @@ HOLD_OUT_INTENTS = {
 HOLD_OUT_SHARE = 4          # in ten
 
 
+_VARY_TAIL = re.compile(r"( please| now| for me| thanks| ok\?)+$", re.I)
+
+
+def partition_key(text: str) -> str:
+    """The form a row still has after the corpus generator has decorated it.
+
+    `negatives.vary` prepends "please "/"can you "/... and appends " please"/
+    " now"/..., so two MASSIVE rows that the partition separated can come out
+    of the generator byte-identical. That happened: "turn down the lights in
+    the living room" was held for training and "please turn down the lights in
+    the living room" for the test set, and vary() closed the gap -- one leaked
+    row, invisible to a partition that looked only at the raw strings.
+
+    So the key is the stripped form. Anything the decoration can add or remove
+    must come off before hashing, or the partition is only true of the strings
+    nobody trains on.
+    """
+    s = _LEAD_PREFIX.sub("", text.strip().lower())
+    s = _VARY_TAIL.sub("", s).strip(" .,!?")
+    return " ".join(s.split())
+
+
 def is_held_out(text: str) -> bool:
     """Whether a near-miss row belongs to the held-out set rather than training.
 
@@ -86,7 +108,7 @@ def is_held_out(text: str) -> bool:
     """
     import hashlib
 
-    h = hashlib.sha1(text.strip().lower().encode()).hexdigest()
+    h = hashlib.sha1(partition_key(text).encode()).hexdigest()
     return int(h[:8], 16) % 10 < HOLD_OUT_SHARE
 
 
@@ -179,6 +201,7 @@ def _near_miss(held_out: bool) -> list[str]:
     # the same key.
     side: dict[str, bool] = {}
     order: list[str] = []
+    seen_text: set[str] = set()
     for intent, text in _rows():
         if intent not in NEAR_MISS_INTENTS:
             continue
@@ -193,16 +216,21 @@ def _near_miss(held_out: bool) -> list[str]:
             continue
         if not t:
             continue
-        k = t.lower()
-        if k not in side:
-            side[k] = False
-            order.append(t)
+        # Dedup on the cleaned text -- distinct surface forms are distinct rows
+        # -- but decide the *side* on the partition key, so every variant that
+        # vary() could collapse together lands on the same side of the split.
+        k = partition_key(t)
+        if t.lower() in seen_text:
+            continue
+        seen_text.add(t.lower())
+        order.append(t)
+        side.setdefault(k, False)
         # Held out if *any* of its intents is one of the hue near-misses, so a
         # text that also appears under coffee/cleaning cannot be pulled back
         # into training by the second occurrence.
-        if intent in HOLD_OUT_INTENTS and is_held_out(k):
+        if intent in HOLD_OUT_INTENTS and is_held_out(t):
             side[k] = True
-    return [t for t in order if side[t.lower()] == held_out]
+    return [t for t in order if side[partition_key(t)] == held_out]
 
 
 def near_miss_negatives() -> list[str]:
