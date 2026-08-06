@@ -26,6 +26,9 @@
 // directory, so a "../generated/" path would only work on the host. Host
 // builds pass -Ifirmware/generated instead.
 #include "symbols.h"
+// For tok_decode. A name is the only slot whose content is text, so this is
+// the only reason the command parser needs the tokenizer at all.
+#include "tokenizer.h"
 
 // Mirrors of frames.py. MAX_SEQ_PINS is what the hardware runs; CMD_MAX_PINS is
 // what the parser will hold, and it is deliberately larger so an over-long
@@ -38,6 +41,12 @@
 #define CMD_MAX_DIGITS 6
 #define CMD_UNSET (-1)
 
+// Named targets. Four is well past what anyone says in one breath ("the lamp,
+// the fan and the buzzer" is three) and each costs SYM_MAX_NAME+1 bytes of a
+// stack-allocated Command, so this is not free.
+#define CMD_MAX_NAMES 4
+#define CMD_NAME_BUF (SYM_MAX_NAME + 1)
+
 typedef enum {
   ACT_SET, ACT_READ, ACT_BLINK, ACT_SEQ, ACT_STOP, ACT_UNKNOWN
 } CmdAction;
@@ -46,13 +55,30 @@ typedef enum { LVL_NONE, LVL_HIGH, LVL_LOW, LVL_TOGGLE } CmdLevel;
 
 typedef enum {
   VERDICT_EXECUTE, VERDICT_BAD_PIN, VERDICT_BAD_INTERVAL,
-  VERDICT_TOO_MANY_PINS, VERDICT_UNKNOWN
+  VERDICT_TOO_MANY_PINS, VERDICT_UNKNOWN,
+  // Only reachable once the alias table has been consulted. Refusing an
+  // unresolvable name *by name* is the whole point of copying it rather than
+  // classifying it -- "I don't know 'aquarium pump'" is a sentence the user can
+  // act on, and it is what stops the model reaching for the nearest name it
+  // does know.
+  VERDICT_UNKNOWN_NAME, VERDICT_NAME_TOO_FEW_PINS
 } Verdict;
 
 typedef struct {
   CmdAction action;
   int pins[CMD_MAX_PINS];
   int n_pins;
+  // Names as copied, before resolution. Kept apart from pins[] because at parse
+  // time nothing here knows what a name resolves to -- alias_resolve() is what
+  // turns these into pins, and it is the only thing that may.
+  //
+  // Known limitation: resolved pins are appended, so "chase pin 4 and the desk
+  // lamp" runs the pin before the lamp regardless of the order spoken. Order is
+  // cosmetic for set/read/stop, and a mixed pin+name chase is under half a
+  // percent of the corpus. Recorded rather than fixed, so the next person knows
+  // it is a choice and not an oversight.
+  char names[CMD_MAX_NAMES][CMD_NAME_BUF];
+  int n_names;
   int all;                  // the <all> target was present
   CmdLevel level;
   int interval_ms;          // CMD_UNSET when the speaker gave none
@@ -72,10 +98,11 @@ static const char *cmd_action_name(CmdAction a) {
 
 // Parse `n` emitted token ids. Returns 0 on success, -1 if the sequence is not
 // something the grammar can produce. On -1 the Command is not usable.
-static int cmd_parse(const int *ids, int n, Command *c) {
+static int cmd_parse(const int *ids, int n, const Bpe *bpe, Command *c) {
   c->action = ACT_UNKNOWN;
-  c->n_pins = 0; c->all = 0; c->level = LVL_NONE;
+  c->n_pins = 0; c->n_names = 0; c->all = 0; c->level = LVL_NONE;
   c->interval_ms = CMD_UNSET; c->count = CMD_UNSET;
+  c->names[0][0] = 0;
 
   int i = 0;
   if (n <= 0) return -1;
@@ -115,6 +142,35 @@ static int cmd_parse(const int *ids, int n, Command *c) {
       if (c->n_pins >= CMD_MAX_PINS) return -1;
       READ_NUM(c->pins[c->n_pins]);
       c->n_pins++;
+    } else if (ids[i] == SYM_NAME) {
+      i++;
+      if (c->n_names >= CMD_MAX_NAMES) return -1;
+      int start = i;
+      while (i < n && ids[i] != SYM_NEND) {
+        // A reserved id inside a span means the generation lost track of the
+        // name boundary. Refuse the whole command: the alternative is decoding
+        // a marker into text and resolving whatever that spells.
+        if (ids[i] < SYM_RESERVED_N) return -1;
+        i++;
+      }
+      if (i >= n) return -1;                    // <nend> never arrived
+      if (i == start) return -1;                // empty name
+      char *dst = c->names[c->n_names];
+      if (tok_decode(bpe, ids + start, i - start, dst, CMD_NAME_BUF) < 0)
+        return -1;
+      // The copy carries the leading space ByteLevel folded into its first
+      // token. Trim both ends here so the name reads correctly when it is
+      // echoed back in a refusal; case and inner spacing are folded later, by
+      // whoever compares it against the table.
+      int a = 0, b = (int)strlen(dst);
+      while (dst[a] == ' ') a++;
+      while (b > a && dst[b - 1] == ' ') b--;
+      if (b <= a) return -1;                    // whitespace only
+      memmove(dst, dst + a, (size_t)(b - a));
+      dst[b - a] = 0;
+      i++;                                      // consume <nend>
+      c->n_names++;
+      if (c->n_names < CMD_MAX_NAMES) c->names[c->n_names][0] = 0;
     } else break;
   }
 
@@ -130,7 +186,7 @@ static int cmd_parse(const int *ids, int n, Command *c) {
   if (i >= n || ids[i] != SYM_END || i + 1 != n) return -1;
 
   // --- shape, mirroring frames.validate -------------------------------------
-  int targets = c->n_pins + (c->all ? 1 : 0);
+  int targets = c->n_pins + c->n_names + (c->all ? 1 : 0);
   int timed = (c->interval_ms != CMD_UNSET) + (c->count != CMD_UNSET);
   int rate_no_count = (c->interval_ms != CMD_UNSET && c->count == CMD_UNSET);
 
@@ -138,7 +194,7 @@ static int cmd_parse(const int *ids, int n, Command *c) {
     case ACT_SET:
       // Several pins at one level is legal; <all> mixed into a list is not,
       // because <all> already means the whole board. Mirrors frames.validate.
-      if (targets < 1 || (c->all && c->n_pins) || c->level == LVL_NONE || timed)
+      if (targets < 1 || (c->all && targets > 1) || c->level == LVL_NONE || timed)
         return -1;
       break;
     case ACT_READ:
@@ -148,13 +204,20 @@ static int cmd_parse(const int *ids, int n, Command *c) {
       // A count with no rate is legal -- "blink pin 4 five times" means five
       // cycles at the device default. A rate with no count is not: it would
       // discard a number the speaker said.
-      if (targets < 1 || (c->all && c->n_pins) || c->level != LVL_NONE ||
+      if (targets < 1 || (c->all && targets > 1) || c->level != LVL_NONE ||
           rate_no_count) return -1;
       break;
     case ACT_SEQ:
       // Only the lower bound is structural. The upper bound is how many pins
       // the hardware will drive, and that is cmd_range_check's call.
-      if (c->n_pins < 2 || c->all || c->level != LVL_NONE || rate_no_count)
+      //
+      // A name suspends the lower bound: "chase the porch lights" is one target
+      // that the alias table expands into several, and how many pins a name
+      // covers is not knowable here. Demanding two targets would leave the
+      // model no way to say it except by inventing a second one. The count is
+      // checked after resolution, where it is real. Mirrors frames.validate.
+      if ((targets < 2 && !c->n_names) || c->all || c->level != LVL_NONE ||
+          rate_no_count)
         return -1;
       break;
     case ACT_STOP:

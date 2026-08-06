@@ -19,6 +19,7 @@
 #include "../common/llm.h"
 #include "../common/tokenizer.h"
 #include "../common/command.h"
+#include "../common/alias.h"
 #include "../generated/bpe.h"
 
 #define MAX_LINE 1024
@@ -84,7 +85,17 @@ int main(int argc, char **argv) {
   int rc = llm_load(&m, buf);
   if (rc) { fprintf(stderr, "llm_load failed (%d)\n", rc); return 1; }
 
-  Bpe bpe = {BPE_BYTE_TOK, BPE_PAIR_KEY, BPE_PAIR_RANK, BPE_PAIR_NEW, BPE_N_PAIRS};
+  Bpe bpe = BPE_INIT;
+
+  // A few aliases so the pretty mode can show both halves of resolution: a
+  // name that exists drives pins, one that does not is refused by name. The
+  // device builds this table at runtime instead; these are only here so the
+  // host repl is usable without one.
+  AliasTable aliases;
+  alias_init(&aliases);
+  alias_set(&aliases, "desk lamp", (const int[]){4}, 1);
+  alias_set(&aliases, "status led", (const int[]){2}, 1);
+  alias_set(&aliases, "porch lights", (const int[]){5, 6, 7, 8}, 4);
 
   if (pretty)
     printf("loaded %s: V=%d D=%d L=%d  (%.0f KB)\ntype a command, ctrl-D to quit\n\n",
@@ -108,11 +119,19 @@ int main(int argc, char **argv) {
 
     Command c;
     char msg[128], desc[192];
-    if (cmd_parse(out, n, &c) != 0) {
+    if (cmd_parse(out, n, &bpe, &c) != 0) {
       printf("  -> MALFORMED (%d symbols)\n\n", n);
       continue;
     }
-    Verdict v = cmd_range_check(&c, PINS_S3, N_PINS_S3, msg, sizeof(msg));
+    // Names resolve before the board is consulted: an unknown name is not a
+    // bad pin, and saying so is the whole point of copying the name.
+    Verdict v = alias_resolve(&c, &aliases, msg, sizeof(msg));
+    if (v != VERDICT_EXECUTE) {
+      printf("  -> refused: %s\n\n", msg);
+      fflush(stdout);
+      continue;
+    }
+    v = cmd_range_check(&c, PINS_S3, N_PINS_S3, msg, sizeof(msg));
     cmd_describe(&c, desc, sizeof(desc));
     if (v == VERDICT_EXECUTE) printf("  -> %s   [execute]\n\n", desc);
     else                      printf("  -> %s   [refused: %s]\n\n", desc, msg);

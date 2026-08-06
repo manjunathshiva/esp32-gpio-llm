@@ -37,12 +37,18 @@ NEG_FRACTION = 0.30
 # number of generated gibberish strings, because they are what the false-accept
 # metric actually measures.
 #
-# `v1_deferred` is capability this device will have in v2, not a permanent
+# `deferred_alias` is capability this device will have in v2.1, not a permanent
 # refusal. It is a separate entry rather than folded into `synthetic` so that
 # dropping it is a one-line change and so its share is visible in the build
 # report -- see negatives.sample_deferred and README.md.
-NEG_MIX = {"massive_near": 0.16, "massive_far": 0.18, "synthetic": 0.24,
-           "truncated": 0.12, "v1_deferred": 0.30}
+#
+# It was 0.30 in v1, when it also carried every name-targeted command. Names
+# became positives in v2.0, so the entry now holds alias *creation* alone and
+# the freed 0.22 went back to the other four in their existing proportions --
+# not to one of them, which would have quietly re-weighted what false-accept
+# measures.
+NEG_MIX = {"massive_near": 0.21, "massive_far": 0.24, "synthetic": 0.31,
+           "truncated": 0.16, "deferred_alias": 0.08}
 
 
 def build(n: int, seed: int, use_massive: bool) -> list[dict]:
@@ -93,11 +99,12 @@ def build(n: int, seed: int, use_massive: bool) -> list[dict]:
                 tries += 1
                 got += add(negatives.sample_negative(rng), unknown, "synthetic")
             continue
-        if kind == "v1_deferred":
+        if kind == "deferred_alias":
             got, tries = 0, 0
             while got < want and tries < want * 60:
                 tries += 1
-                got += add(negatives.sample_deferred(rng), unknown, "v1_deferred")
+                got += add(negatives.sample_deferred(rng), unknown,
+                           "deferred_alias")
             continue
         if kind == "truncated":
             # Cut real commands short. Half-finished input was the largest

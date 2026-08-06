@@ -30,6 +30,7 @@ data/v1_artifacts/
 firmware/device/espcontrol/llm.h
 firmware/device/espcontrol/tokenizer.h
 firmware/device/espcontrol/command.h
+firmware/device/espcontrol/alias.h
 firmware/device/espcontrol/gpio_control.h
 firmware/device/espcontrol/gpio_control.c
 firmware/device/espcontrol/symbols.h

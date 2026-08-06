@@ -14,7 +14,7 @@
 #define MAX_IDS 4096
 
 int main(void) {
-  Bpe bpe = {BPE_BYTE_TOK, BPE_PAIR_KEY, BPE_PAIR_RANK, BPE_PAIR_NEW, BPE_N_PAIRS};
+  Bpe bpe = BPE_INIT;
   static char line[MAX_LINE];
   static int ids[MAX_IDS];
 

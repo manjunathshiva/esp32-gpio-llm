@@ -30,7 +30,7 @@ from __future__ import annotations
 import random
 
 import names
-from frames import Action, All, Frame, Level, Pin, Target
+from frames import Action, All, Frame, Level, Name, Pin, Target
 
 NUM_WORDS = {
     1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six",
@@ -109,6 +109,13 @@ class Speaker:
                 ["everything", "all pins", "all of them", "every pin",
                  "all the pins", "them all", "all gpio", "all the leds",
                  "the lot", "everything at once"])
+        if isinstance(t, Name):
+            # Verbatim, and only the determiner is added around it. prepare.py
+            # finds this span in the finished utterance to slice the label's
+            # token ids out of the prompt, so anything that rewrites the name
+            # itself -- pluralising, trimming, expanding an abbreviation --
+            # breaks the copy and the row is dropped with a SpanError.
+            return self.name(t.s)
         return self.pin(t.n)
 
     # What joins the last two items of a list. "and" is not the only one people
@@ -430,7 +437,13 @@ def _terse(f: Frame, rng: random.Random, sp: Speaker) -> str | None:
                     f"{f.interval_ms}ms{k}")
         return f"{head} {r} {f.interval_ms}ms{ct}"
     if a is Action.SEQ:
-        body = " ".join(str(t.n) for t in f.targets)
+        # The bare-number form is what makes this register terse ("chase 2 3 4
+        # 5"), and it only exists for pins. A named chase still has a terse
+        # form -- "chase porch lights 200ms 5" -- but it has to go through the
+        # reference renderer, which is the only thing that writes a name
+        # verbatim; str(t.n) on a Name is how this first crashed.
+        body = (" ".join(str(t.n) for t in f.targets)
+                if all(isinstance(t, Pin) for t in f.targets) else _ref(f, sp))
         head = rng.choice(["chase", "cycle", "sweep", "seq"])
         if f.interval_ms is None:
             return f"{head} {body}"

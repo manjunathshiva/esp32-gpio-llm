@@ -8,11 +8,9 @@ The symbol encoder here and the decoder in command.h must agree exactly --
 there are no names in the token stream, only ordered slots. Change one, change
 the other. (Same contract as export.py's tensor `plan` and llm_load().)
 
-**v1 targets pins by number only.** No names, no aliases -- see README.md
-for why, and the digit-wise pin comment in data/frames.py for the part
-that matters most: pin numbers are emitted digit-wise, exactly like intervals,
-and the *runtime* decides whether a number is a GPIO on this board. The model
-transcribes; it does not validate.
+**Targets are pin numbers or names.** Pin numbers are emitted digit-wise,
+exactly like intervals, and the *runtime* decides whether a number is a GPIO on
+this board. The model transcribes; it does not validate.
 
 That split is load-bearing. v0 gave each allowlisted pin its own symbol, which
 made an illegal pin unrepresentable -- and an unrepresentable pin does not
@@ -20,7 +18,17 @@ produce a refusal, it produces the nearest legal one. "switch off pin 100" came
 back as <set> <p10> <low>: the wrong physical pin, actuated silently. Range is
 a hardware fact, so it belongs with the hardware.
 
-See data/frames.py.
+**v2 applies the same rule to names**, which is the whole reason they were
+worth deferring until after the pin fix was understood. A name is copied from
+the utterance as a span and resolved against an alias table the model has never
+seen; an unknown name is refused by name. The tempting alternative -- teaching
+the model which names exist -- rebuilds the pin-100 bug one level up: a model
+that can only say names it was trained on answers "turn on the aquarium pump"
+with the nearest name it knows, and actuates the wrong device. It must be able
+to say a name that does not resolve, so that something downstream can say so.
+
+v1 shipped without names and answered <unknown> to all of them; see
+data/names.py for why the name space is generated rather than listed.
 """
 
 from __future__ import annotations
@@ -28,6 +36,8 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass, field
 from enum import Enum
+
+import names
 
 # Pin allowlists, copied from femtoclaw's tool_gpio.c. Unlike v0 these no longer
 # constrain what the model can emit -- they are what range_check() tests against
@@ -44,6 +54,14 @@ MAX_SEQ_PINS = 6                            # see data/frames.py (MAX_SEQ_PINS)
 # has run away, which is a structural failure.
 MAX_DIGITS = 6
 
+# Same idea for a copied name span. A name is arbitrary text, so unlike a digit
+# run it has no natural end and a degenerate generation could copy forever; this
+# is the structural stop, and it sizes the buffer in command.h. Generous on
+# purpose -- "the light above the workbench in the garage" is a name someone
+# will type, and truncating it silently would resolve to a *different* alias,
+# which is the one outcome this design exists to prevent.
+MAX_NAME_CHARS = 48
+
 
 class Action(str, Enum):
     SET = "set"
@@ -52,6 +70,10 @@ class Action(str, Enum):
     SEQ = "seq"
     STOP = "stop"
     UNKNOWN = "unknown"
+    # Reserved by v2.0, sampled from v2.1. It costs one id out of 1024 to carry
+    # it now, and adding a reserved symbol later would shift every token id and
+    # force a second full retrain of a model that is otherwise finished.
+    ALIAS = "alias"
 
 
 class Level(str, Enum):
@@ -70,7 +92,33 @@ class All:
     pass
 
 
-Target = Pin | All
+@dataclass(frozen=True)
+class Name:
+    """A target named rather than numbered, copied verbatim from the utterance.
+
+    Deliberately just a string. Nothing here knows whether the name resolves --
+    the alias table lives on the device and is edited at runtime, so resolution
+    cannot be a property of the frame without baking a snapshot of the user's
+    table into the training data."""
+    s: str
+
+    def norm(self) -> str:
+        """The form the alias table matches on. Case and run-length of spaces
+        are not meaningful in a name someone typed, and the device folds them
+        the same way -- so scoring must too, or a correct copy of "Desk Lamp"
+        reads as a miss."""
+        return " ".join(self.s.split()).casefold()
+
+
+Target = Pin | All | Name
+
+
+def _target_key(t: Target) -> tuple:
+    if isinstance(t, Pin):
+        return ("pin", t.n)
+    if isinstance(t, Name):
+        return ("name", t.norm())
+    return ("all",)
 
 
 @dataclass
@@ -85,8 +133,7 @@ class Frame:
         """Hashable identity, for exact-match scoring."""
         return (
             self.action,
-            tuple(("pin", t.n) if isinstance(t, Pin) else ("all",)
-                  for t in self.targets),
+            tuple(_target_key(t) for t in self.targets),
             self.level,
             self.interval_ms,
             self.count,
@@ -102,13 +149,18 @@ S_ALL = "<all>"
 S_PIN = "<pin>"
 S_INT = "<int>"
 S_CNT = "<cnt>"
+S_NAME = "<name>"
+S_NEND = "<nend>"
 
 ACTION_SYM = {a: f"<{a.value}>" for a in Action}
 LEVEL_SYM = {l: f"<{l.value}>" for l in Level}
 
 # Every marker that introduces a run of digits. A run ends at the next symbol
-# that is not a digit, which is why v1 has no <nend>: with names gone, the only
-# thing <nend> terminated was a number, and a number already terminates itself.
+# that is not a digit, so none of these needs a terminator: a number terminates
+# itself. <nend> exists for the one slot where that is not true -- a name is
+# arbitrary text, and "kitchen light" followed by <high> is indistinguishable
+# from a name that happens to contain the word "high" unless something closes
+# the span explicitly.
 NUM_SYM = (S_PIN, S_INT, S_CNT)
 
 
@@ -116,25 +168,45 @@ def special_symbols() -> list[str]:
     """Every reserved id, in a stable order. gen_assets.py emits symbols.h from
     this, so the order is part of the model format -- do not sort it later.
 
-    No longer parameterised by the pin allowlist: v1 has one <pin> symbol and
-    the board is not baked into the vocabulary. Changing boards is now a change
-    to gpio_control.c alone, not a retrain."""
+    Not parameterised by the pin allowlist: there is one <pin> symbol and the
+    board is not baked into the vocabulary. Changing boards is a change to
+    gpio_control.c alone, not a retrain.
+
+    v2 appends <name>/<nend> and <alias>, which moves every id after them. That
+    is a tokenizer change and therefore a retrain -- src/train.py's fingerprint
+    is what stops a v1 checkpoint from being scored against this table and
+    reading as a model that forgot which action was which."""
     return (
         [ACTION_SYM[a] for a in Action]
-        + [S_PIN, S_ALL]
+        + [S_PIN, S_ALL, S_NAME, S_NEND]
         + [LEVEL_SYM[l] for l in Level]
         + [S_INT, S_CNT, S_END]
     )
 
 
+# Membership test for "is this element a marker rather than content". Only a
+# name span can contain arbitrary text, so this is what tells a copied name from
+# the symbol that ends it.
+RESERVED_SET = frozenset(special_symbols())
+
+
 def to_symbols(f: Frame) -> list[str]:
     """Frame -> emitted symbol sequence. Order is fixed:
-    ACTION TARGET* [LEVEL] [<int> digits] [<cnt> digits] <end>"""
+    ACTION TARGET* [LEVEL] [<int> digits] [<cnt> digits] <end>
+
+    An element of the returned list is one of three things: a reserved symbol, a
+    single digit, or -- between <name> and <nend> -- a whole name as one string.
+    The name is *not* pre-split into tokens here. prepare.encode_completion is
+    the only place that decides how a span becomes ids, and evaluate.py
+    reassembles the run back into one element before parsing, so both ends of
+    the pipeline agree on what a "symbol" is."""
     out = [ACTION_SYM[f.action]]
 
     for t in f.targets:
         if isinstance(t, Pin):
             out += [S_PIN, *str(t.n)]
+        elif isinstance(t, Name):
+            out += [S_NAME, t.s, S_NEND]
         else:
             out.append(S_ALL)
 
@@ -197,6 +269,25 @@ def from_symbols(syms: list[str]) -> Frame:
             raise ParseError(f"{what} has {len(digits)} digits")
         return int(digits)
 
+    def read_name() -> Name:
+        """The run between <name> and <nend>, which arrives as exactly one
+        element -- see to_symbols. Reassembling model output into that one
+        element is evaluate.py's job, so anything else here means the two halves
+        have drifted and the right response is to fail, not to guess."""
+        nonlocal i
+        s = peek()
+        if s is None or s in RESERVED_SET:
+            raise ParseError("empty name")
+        i += 1
+        if peek() != S_NEND:
+            raise ParseError(f"expected {S_NEND} after a name, got {peek()!r}")
+        i += 1
+        if not s.strip():
+            raise ParseError("blank name")
+        if len(s) > MAX_NAME_CHARS:
+            raise ParseError(f"name is {len(s)} chars")
+        return Name(s)
+
     # targets
     while (s := peek()) is not None:
         if s == S_ALL:
@@ -205,6 +296,9 @@ def from_symbols(syms: list[str]) -> Frame:
         elif s == S_PIN:
             i += 1
             f.targets.append(Pin(read_digits("pin")))
+        elif s == S_NAME:
+            i += 1
+            f.targets.append(read_name())
         else:
             break
 
@@ -239,6 +333,7 @@ def validate(f: Frame) -> None:
     runtime refuse it, instead of the model silently emitting "pin 10"."""
     a, n = f.action, len(f.targets)
     has_all = any(isinstance(t, All) for t in f.targets)
+    has_name = any(isinstance(t, Name) for t in f.targets)
 
     def need(cond: bool, msg: str) -> None:
         if not cond:
@@ -288,7 +383,14 @@ def validate(f: Frame) -> None:
         # Only the lower bound is structural: a chase of one pin is not a chase.
         # The upper bound is how many the hardware will run, so it moved to
         # range_check().
-        need(n >= 2, "needs at least 2 targets")
+        #
+        # A name suspends even the lower bound. "chase the porch lights" is one
+        # target that resolves to four pins, and how many pins a name covers is
+        # a fact about the alias table -- which the model has never seen. Demand
+        # two targets here and the only way to satisfy it is to invent a second
+        # one. The device refuses a chase that resolves to fewer than two pins,
+        # where the count is actually known.
+        need(n >= 2 or has_name, "needs at least 2 targets, or a name")
         need(not has_all, "cannot chase <all>")
         timing_ok()
     elif a is Action.STOP:
@@ -299,6 +401,13 @@ def validate(f: Frame) -> None:
         # verb, from the one command a user reaches for when something is wrong.
         need(not has_all, "<stop> with no targets already means everything")
         need(f.level is None and f.interval_ms is None, "takes no slots")
+    else:
+        # Reached by <alias>, whose id is reserved from v2.0 but which nothing
+        # is trained to emit yet. Without this the if/elif chain would fall
+        # through and validate an <alias> frame by checking nothing at all --
+        # the quiet kind of hole, since the parse would succeed and the device
+        # would act on a command with no shape rules behind it.
+        raise ParseError(f"{a.value}: no shape rule, and none is emitted yet")
 
     if f.count is not None:
         need(f.count >= 0, "negative count")
@@ -314,6 +423,11 @@ class Verdict(str, Enum):
     BAD_PIN = "bad_pin"
     BAD_INTERVAL = "bad_interval"
     TOO_MANY_PINS = "too_many_pins"
+    # Only the device can return these: both need the alias table, which lives
+    # in NVS and is edited at runtime. They are listed here so the two Verdict
+    # enums stay a mirror of each other rather than diverging quietly.
+    UNKNOWN_NAME = "unknown_name"
+    NAME_TOO_FEW_PINS = "name_too_few_pins"
 
 
 def range_check(f: Frame, pins: list[int] = PINS_S3) -> tuple[Verdict, str]:
@@ -327,6 +441,11 @@ def range_check(f: Frame, pins: list[int] = PINS_S3) -> tuple[Verdict, str]:
     if f.action is Action.UNKNOWN:
         return Verdict.EXECUTE, ""
 
+    # Name targets pass through untouched, and that is not an omission. Whether
+    # a name resolves is a fact about the user's alias table, which lives on the
+    # device; the nearest thing this process could do is check against a
+    # snapshot, and a stale snapshot would reject aliases that exist. The device
+    # returns UNKNOWN_NAME. Here, a name is simply not a range question.
     for t in f.targets:
         if isinstance(t, Pin) and t.n not in pins:
             return Verdict.BAD_PIN, f"pin {t.n} is not a GPIO on this board"
@@ -481,10 +600,38 @@ MULTI_PIN_PROB = 0.18
 LONG_LIST_PROB = 0.0
 
 
+# Share of pin-taking frames that address their target by name instead. Higher
+# than the ~12% of the held-out set that is name-shaped, because the two are
+# answering different questions: held-out share measures what people type,
+# this measures how much evidence the *slot* needs. A pin is one of 25 values
+# and a name is one of tens of thousands, so the same coverage costs more rows.
+NAME_TARGET_PROB = 0.30
+# Of named frames, how many name several devices ("the lamp and the fan").
+NAME_LIST_PROB = 0.14
+# ...and how many mix a name with a bare pin number. Rare in speech, but never
+# zero: a shape absent from the corpus becomes a shape the model refuses, and
+# "turn on pin 4 and the desk lamp" is a sentence someone will type.
+MIXED_TARGET_PROB = 0.06
+
+
+def _named_list(rng: random.Random, pins: list[int]) -> list[Target]:
+    """Targets for a frame that addresses devices by name."""
+    if rng.random() < NAME_LIST_PROB:
+        return [Name(names.sample_name(rng)) for _ in range(rng.randint(2, 3))]
+    if rng.random() < MIXED_TARGET_PROB:
+        ts: list[Target] = [Name(names.sample_name(rng)),
+                            Pin(sample_pin_number(rng, pins))]
+        rng.shuffle(ts)         # either order occurs; neither should be special
+        return ts
+    return [Name(names.sample_name(rng))]
+
+
 def _pin_list(rng: random.Random, pins: list[int], *,
-              allow_all: bool = True) -> list[Target]:
+              allow_all: bool = True, named: bool = False) -> list[Target]:
     """One target, or several pins. Shared by set/read/blink/stop so the four
     cannot drift apart again."""
+    if named:
+        return _named_list(rng, pins)
     t = sample_target(rng, pins, allow_all=allow_all)
     if isinstance(t, All) or rng.random() >= MULTI_PIN_PROB:
         return [t]
@@ -514,14 +661,18 @@ ACTION_WEIGHTS = {
 
 def sample_frame(rng: random.Random, pins: list[int] = PINS_S3) -> Frame:
     action = rng.choices(list(ACTION_WEIGHTS), weights=list(ACTION_WEIGHTS.values()))[0]
+    # Decided once per frame, not per target: an utterance that says "the desk
+    # lamp and pin 7" is a real but unusual shape, and sampling name-ness per
+    # target would make it the common one.
+    named = rng.random() < NAME_TARGET_PROB
 
     if action is Action.SET:
         level = rng.choices([Level.HIGH, Level.LOW, Level.TOGGLE],
                             weights=[45, 45, 10])[0]
-        f = Frame(action, _pin_list(rng, pins), level=level)
+        f = Frame(action, _pin_list(rng, pins, named=named), level=level)
 
     elif action is Action.READ:
-        f = Frame(action, _pin_list(rng, pins, allow_all=False))
+        f = Frame(action, _pin_list(rng, pins, allow_all=False, named=named))
 
     elif action is Action.BLINK:
         roll = rng.random()
@@ -531,7 +682,8 @@ def sample_frame(rng: random.Random, pins: list[int] = PINS_S3) -> Frame:
             iv, ct = None, rng.randint(1, 20)
         else:                                # "blink pin 4" -- device default
             iv, ct = None, None
-        f = Frame(action, _pin_list(rng, pins), interval_ms=iv, count=ct)
+        f = Frame(action, _pin_list(rng, pins, named=named),
+                  interval_ms=iv, count=ct)
 
     elif action is Action.SEQ:
         # Over-long chases stop at +4. Past that the utterance runs beyond
@@ -554,14 +706,25 @@ def sample_frame(rng: random.Random, pins: list[int] = PINS_S3) -> Frame:
         else:
             chosen = [sample_pin_number(rng, pins) for _ in range(n)]
         timed = rng.random() < 0.72          # "chase 2 3 4 5" carries no timing
-        f = Frame(action, [Pin(p) for p in chosen],
+        if named:
+            # A chase named collectively -- "cycle the porch lights" -- is one
+            # target that the alias table expands into several. It is the shape
+            # that forces the >=2 rule in validate() to be about *targets* and
+            # not about pins; see the note there.
+            seq_targets: list[Target] = (
+                [Name(names.sample_group_name(rng))] if rng.random() < 0.7
+                else [Name(names.sample_name(rng))
+                      for _ in range(rng.randint(2, 3))])
+        else:
+            seq_targets = [Pin(p) for p in chosen]
+        f = Frame(action, seq_targets,
                   interval_ms=sample_interval(rng) if timed else None,
                   count=sample_count(rng) if timed else None)
 
     else:  # STOP
         # No target means everything, which is most of what people say.
         targets = ([] if rng.random() < 0.45
-                   else _pin_list(rng, pins, allow_all=False))
+                   else _pin_list(rng, pins, allow_all=False, named=named))
         f = Frame(action, targets)
 
     validate(f)

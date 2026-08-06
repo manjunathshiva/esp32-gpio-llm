@@ -38,6 +38,11 @@ typedef struct {
   const uint16_t *rank;      // [n]
   const uint16_t *newtok;    // [n]
   int n;
+  // Decode direction. Only the name span needs it, but it is part of the same
+  // generated pair as the tables above and must never be swapped independently.
+  const uint16_t *tok_off;   // [vocab + 1] offsets into tok_bytes
+  const uint8_t *tok_bytes;  // raw bytes of every token, concatenated
+  int vocab;
 } Bpe;
 
 #define TOK_NO_RANK 0xFFFF
@@ -156,6 +161,32 @@ static int tok_encode(const Bpe *bpe, const char *text, int *out, int max_out) {
     i += len;
   }
   return total;
+}
+
+// Decode `n` ids into `out` as a NUL-terminated string. Returns the length
+// written, or -1 if an id is out of range or the text does not fit.
+//
+// Used for one thing: turning a copied name span back into the string the alias
+// table is keyed on. It is a concatenation, not an inverse BPE -- gen_assets.py
+// already un-mapped ByteLevel's codepoints back to bytes, so there is nothing
+// to undo here.
+//
+// -1 rather than a truncated string on overflow, deliberately. A name cut short
+// is still a *valid* name, and would resolve to a different device than the one
+// asked for -- the same substitution this design exists to prevent, arriving
+// through a buffer instead of through the model.
+static int tok_decode(const Bpe *bpe, const int *ids, int n,
+                      char *out, int max_out) {
+  int len = 0;
+  for (int i = 0; i < n; i++) {
+    int id = ids[i];
+    if (id < 0 || id >= bpe->vocab) return -1;
+    int lo = bpe->tok_off[id], hi = bpe->tok_off[id + 1];
+    if (len + (hi - lo) >= max_out) return -1;      // >= leaves room for NUL
+    for (int k = lo; k < hi; k++) out[len++] = (char)bpe->tok_bytes[k];
+  }
+  out[len] = 0;
+  return len;
 }
 
 #endif
