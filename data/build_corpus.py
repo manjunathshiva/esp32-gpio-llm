@@ -37,12 +37,16 @@ NEG_FRACTION = 0.30
 # number of generated gibberish strings, because they are what the false-accept
 # metric actually measures.
 #
-# `v1_deferred` is capability this device will have in v2, not a permanent
-# refusal. It is a separate entry rather than folded into `synthetic` so that
-# dropping it is a one-line change and so its share is visible in the build
-# report -- see negatives.sample_deferred and README.md.
-NEG_MIX = {"massive_near": 0.16, "massive_far": 0.18, "synthetic": 0.24,
-           "truncated": 0.12, "v1_deferred": 0.30}
+# The `deferred` entry is gone as of v2.1. It held capability the device did
+# not have yet -- name-targeted commands until v2.0, alias creation until v2.1
+# -- and both are positives now. It was a separate entry precisely so that
+# emptying it would be a one-line change.
+#
+# Its share was 0.30 in v1 and 0.08 in v2.0. Each time the freed share went
+# back to the other four in their existing proportions rather than to one of
+# them, which would have quietly re-weighted what false-accept measures.
+NEG_MIX = {"massive_near": 0.23, "massive_far": 0.26, "synthetic": 0.34,
+           "truncated": 0.17}
 
 
 def build(n: int, seed: int, use_massive: bool) -> list[dict]:
@@ -92,12 +96,6 @@ def build(n: int, seed: int, use_massive: bool) -> list[dict]:
             while got < want and tries < want * 60:
                 tries += 1
                 got += add(negatives.sample_negative(rng), unknown, "synthetic")
-            continue
-        if kind == "v1_deferred":
-            got, tries = 0, 0
-            while got < want and tries < want * 60:
-                tries += 1
-                got += add(negatives.sample_deferred(rng), unknown, "v1_deferred")
             continue
         if kind == "truncated":
             # Cut real commands short. Half-finished input was the largest

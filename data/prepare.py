@@ -8,12 +8,15 @@ tokens per number and requires the matching change in
 `firmware/common/tokenizer.h` -- GPT-2's split groups `\\p{N}+` into one chunk,
 this does not. `src/tok_check.py` is the gate for that.
 
-In v1 this is the *only* decision that shapes the completion, and it carries far
-more weight than it did: pin numbers are copied digits too now, so a tokenizer
+This carries a lot of weight: pin numbers are copied digits too, so a tokenizer
 that merged "10" into one token would make "pin 100" -> "pin 10" a single-token
-slip. The v0 note about encoding name spans with a leading space is gone with
-names -- every completion symbol is now either reserved or a lone digit, which
-`encode_completion` asserts rather than handles.
+slip.
+
+v2 adds the other copied slot, a name. Its label ids are **sliced out of the
+encoded prompt** rather than re-encoded from the name string -- see
+`name_span_ids` for why re-encoding cannot work under ByteLevel. That makes the
+completion a literal subsequence of the input, which is the property that turns
+copying into an attention task instead of a memorization one.
 
 Usage:
     uv run python data/prepare.py --seq-len 96 --vocab 1024
@@ -23,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -68,21 +72,71 @@ def train_tokenizer(texts: list[str], vocab: int, reserved: list[str],
     return tok
 
 
-def encode_completion(tok: Tokenizer, syms: list[str],
-                      reserved: set[str]) -> list[int]:
+class SpanError(ValueError):
+    """A name in the label is not present in the utterance. A corpus bug, not a
+    tokenizer one: the realizer must render the name it recorded."""
+
+
+def name_span_ids(enc, text: str, name: str) -> list[int]:
+    """The prompt's own token ids for `name`, sliced out of an encoded prompt.
+
+    Not `tok.encode(name)`. A name is *copied*, so the label has to be the same
+    ids the model can see in front of it -- and re-encoding does not give those:
+
+      - ByteLevel makes "status" and "Ġstatus" different ids, so a name at
+        position 0 ("status_pin off") re-encodes to tokens that never appear in
+        the prompt. v0 hit exactly this and the span came back garbled.
+      - Utterances get case-mangled after the frame is built, so "desk lamp"
+        may surface as "DESK LAMP", which tokenizes completely differently.
+
+    Taking the ids from the prompt makes the label a literal subsequence of the
+    input, so copying is correct by construction rather than by coincidence, and
+    every surface form is handled without enumerating them.
+
+    Selection is by *overlap*, not containment: ByteLevel folds the preceding
+    space into the following token, so "Ġdesk" spans (11,16) while the name
+    starts at char 12. Requiring containment silently drops a name's first
+    token -- which still trains, still looks plausible, and resolves to the
+    wrong alias.
+    """
+    lo = text.casefold().find(name.casefold())
+    if lo < 0:
+        raise SpanError(f"{name!r} does not occur in {text!r}")
+    hi = lo + len(name)
+    ids = [i for i, (s, e) in zip(enc.ids, enc.offsets) if e > lo and s < hi]
+    if not ids:
+        raise SpanError(f"{name!r} selected no tokens in {text!r}")
+    return ids
+
+
+def encode_completion(tok: Tokenizer, syms: list[str], reserved: set[str],
+                      enc=None, text: str = "") -> list[int]:
     """Symbol list -> token ids.
 
-    Every v1 completion symbol is either reserved or a single digit, so this is
-    a straight lookup with no BPE in the loop. The assert is the guard: if a
-    multi-character non-reserved symbol ever appears here it means to_symbols()
-    grew a span slot again, and silently BPE-ing it would produce a label the
-    model has to translate rather than copy.
+    Outside a name span every symbol is reserved or a single digit, so it is a
+    straight lookup with no BPE in the loop. The assert is the guard: a
+    multi-character non-reserved symbol anywhere else means to_symbols() grew a
+    slot this function does not know about, and silently BPE-ing it would
+    produce a label the model has to translate rather than copy.
     """
     out: list[int] = []
-    for s in syms:
+    i = 0
+    while i < len(syms):
+        s = syms[i]
+        if s == frames.S_NAME:
+            # The one slot whose content is arbitrary text. It is bounded by
+            # <nend> because, unlike a digit run, a name does not end itself.
+            out.append(tok.token_to_id(s))
+            i += 1
+            if i >= len(syms):
+                raise SpanError(f"{frames.S_NAME} with nothing after it")
+            out += name_span_ids(enc, text, syms[i])
+            i += 1
+            continue
         assert s in reserved or (s.isdigit() and len(s) == 1), \
             f"completion symbol {s!r} is neither reserved nor a digit"
         out.append(tok.token_to_id(s))
+        i += 1
     return out
 
 
@@ -113,6 +167,9 @@ def main() -> None:
     meta = {"vocab": real_vocab, "seq_len": a.seq_len, "pad": pad_id,
             "go": go_id, "reserved": {s: tok.token_to_id(s) for s in reserved}}
 
+    unspanned: list[str] = []
+    n_unspanned = 0
+
     for name, rows in splits.items():
         toks = np.zeros((len(rows), a.seq_len), dtype=np.uint16)
         mask = np.zeros((len(rows), a.seq_len), dtype=np.uint8)
@@ -120,9 +177,20 @@ def main() -> None:
         longest = 0
 
         for r in rows:
-            body = tok.encode(r["text"]).ids
-            prompt = body + [go_id]
-            comp = encode_completion(tok, r["symbols"], reserved_set)
+            enc = tok.encode(r["text"])
+            prompt = enc.ids + [go_id]
+            try:
+                comp = encode_completion(tok, r["symbols"], reserved_set,
+                                         enc, r["text"])
+            except SpanError as e:
+                # The realizer rendered a name the label does not contain, so
+                # the row cannot teach a copy. Collected rather than raised on
+                # the spot: one example tells you almost nothing, and the count
+                # is what says whether it is a typo or a broken template.
+                if len(unspanned) < 5:
+                    unspanned.append(str(e))
+                n_unspanned += 1
+                continue
             seq = prompt + comp
             longest = max(longest, len(seq))
             if len(seq) > a.seq_len:
@@ -144,6 +212,16 @@ def main() -> None:
 
     (HERE / "meta.json").write_text(json.dumps(meta, indent=2))
     print(f"\nwrote {HERE}/meta.json")
+
+    # Fatal, and deliberately at the end so the report is the whole count rather
+    # than the first row that tripped. A name the model cannot copy from the
+    # prompt is not a smaller training set, it is a silently different task.
+    if n_unspanned:
+        for e in unspanned:
+            print(f"  {e}", file=sys.stderr)
+        raise SystemExit(
+            f"{n_unspanned:,} rows had a name absent from their own utterance. "
+            f"data/realize.py must render the name it recorded in the frame.")
 
 
 if __name__ == "__main__":

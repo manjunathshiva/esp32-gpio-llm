@@ -86,7 +86,12 @@ def rate(label: str, k: int, n: int) -> str:
 class Decoder:
     """Wraps model + tokenizer and turns text into a Frame."""
 
-    def __init__(self, run: Path, device: str = "cpu"):
+    def __init__(self, run: Path | str, device: str = "cpu"):
+        # Normalised because the fingerprint mismatch below reports run.name,
+        # and a str path made that message raise AttributeError instead of
+        # printing -- turning the one error that explains a stale checkpoint
+        # into a traceback about something else entirely.
+        run = Path(run)
         ck = torch.load(run, map_location=device, weights_only=False)
         self.cfg = Config(**ck["cfg"])
         self.model = TinyLM(self.cfg).to(device).eval()
@@ -124,11 +129,36 @@ class Decoder:
     def _to_symbols(self, ids: list[int]) -> list[str]:
         """Token ids -> the symbol list frames.from_symbols expects.
 
-        A straight lookup in v1. Every completion token is either a reserved
-        symbol or a lone digit -- there are no spans to reassemble now that
-        names are gone, and digits stay separate because prepare.py's
-        Digits(individual_digits=True) never merges them."""
-        return [self.inv.get(i, "") for i in ids]
+        Mostly a straight lookup: every completion token is a reserved symbol or
+        a lone digit, and digits stay separate because prepare.py's
+        Digits(individual_digits=True) never merges them.
+
+        The exception is a name, which arrives as however many tokens the copy
+        took and has to come back as one element -- that is the shape
+        frames.to_symbols produces, so it is the shape from_symbols parses.
+        Reassembly stops at <nend>; a span that runs to the end of the
+        generation without one is left unterminated on purpose, so from_symbols
+        rejects it rather than accepting a name the model never finished."""
+        out: list[str] = []
+        i = 0
+        while i < len(ids):
+            s = self.inv.get(ids[i], "")
+            out.append(s)
+            i += 1
+            if s != frames.S_NAME:
+                continue
+            span: list[int] = []
+            while i < len(ids) and self.inv.get(ids[i], "") != frames.S_NEND:
+                span.append(ids[i])
+                i += 1
+            # skip_special_tokens=False so a marker that leaked into the span
+            # surfaces as text and scores as a miss. Dropping it would repair
+            # the name and hide a malformed generation.
+            out.append(self.tok.decode(span, skip_special_tokens=False).strip())
+            if i < len(ids):
+                out.append(frames.S_NEND)
+                i += 1
+        return out
 
     @torch.no_grad()
     def parse(self, text: str, max_new: int = 40,

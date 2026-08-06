@@ -23,6 +23,7 @@ sketch="$here/espcontrol"
 cp "$root/firmware/common/llm.h" \
    "$root/firmware/common/tokenizer.h" \
    "$root/firmware/common/command.h" \
+   "$root/firmware/common/alias.h" \
    "$root/firmware/common/gpio_control.h" \
    "$root/firmware/common/gpio_control.c" \
    "$root/firmware/generated/symbols.h" \

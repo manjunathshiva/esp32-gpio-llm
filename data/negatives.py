@@ -16,13 +16,18 @@ would train the exact reflex v1 removes, so they changed side rather than being
 deleted; the sampling now happens in frames.sample_pin_number and
 frames.sample_interval. See the out-of-range sampling comment in data/frames.py.
 
-**What is a negative only until v2.** name_targeted() and alias_request() are
-debt. v1 has no alias table, so a name has nothing to resolve against and
-<unknown> is the only honest answer -- but the thing being rejected is the
-*shape* (verb + noun phrase), never a particular noun, which is why names.py
-generates from a space too large to memorise. Both carry source "v1_deferred"
-so v2 drops them in one move. See data/frames.py on why a model that learns to
-reject nouns is a model that rejects legitimate new aliases.
+**What stopped being a negative in v2.0.** name_targeted() used to live here,
+because v1 had no alias table and so a name had nothing to resolve against.
+A named command is now a positive with a Name target and the *device* answers
+for whether the name resolves; keeping it here as well would train two answers
+for one sentence. The generator is retained, unused by sample_deferred, because
+it is still the cleanest way to produce name-shaped utterances for probing.
+
+**What is still deferred.** alias_request() -- asking to *create* a name -- is
+debt until v2.1. It carries source "deferred_alias" so it drops in one move,
+and the thing being rejected is the *shape* (assign a name to a pin), never a
+particular noun. See data/frames.py on why a model that learns to reject nouns
+is a model that rejects legitimate new aliases.
 """
 
 from __future__ import annotations
@@ -262,16 +267,11 @@ def name_targeted(rng: random.Random) -> str:
     return realize._decorate(rng.choice(realize.SEQ_T).format(r=body), rng)
 
 
-_ALIAS_T = [
-    "call {r} the {n}", "name {r} the {n}", "call {r} {n}", "name {r} {n}",
-    "rename {r} to {n}", "remember {r} as the {n}", "label {r} as the {n}",
-    "set the name of {r} to {n}", "refer to {r} as the {n}",
-]
-_ALIAS_DECL_T = [
-    "{r} is the {n}", "{r} is called the {n}", "let's call {r} the {n}",
-    "{r} should be called the {n}", "from now on {r} is the {n}",
-    "{r} is my {n}", "i call {r} the {n}", "{r} = {n}",
-]
+# Moved to realize.py in v2.1, where the positives live. Re-exported here so
+# alias_request() below still reads the same list -- it is kept as a probe
+# generator even though nothing samples it as a negative any more.
+_ALIAS_T = realize.ALIAS_T
+_ALIAS_DECL_T = realize.ALIAS_DECL_T
 
 
 def alias_request(rng: random.Random) -> str:
@@ -498,13 +498,24 @@ _GEN = [(unsupported_capability, 18, "imperative"),
 
 
 def sample_deferred(rng: random.Random) -> str:
-    """v1-only negatives: capability this device is *going* to have.
+    """Negatives for capability this device is *going* to have.
 
-    Sampled and tagged apart from the permanent negatives so v2 drops them in
-    one move rather than picking them out of a mixed pool. Already decorated by
-    realize._decorate, so unlike sample_negative this needs no further dressing.
+    Sampled and tagged apart from the permanent negatives so a version bump
+    drops them in one move rather than picking them out of a mixed pool.
+    Already decorated by realize._decorate, so unlike sample_negative this
+    needs no further dressing.
+
+    v2.0 dropped name_targeted() from here: a command aimed at a name is now a
+    positive with a Name target, and leaving it in the negative pool would
+    train both answers for one sentence. v2.1 dropped alias_request() for the
+    same reason -- naming a pin is the <alias> action now.
+
+    Nothing is deferred any more, so this returns None and build_corpus.py has
+    no deferred share left to fill. Both generators stay in this file: they are
+    still the cleanest way to produce name-shaped and alias-shaped utterances
+    for probing a trained model, which is a different job from training it.
     """
-    return name_targeted(rng) if rng.random() < 0.72 else alias_request(rng)
+    return None
 
 
 def sample_negative(rng: random.Random) -> str:
