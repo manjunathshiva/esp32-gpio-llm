@@ -31,8 +31,12 @@
 
 static Model model;
 static Run  *run;                 // ~200 KB of KV cache: PSRAM, not the stack
-static Bpe   bpe = {BPE_BYTE_TOK, BPE_PAIR_KEY, BPE_PAIR_RANK, BPE_PAIR_NEW,
-                    BPE_N_PAIRS};
+// BPE_INIT, never a field list. Spelling the fields out here is how the decode
+// tables came to be null on device while every host gate passed: C zero-fills
+// the members you leave out, so tok_decode saw vocab==0, refused every id, and
+// each named command came back "I don't understand that" with a symbol count
+// that proved the model had done its part.
+static Bpe   bpe = BPE_INIT;
 static const void *model_base = nullptr;
 
 // The alias table, and the only thing that decides whether a name means
