@@ -228,6 +228,27 @@ static void handle(const char *line) {
   }
 
   char msg[128];
+
+  // Naming is settled before resolution, because an <alias> command's name is
+  // the one that is *supposed* not to exist yet. The pins are range-checked
+  // first so a name can never be bound to a pin this board does not have.
+  if (c.action == ACT_ALIAS) {
+    int n_allow;
+    const int *allow = gpio_allowed_pins(&n_allow);
+    Verdict rv = cmd_range_check(&c, allow, n_allow, msg, sizeof(msg));
+    if (rv != VERDICT_EXECUTE) {
+      Serial.printf("refused: %s   (%lums)\n", msg, (unsigned long)ms);
+      return;
+    }
+    if (alias_apply(&c, &aliases, msg, sizeof(msg)) != 0) {
+      Serial.printf("refused: %s   (%lums)\n", msg, (unsigned long)ms);
+      return;
+    }
+    alias_save();
+    Serial.printf("%s   (%lums)\n", msg, (unsigned long)ms);
+    return;
+  }
+
   // Resolution first: an unknown name is not a bad pin, and it is the one
   // refusal that has to name what it could not find. Only after every name has
   // become a real pin does the board get a say.

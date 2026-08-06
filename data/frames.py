@@ -70,9 +70,8 @@ class Action(str, Enum):
     SEQ = "seq"
     STOP = "stop"
     UNKNOWN = "unknown"
-    # Reserved by v2.0, sampled from v2.1. It costs one id out of 1024 to carry
-    # it now, and adding a reserved symbol later would shift every token id and
-    # force a second full retrain of a model that is otherwise finished.
+    # Reserved by v2.0 and live from v2.1. Carrying the id early cost one slot
+    # out of 1024 and saved a second full retrain to shift every token.
     ALIAS = "alias"
 
 
@@ -403,13 +402,28 @@ def validate(f: Frame) -> None:
         # verb, from the one command a user reaches for when something is wrong.
         need(not has_all, "<stop> with no targets already means everything")
         need(f.level is None and f.interval_ms is None, "takes no slots")
+    elif a is Action.ALIAS:
+        # "call pin 4 the desk lamp": the pins are what gets named, the single
+        # Name is what they get called. Pins, not names -- aliasing a name to a
+        # name is a rename, which needs the table to resolve the left side and
+        # is therefore the device's business, not a shape this grammar holds.
+        #
+        # Exactly one Name, because the frame has one name slot and two would
+        # be silently ambiguous about which is the new label. The pin count is
+        # only bounded above by the parser; how many pins one alias may cover
+        # is a hardware fact and belongs with the hardware.
+        n_named = sum(1 for t in f.targets if isinstance(t, Name))
+        need(n_named == 1, "names exactly one thing")
+        need(n - n_named >= 1, "needs at least one pin to name")
+        need(not has_all, "cannot name the whole board")
+        need(f.level is None and f.interval_ms is None and f.count is None,
+             "takes no level or timing")
     else:
-        # Reached by <alias>, whose id is reserved from v2.0 but which nothing
-        # is trained to emit yet. Without this the if/elif chain would fall
-        # through and validate an <alias> frame by checking nothing at all --
-        # the quiet kind of hole, since the parse would succeed and the device
-        # would act on a command with no shape rules behind it.
-        raise ParseError(f"{a.value}: no shape rule, and none is emitted yet")
+        # Unreachable while every Action has a branch. Kept because the chain
+        # would otherwise validate a new action by checking nothing at all --
+        # the parse would succeed and the device would act on a command with no
+        # shape rules behind it.
+        raise ParseError(f"{a.value}: no shape rule")
 
     if f.count is not None:
         need(f.count >= 0, "negative count")
@@ -650,14 +664,17 @@ def _pin_list(rng: random.Random, pins: list[int], *,
 
 
 # Weighted so the corpus is not dominated by the rarest actions. `set` is what
-# people actually type. `alias`'s v0 share is redistributed rather than kept:
-# there is no alias action in v1.
+# people actually type. `alias` is back from v2.1 and deliberately small: it is
+# something a user does once per device and then never again, so over-weighting
+# it would buy accuracy on a rare utterance by making every ordinary command
+# slightly likelier to be read as a naming request.
 ACTION_WEIGHTS = {
     Action.SET: 38,
     Action.BLINK: 22,
     Action.READ: 14,
     Action.STOP: 12,
     Action.SEQ: 14,
+    Action.ALIAS: 8,
 }
 
 
@@ -722,6 +739,24 @@ def sample_frame(rng: random.Random, pins: list[int] = PINS_S3) -> Frame:
         f = Frame(action, seq_targets,
                   interval_ms=sample_interval(rng) if timed else None,
                   count=sample_count(rng) if timed else None)
+
+    elif action is Action.ALIAS:
+        # "call pin 4 the desk lamp". Usually one pin; a group name over
+        # several is the tail. Pin numbers go through sample_pin_number like
+        # every other action, so out-of-range ones occur -- naming pin 100 is a
+        # well-formed request that the runtime refuses, and a corpus that only
+        # ever names legal pins would teach the model to correct the number.
+        n = 1 if rng.random() < 0.78 else rng.randint(2, 4)
+        nm = names.sample_group_name(rng) if n > 1 else names.sample_name(rng)
+        # Distinct pins: "call gpios 38, 42 and 42 the table lasers" is not
+        # something anyone types, and a repeated pin in a naming request is
+        # noise the model would have to learn to reproduce.
+        chosen: list[int] = []
+        while len(chosen) < n:
+            p = sample_pin_number(rng, pins)
+            if p not in chosen:
+                chosen.append(p)
+        f = Frame(action, [Pin(p) for p in chosen] + [Name(nm)])
 
     else:  # STOP
         # No target means everything, which is most of what people say.

@@ -86,7 +86,12 @@ def rate(label: str, k: int, n: int) -> str:
 class Decoder:
     """Wraps model + tokenizer and turns text into a Frame."""
 
-    def __init__(self, run: Path, device: str = "cpu"):
+    def __init__(self, run: Path | str, device: str = "cpu"):
+        # Normalised because the fingerprint mismatch below reports run.name,
+        # and a str path made that message raise AttributeError instead of
+        # printing -- turning the one error that explains a stale checkpoint
+        # into a traceback about something else entirely.
+        run = Path(run)
         ck = torch.load(run, map_location=device, weights_only=False)
         self.cfg = Config(**ck["cfg"])
         self.model = TinyLM(self.cfg).to(device).eval()

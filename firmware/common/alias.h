@@ -104,6 +104,11 @@ static Verdict alias_resolve(Command *c, const AliasTable *t,
                              char *msg, int msg_n) {
   if (msg && msg_n) msg[0] = 0;
 
+  // An <alias> command's name is being *defined*, not looked up. Resolving it
+  // would refuse every new name for not existing yet, which is the one moment
+  // a name legitimately does not.
+  if (c->action == ACT_ALIAS) return VERDICT_EXECUTE;
+
   for (int i = 0; i < c->n_names; i++) {
     int ix = alias_find(t, c->names[i]);
     if (ix < 0) {
@@ -136,6 +141,35 @@ static Verdict alias_resolve(Command *c, const AliasTable *t,
 
   c->n_names = 0;               // consumed; the command is now pins only
   return VERDICT_EXECUTE;
+}
+
+// Apply an <alias> command: bind its name to its pins. Returns 0, or -1 with a
+// reason in `msg`.
+//
+// Range-checking happens before this, in cmd_range_check, so a name can never
+// be bound to a pin the board does not have. Refusing at creation is better
+// than refusing at every use, and it keeps the table from becoming a second
+// place an illegal pin can hide.
+static int alias_apply(const Command *c, AliasTable *t, char *msg, int msg_n) {
+  if (c->action != ACT_ALIAS || c->n_names != 1 || c->n_pins < 1) {
+    if (msg) snprintf(msg, (size_t)msg_n, "not a naming command");
+    return -1;
+  }
+  if (c->n_pins > ALIAS_MAX_PINS) {
+    if (msg) snprintf(msg, (size_t)msg_n,
+                      "a name covers at most %d pins, got %d",
+                      ALIAS_MAX_PINS, c->n_pins);
+    return -1;
+  }
+  if (alias_set(t, c->names[0], c->pins, c->n_pins) != 0) {
+    if (msg) snprintf(msg, (size_t)msg_n, "the alias table is full (%d)",
+                      ALIAS_MAX);
+    return -1;
+  }
+  int k = snprintf(msg, (size_t)msg_n, "\"%s\" ->", c->names[0]);
+  for (int i = 0; i < c->n_pins && k < msg_n; i++)
+    k += snprintf(msg + k, (size_t)(msg_n - k), " %d", c->pins[i]);
+  return 0;
 }
 
 #endif

@@ -267,16 +267,11 @@ def name_targeted(rng: random.Random) -> str:
     return realize._decorate(rng.choice(realize.SEQ_T).format(r=body), rng)
 
 
-_ALIAS_T = [
-    "call {r} the {n}", "name {r} the {n}", "call {r} {n}", "name {r} {n}",
-    "rename {r} to {n}", "remember {r} as the {n}", "label {r} as the {n}",
-    "set the name of {r} to {n}", "refer to {r} as the {n}",
-]
-_ALIAS_DECL_T = [
-    "{r} is the {n}", "{r} is called the {n}", "let's call {r} the {n}",
-    "{r} should be called the {n}", "from now on {r} is the {n}",
-    "{r} is my {n}", "i call {r} the {n}", "{r} = {n}",
-]
+# Moved to realize.py in v2.1, where the positives live. Re-exported here so
+# alias_request() below still reads the same list -- it is kept as a probe
+# generator even though nothing samples it as a negative any more.
+_ALIAS_T = realize.ALIAS_T
+_ALIAS_DECL_T = realize.ALIAS_DECL_T
 
 
 def alias_request(rng: random.Random) -> str:
@@ -512,10 +507,15 @@ def sample_deferred(rng: random.Random) -> str:
 
     v2.0 dropped name_targeted() from here: a command aimed at a name is now a
     positive with a Name target, and leaving it in the negative pool would
-    train both answers for one sentence. Only alias *creation* is still
-    deferred, so this is alias_request() alone until v2.1.
+    train both answers for one sentence. v2.1 dropped alias_request() for the
+    same reason -- naming a pin is the <alias> action now.
+
+    Nothing is deferred any more, so this returns None and build_corpus.py has
+    no deferred share left to fill. Both generators stay in this file: they are
+    still the cleanest way to produce name-shaped and alias-shaped utterances
+    for probing a trained model, which is a different job from training it.
     """
-    return alias_request(rng)
+    return None
 
 
 def sample_negative(rng: random.Random) -> str:

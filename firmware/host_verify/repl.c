@@ -123,6 +123,18 @@ int main(int argc, char **argv) {
       printf("  -> MALFORMED (%d symbols)\n\n", n);
       continue;
     }
+    if (c.action == ACT_ALIAS) {
+      // Naming, not acting. Range-check the pins first so a name cannot be
+      // bound to a pin the board does not have, then bind it.
+      Verdict rv = cmd_range_check(&c, PINS_S3, N_PINS_S3, msg, sizeof(msg));
+      if (rv != VERDICT_EXECUTE || alias_apply(&c, &aliases, msg, sizeof(msg)))
+        printf("  -> refused: %s\n\n", msg);
+      else
+        printf("  -> %s   [named]\n\n", msg);
+      fflush(stdout);
+      continue;
+    }
+
     // Names resolve before the board is consulted: an unknown name is not a
     // bad pin, and saying so is the whole point of copying the name.
     Verdict v = alias_resolve(&c, &aliases, msg, sizeof(msg));

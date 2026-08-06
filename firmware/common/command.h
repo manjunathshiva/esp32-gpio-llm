@@ -48,7 +48,7 @@
 #define CMD_NAME_BUF (SYM_MAX_NAME + 1)
 
 typedef enum {
-  ACT_SET, ACT_READ, ACT_BLINK, ACT_SEQ, ACT_STOP, ACT_UNKNOWN
+  ACT_SET, ACT_READ, ACT_BLINK, ACT_SEQ, ACT_STOP, ACT_UNKNOWN, ACT_ALIAS
 } CmdAction;
 
 typedef enum { LVL_NONE, LVL_HIGH, LVL_LOW, LVL_TOGGLE } CmdLevel;
@@ -92,6 +92,7 @@ static const char *cmd_action_name(CmdAction a) {
     case ACT_BLINK: return "blink";
     case ACT_SEQ: return "seq";
     case ACT_STOP: return "stop";
+    case ACT_ALIAS: return "alias";
     default: return "unknown";
   }
 }
@@ -113,6 +114,7 @@ static int cmd_parse(const int *ids, int n, const Bpe *bpe, Command *c) {
     case SYM_BLINK:   c->action = ACT_BLINK; break;
     case SYM_SEQ:     c->action = ACT_SEQ; break;
     case SYM_STOP:    c->action = ACT_STOP; break;
+    case SYM_ALIAS:   c->action = ACT_ALIAS; break;
     case SYM_UNKNOWN: c->action = ACT_UNKNOWN; break;
     default: return -1;                       // no action leads the sequence
   }
@@ -220,6 +222,14 @@ static int cmd_parse(const int *ids, int n, const Bpe *bpe, Command *c) {
           rate_no_count)
         return -1;
       break;
+    case ACT_ALIAS:
+      // "call pin 4 the desk lamp": pins are what gets named, the one name is
+      // what they get called. Exactly one name, because two would be
+      // ambiguous about which is the new label. Mirrors frames.validate.
+      if (c->n_names != 1 || c->n_pins < 1 || c->all ||
+          c->level != LVL_NONE || timed)
+        return -1;
+      break;
     case ACT_STOP:
       // No targets means everything; any other number is a list of pins. One
       // target was the old limit, and "stop pins 4 and 5" came back as <seq>,
@@ -277,6 +287,10 @@ static void cmd_describe(const Command *c, char *out, int out_n) {
   if (c->all) k += snprintf(out + k, (size_t)(out_n - k), " all");
   for (int i = 0; i < c->n_pins && k < out_n; i++)
     k += snprintf(out + k, (size_t)(out_n - k), " pin%d", c->pins[i]);
+  // Names as well as pins: after alias_resolve there are none left, but before
+  // it -- and always, for <alias> -- the name is the whole point of the line.
+  for (int i = 0; i < c->n_names && k < out_n; i++)
+    k += snprintf(out + k, (size_t)(out_n - k), " \"%s\"", c->names[i]);
   if (c->level != LVL_NONE && k < out_n)
     k += snprintf(out + k, (size_t)(out_n - k), " %s",
                   c->level == LVL_HIGH ? "high" :

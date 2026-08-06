@@ -304,6 +304,24 @@ STOP_ALL_T = [
     "stop flashing", "cancel animation", "stop animation", "halt animation",
 ]
 
+# Naming something. `{r}` is the pin reference, `{n}` the name being assigned.
+# Two registers: an imperative ("call pin 4 the desk lamp") and a declarative
+# ("pin 4 is the desk lamp"). The declarative matters more than its share
+# suggests -- it has no command verb at all, so a model that keys on the verb
+# to decide the action has nothing to key on and must read the sentence.
+ALIAS_T = [
+    "call {r} the {n}", "name {r} the {n}", "call {r} {n}", "name {r} {n}",
+    "rename {r} to {n}", "remember {r} as the {n}", "label {r} as the {n}",
+    "set the name of {r} to {n}", "refer to {r} as the {n}",
+    "alias {r} to {n}", "tag {r} as {n}", "map {r} to the {n}",
+]
+ALIAS_DECL_T = [
+    "{r} is the {n}", "{r} is called the {n}", "let's call {r} the {n}",
+    "{r} should be called the {n}", "from now on {r} is the {n}",
+    "{r} is my {n}", "i call {r} the {n}", "{r} = {n}",
+    "{r} is now the {n}", "treat {r} as the {n}",
+]
+
 STOP_ONE_T = [
     "stop {r}", "stop blinking {r}", "halt {r}", "cancel {r}",
     "stop the blinking on {r}", "quit blinking {r}", "freeze {r}",
@@ -506,6 +524,20 @@ def realize(f: Frame, rng: random.Random) -> str:
     if a is Action.SEQ:
         s = rng.choice(SEQ_T).format(r=sp.target_list(f.targets))
         return _decorate(_with_timing(s, f, rng, "cycles"), rng)
+
+    if a is Action.ALIAS:
+        # The name is the last target and everything before it is the pins
+        # being named -- see frames.validate. Rendered verbatim through
+        # Speaker.name so prepare.py can still find the span; the templates
+        # supply their own determiner, so this one must not add a second.
+        pins = [t for t in f.targets if isinstance(t, Pin)]
+        nm = next(t for t in f.targets if isinstance(t, Name)).s
+        r = (sp.pin(pins[0].n) if len(pins) == 1
+             else sp.target_list(list(pins)))
+        decl = rng.random() < 0.42
+        bank = ALIAS_DECL_T if decl else ALIAS_T
+        return _decorate(rng.choice(bank).format(r=r, n=nm), rng,
+                         "neutral" if decl else "imperative")
 
     # STOP
     s = (rng.choice(STOP_ONE_T).format(r=_ref(f, sp))
