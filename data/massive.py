@@ -59,6 +59,59 @@ NEAR_MISS_INTENTS = {
     "iot_cleaning",
 }
 
+# The three hue intents are the only *name-targeted near-miss* rows in the
+# dataset: a real device or room, plus a modifier this board genuinely cannot
+# do. coffee and cleaning are far off-domain and belong with the rest.
+#
+# A share of them is held back from training, because until now every one of
+# the 501 near-miss rows went into the corpus and the held-out sets contained
+# 26 name-targeted near-misses between them -- against a +-1.2pp seed spread,
+# which is no measurement at all. A corpus fix aimed at exactly this shape
+# (branch v22-near-miss) moved a purpose-built probe by 19 points and the
+# held-out numbers by nothing, because nothing on the held-out side could see
+# it. The eval was the thing that needed fixing.
+HOLD_OUT_INTENTS = {
+    "iot_hue_lightdim", "iot_hue_lightup", "iot_hue_lightchange",
+}
+HOLD_OUT_SHARE = 4          # in ten
+
+
+_VARY_TAIL = re.compile(r"( please| now| for me| thanks| ok\?)+$", re.I)
+
+
+def partition_key(text: str) -> str:
+    """The form a row still has after the corpus generator has decorated it.
+
+    `negatives.vary` prepends "please "/"can you "/... and appends " please"/
+    " now"/..., so two MASSIVE rows that the partition separated can come out
+    of the generator byte-identical. That happened: "turn down the lights in
+    the living room" was held for training and "please turn down the lights in
+    the living room" for the test set, and vary() closed the gap -- one leaked
+    row, invisible to a partition that looked only at the raw strings.
+
+    So the key is the stripped form. Anything the decoration can add or remove
+    must come off before hashing, or the partition is only true of the strings
+    nobody trains on.
+    """
+    s = _LEAD_PREFIX.sub("", text.strip().lower())
+    s = _VARY_TAIL.sub("", s).strip(" .,!?")
+    return " ".join(s.split())
+
+
+def is_held_out(text: str) -> bool:
+    """Whether a near-miss row belongs to the held-out set rather than training.
+
+    Hashed on the text, not sampled by index: the partition has to survive the
+    dataset arriving in a different order, near_miss_negatives() gaining a
+    filter, and the corpus being rebuilt on another machine. A row that moves
+    sides between builds is a row that is in training and in the test set.
+    """
+    import hashlib
+
+    h = hashlib.sha1(partition_key(text).encode()).hexdigest()
+    return int(h[:8], 16) % 10 < HOLD_OUT_SHARE
+
+
 # On/off rows: mined for phrasings, never relabelled. See the module docstring.
 ONOFF_INTENTS = {
     "iot_hue_lighton", "iot_hue_lightoff", "iot_wemo_on", "iot_wemo_off",
@@ -132,9 +185,23 @@ def _rows() -> list[tuple[str, str]]:
     return out
 
 
-def near_miss_negatives() -> list[str]:
-    """Real requests for capabilities we do not have -- dimming, colour, %."""
-    seen, out = set(), []
+def _near_miss(held_out: bool) -> list[str]:
+    """Shared body of near_miss_negatives() and held_out_near_miss().
+
+    One function so the two sides cannot drift into overlapping: every filter
+    below applies identically, and `held_out` only chooses which side of
+    is_held_out() to keep.
+    """
+    # Side is decided per *cleaned, lowercased* text, and only once. Deciding
+    # it per raw row put 8 utterances on both sides at the first attempt:
+    # "Dim the lights." and "dim the lights" clean to one string but hash to
+    # two, and the same text also occurs under more than one intent. A row in
+    # training and in the test set is the one defect this partition exists to
+    # prevent, so the key that dedupes and the key that partitions have to be
+    # the same key.
+    side: dict[str, bool] = {}
+    order: list[str] = []
+    seen_text: set[str] = set()
     for intent, text in _rows():
         if intent not in NEAR_MISS_INTENTS:
             continue
@@ -147,10 +214,42 @@ def near_miss_negatives() -> list[str]:
         body = _LEAD_PREFIX.sub("", t.lower()).strip()
         if any(body.startswith(v + " ") for v in _command_openings()):
             continue
-        if t and t.lower() not in seen:
-            seen.add(t.lower())
-            out.append(t)
-    return out
+        if not t:
+            continue
+        # Dedup on the cleaned text -- distinct surface forms are distinct rows
+        # -- but decide the *side* on the partition key, so every variant that
+        # vary() could collapse together lands on the same side of the split.
+        k = partition_key(t)
+        if t.lower() in seen_text:
+            continue
+        seen_text.add(t.lower())
+        order.append(t)
+        side.setdefault(k, False)
+        # Held out if *any* of its intents is one of the hue near-misses, so a
+        # text that also appears under coffee/cleaning cannot be pulled back
+        # into training by the second occurrence.
+        if intent in HOLD_OUT_INTENTS and is_held_out(t):
+            side[k] = True
+    return [t for t in order if side[partition_key(t)] == held_out]
+
+
+def near_miss_negatives() -> list[str]:
+    """Real requests for capabilities we do not have -- dimming, colour, %.
+
+    Training side only. The held-out share of the hue intents is excluded here
+    and returned by held_out_near_miss() instead.
+    """
+    return _near_miss(held_out=False)
+
+
+def held_out_near_miss() -> list[str]:
+    """The same rows, on the other side of the partition. Never trained on.
+
+    Human-written, which is the point: a held-out stratum built from this
+    project's own generators would measure whether the generators changed, not
+    whether the model learned anything.
+    """
+    return _near_miss(held_out=True)
 
 
 def far_negatives() -> list[str]:
